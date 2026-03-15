@@ -2,7 +2,10 @@
    PrimeReport – article.js (Premium Article Page Engine)
    ============================================================== */
 
-const API_BASE  = 'http://localhost:3000';
+const API_BASE =
+    window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://primereport-server.onrender.com';
 const PLACEHOLDER = '/assets/images/news-placeholder.jpg';
 
 document.addEventListener('DOMContentLoaded', () => {

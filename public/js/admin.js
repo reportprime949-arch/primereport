@@ -1,7 +1,10 @@
 import { auth } from "./firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL =
+    (window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://primereport-server.onrender.com') + '/api';
 
 // == Authentication & Fetch Wrapper ==
 

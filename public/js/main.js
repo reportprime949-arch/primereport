@@ -3,10 +3,9 @@
    Powers: Hero, News Grid, Breaking Ticker, Trending, Dark Mode
    ============================================================== */
 
-const API_BASE =
+
   window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://primereport-server.onrender.com";
+    const API_BASE = 'https://primereport-server.onrender.com';
 const PLACEHOLDER = '/assets/images/news-placeholder.jpg';
 
 let allArticles   = [];

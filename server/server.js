@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -18,7 +19,7 @@ const adminRoutes = require("./routes/admin");
 
 app.use("/api/news", newsRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api", adminRoutes);
+
 
 /* health check (important for Render) */
 app.get("/", (req, res) => {
