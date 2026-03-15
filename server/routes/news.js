@@ -61,34 +61,25 @@ router.get("/", async (req, res) => {
 /* ============================= */
 router.get("/:id", async (req, res) => {
   try {
-    const decodedId = decodeURIComponent(req.params.id);
+    const id = decodeURIComponent(req.params.id);
 
-    let articles = NewsFetcher.getArticlesCache();
+    // Get all categories to search
+    const categories = [
+      "world",
+      "technology",
+      "business",
+      "politics",
+      "sports",
+      "science",
+      "entertainment"
+    ];
 
-    // If cache empty, fetch again
-    if (!articles || articles.length === 0) {
-      articles = await fetchAndProcessNews("world");
-    }
+    let article = null;
 
-    let article = articles.find(a => a.id === decodedId);
-
-    // If still not found, search all categories
-    if (!article) {
-      const categories = [
-        "world",
-        "technology",
-        "business",
-        "politics",
-        "sports",
-        "science",
-        "entertainment"
-      ];
-
-      for (const cat of categories) {
-        const list = await fetchAndProcessNews(cat);
-        article = list.find(a => a.id === decodedId);
-        if (article) break;
-      }
+    for (const cat of categories) {
+      const articles = await fetchAndProcessNews(cat);
+      article = articles.find(a => a.id === id);
+      if (article) break;
     }
 
     if (!article) {
@@ -98,11 +89,10 @@ router.get("/:id", async (req, res) => {
     res.json(article);
 
   } catch (error) {
-    console.error("Single article error:", error);
-    res.status(500).json({ error: "Failed to fetch article" });
+    console.error("Article fetch error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });
-
 /* ============================= */
 /* Manual RSS Refresh */
 /* ============================= */
