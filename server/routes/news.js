@@ -1,5 +1,7 @@
 router.get("/:id", async (req, res) => {
+
   try {
+
     const id = decodeURIComponent(req.params.id);
 
     const categories = [
@@ -12,24 +14,29 @@ router.get("/:id", async (req, res) => {
       "entertainment"
     ];
 
-    let article = null;
-
     for (const cat of categories) {
+
       const articles = await fetchAndProcessNews(cat);
 
-      article = articles.find(a => a.id === id);
+      const article = articles.find(a =>
+        a.id === id ||
+        decodeURIComponent(a.id || "") === id ||
+        (a.id || "").includes(id.substring(0,30))
+      );
 
-      if (article) break;
+      if (article) {
+        return res.json(article);
+      }
+
     }
 
-    if (!article) {
-      return res.status(404).json({ error: "Article not found" });
-    }
-
-    res.json(article);
+    res.status(404).json({ error: "Article not found" });
 
   } catch (err) {
-    console.error("Article fetch error:", err);
+
+    console.error(err);
     res.status(500).json({ error: "Server error" });
+
   }
+
 });
