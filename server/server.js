@@ -30,5 +30,5 @@ const PORT = process.env.PORT || 3000;
 
 /* start server */
 app.listen(PORT, () => {
-  console.log(`PrimeReport server running on port ${PORT}`);
-});git 
+  console.log(`Server running on port ${PORT}`);
+});
