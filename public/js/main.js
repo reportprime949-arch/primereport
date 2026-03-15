@@ -4,8 +4,10 @@
    ============================================================== */
 
 
-  window.location.hostname === "localhost"
-    const API_BASE = 'https://primereport-server.onrender.com';
+const API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://primereport-server.onrender.com";
+
 const PLACEHOLDER = '/assets/images/news-placeholder.jpg';
 
 let allArticles   = [];
@@ -141,16 +143,15 @@ async function loadHero() {
     if (!layout) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/news?category=${currentCat === 'all' ? 'world' : currentCat}&page=1&limit=8`);
-        const data = await res.json();
-        const articles = Array.isArray(data) ? data : (data.articles || []);
+        const res = await fetch(`${API_BASE}/api/news/hero`);
+        const articles = await res.json();
 
-        if (!articles.length) return;
+        if (!articles || !articles.length) return;
 
         const [main, ...sides] = articles;
 
         layout.innerHTML = `
-        <div class="hero-main" onclick="openArticle('${encodeId(main.id)}')">
+        <div class="hero-main" onclick="openArticle('${main.slug || main.id}')">
             <img src="${main.image || PLACEHOLDER}" 
                  alt="${escHtml(main.title)}" 
                  class="hero-main-img" 
@@ -162,7 +163,7 @@ async function loadHero() {
                 <h2>${escHtml(main.title)}</h2>
                 <p class="excerpt">${escHtml(main.summary || '')}</p>
                 <div class="hero-meta">
-                    <span><i class="far fa-clock"></i> ${timeAgo(main.date)}</span>
+                    <span><i class="far fa-clock"></i> ${timeAgo(main.publishedAt || main.date)}</span>
                     <span>${escHtml(main.source || 'PrimeReport')}</span>
                 </div>
             </div>
@@ -170,7 +171,7 @@ async function loadHero() {
 
         <div class="hero-side">
             ${sides.slice(0,4).map(a => `
-            <div class="hero-side-card" onclick='openArticle(${JSON.stringify(a)})'>
+            <div class="hero-side-card" onclick="openArticle('${a.slug || a.id}')">
                 <img src="${a.image || PLACEHOLDER}" 
                      alt="${escHtml(a.title)}" 
                      class="side-img" 
@@ -179,14 +180,13 @@ async function loadHero() {
                 <div class="hero-side-content">
                     <div class="cat-badge ${catClass(a.category)}" style="margin-bottom:6px;">${a.category || 'News'}</div>
                     <h3>${escHtml(a.title)}</h3>
-                    <div class="side-meta"><i class="far fa-clock"></i> ${timeAgo(a.date)}</div>
+                    <div class="side-meta"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt || a.date)}</div>
                 </div>
             </div>
             `).join('')}
         </div>`;
     } catch (e) {
         console.warn('[Hero] Failed to load:', e.message);
-        layout.innerHTML = '';
     }
 }
 
@@ -240,8 +240,9 @@ function renderCards(articles, append) {
         const card = document.createElement('div');
         card.className = 'news-card';
         card.style.animationDelay = `${(i % 9) * 0.06}s`;
+        const slugOrId = a.slug || a.id;
         card.innerHTML = `
-            <div class="card-img">
+            <div class="card-img" onclick="openArticle('${slugOrId}')">
                 <img class="card-img-inner" 
                      src="${a.image || PLACEHOLDER}" 
                      alt="${escHtml(a.title)}" 
@@ -250,20 +251,15 @@ function renderCards(articles, append) {
             </div>
             <div class="card-body">
                 <div class="cat-badge ${catClass(a.category)}">${a.category || 'News'}</div>
-                <h3>${escHtml(a.title)}</h3>
+                <h3 onclick="openArticle('${slugOrId}')">${escHtml(a.title)}</h3>
                 <p class="card-excerpt">${escHtml(a.summary || '')}</p>
                 <div class="card-footer">
-                    <span class="card-time"><i class="far fa-clock"></i> ${timeAgo(a.date)}</span>
-                    <a class="read-btn" href="article.html?id=${encodeId(a.id)}">
+                    <span class="card-time"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt || a.date)}</span>
+                    <a class="read-btn" href="article.html?id=${encodeId(slugOrId)}">
                         Read <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>`;
-        card.addEventListener('click', e => {
-            if (e.target.closest('.read-btn')) return;
-            sessionStorage.setItem("selectedArticle", JSON.stringify(a));
-window.location.href = "article.html";
-        });
         grid.appendChild(card);
     });
 }
@@ -300,7 +296,7 @@ async function loadBreakingTicker() {
 
         if (articles?.length) {
             const spans = articles
-                .map(a => `<span class="ticker-item" onclick="openArticle('${encodeId(a.id)}')" style="cursor:pointer">${escHtml(a.title)}</span>`)
+                .map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')" style="cursor:pointer">${escHtml(a.title)}</span>`)
                 .join('');
             track.innerHTML = spans + spans;  // duplicate for seamless loop
         }
@@ -324,12 +320,11 @@ async function loadTrending() {
         }
 
         list.innerHTML = items.slice(0, 5).map((item, i) => {
-            const title    = typeof item === 'object' ? (item.title || '') : item;
-            const category = typeof item === 'object' ? (item.category || 'News') : 'Trending';
-            const id       = typeof item === 'object' ? item.id : null;
-            const handler  = id ? `openArticle('${encodeId(id)}')` : '';
+            const title    = item.title || 'Breaking News';
+            const category = item.category || 'Trending';
+            const slugOrId = item.slug || item.id;
             return `
-            <div class="trend-item" onclick="${handler}">
+            <div class="trend-item" onclick="openArticle('${slugOrId}')">
                 <span class="trend-num">0${i + 1}</span>
                 <div class="trend-content">
                     <h4>${escHtml(title)}</h4>
@@ -352,9 +347,9 @@ function handleSubscribe(e) {
 }
 
 /* ─── NAVIGATION ────────────────────────────────────────────── */
-function openArticle(article) {
-    sessionStorage.setItem("selectedArticle", JSON.stringify(article));
-    window.location.href = "article.html";
+function openArticle(slugOrId) {
+    if (!slugOrId) return;
+    window.location.href = `article.html?id=${encodeId(slugOrId)}`;
 }
 
 /* ─── SKELETONS ─────────────────────────────────────────────── */
