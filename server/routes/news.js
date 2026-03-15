@@ -63,9 +63,33 @@ router.get("/:id", async (req, res) => {
   try {
     const decodedId = decodeURIComponent(req.params.id);
 
-    const articles = NewsFetcher.getArticlesCache();
+    let articles = NewsFetcher.getArticlesCache();
 
-    const article = articles.find(a => a.id === decodedId);
+    // If cache empty, fetch again
+    if (!articles || articles.length === 0) {
+      articles = await fetchAndProcessNews("world");
+    }
+
+    let article = articles.find(a => a.id === decodedId);
+
+    // If still not found, search all categories
+    if (!article) {
+      const categories = [
+        "world",
+        "technology",
+        "business",
+        "politics",
+        "sports",
+        "science",
+        "entertainment"
+      ];
+
+      for (const cat of categories) {
+        const list = await fetchAndProcessNews(cat);
+        article = list.find(a => a.id === decodedId);
+        if (article) break;
+      }
+    }
 
     if (!article) {
       return res.status(404).json({ error: "Article not found" });

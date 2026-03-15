@@ -134,7 +134,7 @@ function renderArticle(a) {
         "publisher": {
             "@type": "Organization",
             "name": "PrimeReport",
-            "logo": { "@type": "ImageObject", "url": window.location.origin + "/assets/images/logo.png" }
+            "logo": { "@type": "ImageObject", "url": window.location.origin + "/logo.png" }
         }
     };
     document.getElementById('article-schema').textContent = JSON.stringify(schema);
