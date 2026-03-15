@@ -170,7 +170,7 @@ async function loadHero() {
 
         <div class="hero-side">
             ${sides.slice(0,4).map(a => `
-            <div class="hero-side-card" onclick="openArticle('${encodeId(a.id)}')">
+            <div class="hero-side-card" onclick='openArticle(${JSON.stringify(a)})'>
                 <img src="${a.image || PLACEHOLDER}" 
                      alt="${escHtml(a.title)}" 
                      class="side-img" 
@@ -352,8 +352,9 @@ function handleSubscribe(e) {
 }
 
 /* ─── NAVIGATION ────────────────────────────────────────────── */
-function openArticle(id) {
-    window.location.href = `article.html?id=${encodeURIComponent(id)}`;
+function openArticle(article) {
+    sessionStorage.setItem("selectedArticle", JSON.stringify(article));
+    window.location.href = "article.html";
 }
 
 /* ─── SKELETONS ─────────────────────────────────────────────── */
