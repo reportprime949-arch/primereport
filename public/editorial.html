@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Editorial Team - Meet the experts behind PrimeReport's trusted news coverage.">
+    <title>Editorial Team - PrimeReport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c41e3a',
+                        dark: '#0f0f0f',
+                        'dark-card': '#1a1a1a',
+                        'border-dark': '#2a2a2a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-sans bg-gray-50 text-gray-900 transition-colors duration-300; }
+            h1, h2, h3, h4, h5 { @apply font-heading font-extrabold tracking-tight; }
+        }
+        @layer components {
+            .container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+        }
+    </style>
+</head>
+<body class="light">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark border-b border-gray-200 dark:border-border-dark sticky top-0 z-50">
+        <div class="bg-black text-white text-[11px] py-1.5 font-bold uppercase tracking-widest overflow-hidden">
+            <div class="container flex justify-between items-center">
+                <span id="current-date"></span>
+                <div class="space-x-4">
+                    <a href="support.html" class="hover:text-primary transition-colors">Support</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-6">
+            <div class="container flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="group">
+                        <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 sm:h-12 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="hidden text-3xl font-heading font-extrabold text-primary group-hover:text-black transition-colors">Prime<span class="text-gray-900">Report</span></span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4 flex-grow sm:flex-grow-0 justify-end">
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-dark-card text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-all">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 dark:text-gray-200">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title Section -->
+    <section class="py-20 bg-gray-100 dark:bg-dark-card border-b border-gray-200 dark:border-border-dark">
+        <div class="container text-center">
+            <h1 class="text-4xl sm:text-6xl mb-4">Editorial <span class="text-primary">Team</span></h1>
+            <p class="max-w-2xl mx-auto text-gray-500 dark:text-gray-400 text-lg">The voices behind your daily news. Committed to accuracy, integrity, and depth.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="py-24 bg-white dark:bg-dark">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                
+                <!-- Editor in Chief -->
+                <div class="bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-border-dark p-10 rounded-3xl text-center">
+                    <div class="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i class="fas fa-user-tie text-5xl text-primary"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 dark:text-white">Marcus Vance</h3>
+                    <p class="text-primary text-xs font-black uppercase tracking-widest mb-6">Editor-in-Chief</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Overseeing general strategic direction and ensuring all reporting adheres to our strict gold-standard guidelines.</p>
+                </div>
+
+                <!-- Senior Editor -->
+                <div class="bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-border-dark p-10 rounded-3xl text-center">
+                    <div class="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i class="fas fa-user-edit text-5xl text-primary"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 dark:text-white">Sarah Reynolds</h3>
+                    <p class="text-primary text-xs font-black uppercase tracking-widest mb-6">Senior Editor</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Leading our global news desk and coordinating between regional bureaus to ensure a cohesive narrative.</p>
+                </div>
+
+                <!-- Tech Editor -->
+                <div class="bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-border-dark p-10 rounded-3xl text-center">
+                    <div class="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i class="fas fa-microchip text-5xl text-primary"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 dark:text-white">Leo Chen</h3>
+                    <p class="text-primary text-xs font-black uppercase tracking-widest mb-6">Technology Editor</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Bringing depth to our tech coverage, from Silicon Valley shifts to the latest in deep-learning AI architecture.</p>
+                </div>
+
+            </div>
+
+            <div class="mt-20 pt-20 border-t border-gray-100 dark:border-border-dark">
+                <h2 class="text-3xl font-heading text-center mb-16">Our Commitment</h2>
+                <div class="max-w-3xl mx-auto space-y-8 text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
+                    <p>The PrimeReport editorial team is composed of veteran journalists and domain experts. Every piece of content, whether a breaking alert or a long-form analysis, undergoes a rigorous verification cycle.</p>
+                    <p>We leverage AI to speed up the synthesis of raw data, but the final judgment on accuracy, clarity, and responsible reporting always rests with our human editors. We are committed to transparency and correcting the record whenever necessary.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Integration -->
+    <footer class="bg-black text-white pt-20 pb-10">
+        <div class="container mb-20 text-center">
+            <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 mb-8 mx-auto brightness-0 invert">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm font-bold uppercase tracking-wider text-gray-500">
+                <a href="about.html" class="hover:text-primary transition-colors">About Us</a>
+                <a href="editorial.html" class="hover:text-primary transition-colors">Editorial</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+                <a href="privacy.html" class="hover:text-primary transition-colors">Privacy</a>
+            </div>
+        </div>
+        <div class="container border-t border-white/10 pt-10 text-center">
+            <p class="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em]">&copy; 2026 PrimeReport. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

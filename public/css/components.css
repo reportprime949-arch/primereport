@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Components: Header, Ticker, Cards, Sidebar, Footer
+   ========================================================================== */
+
+/* --- Header & Navigation --- */
+.header {
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-bar {
+    background-color: #000;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-header {
+    padding: 24px 0;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-img {
+    height: 42px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--bg-soft);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    width: 180px;
+    font-size: 0.9rem;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.main-nav {
+    background: var(--header-bg);
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+.nav-links li a {
+    display: block;
+    padding: 16px 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-main);
+    position: relative;
+    cursor: pointer;
+}
+
+.nav-links li a.active, .nav-links li a:hover {
+    color: var(--primary-color);
+}
+
+.nav-links li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.nav-links li a:hover::after, .nav-links li a.active::after {
+    width: 100%;
+}
+
+/* --- Breaking News Bar (Smooth Ticker) --- */
+.ticker-wrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+}
+
+.animate-ticker {
+    display: inline-flex;
+    animation: tickerLoop 30s linear infinite;
+}
+
+@keyframes tickerLoop {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.ticker-item:hover {
+    color: #ef4444;
+}
+
+/* --- Glassmorphism & Modern UI --- */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.dark .glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.hover-lift:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.fade-in {
+    animation: fadeIn 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(1.05); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Hero Slider Refining --- */
+.hero-slide.active {
+    display: block;
+}
+
+.hero-slide img {
+    filter: brightness(0.85);
+}
+
+/* AI Elements */
+.ai-badge {
+    background: linear-gradient(135deg, #ef4444 0%, #7c3aed 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Typography Enhancements */
+h1, h2, h3 {
+    letter-spacing: -0.04em !important;
+}
+
+.tracking-widest {
+    letter-spacing: 0.3em;
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}

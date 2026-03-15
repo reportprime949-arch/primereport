@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Controls - PrimeReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/prime.css">
+    <link rel="stylesheet" href="../css/admin-modern.css">
+    <script type="module" src="../js/auth-check.js"></script>
+</head>
+<body class="admin-body">
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="logo">
+            <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h2 style="display:none;">Prime<span>Report</span></h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html"><i class="fas fa-grid-2"></i> <span>Dashboard</span></a></li>
+                <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+                <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
+                <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
+                <li><a href="rss.html" class="active"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
+                <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
+                <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div style="display:flex; align-items:center;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-left">
+                    <p>Automation</p>
+                    <h2>RSS Controls</h2>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge">3</span>
+                </button>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff&bold=true&size=64" alt="Avatar">
+                    <span>Administrator</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="admin-content">
+            <!-- Sync Banner -->
+            <div class="content-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #bfdbfe; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                    <div>
+                        <h3 style="color:#1e40af; margin:0 0 4px; font-size:1rem;"><i class="fas fa-satellite-dish" style="margin-right:8px;"></i>Global RSS Sync</h3>
+                        <p style="color:#3b82f6; font-size:0.82rem; margin:0;">Trigger the background fetcher to scan all active feeds.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="triggerManualFetch()" style="padding:10px 24px;">
+                        <i class="fas fa-arrows-rotate" id="sync-icon"></i> Fetch Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feeds Table Card -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-rss" style="color:var(--primary);"></i> RSS Sources</h3>
+                    <div class="card-actions">
+                        <button class="btn btn-primary" onclick="openRssModal()">
+                            <i class="fas fa-plus"></i> Add Feed
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Feed URL</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rss-table-body">
+                            <tr><td colspan="5" class="text-center py-4 text-muted"><i class="fas fa-circle-notch fa-spin"></i> Loading feeds...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="rss-modal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center;">
+        <div class="modal-content" style="width:90%; max-width:560px; background:white; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 id="rss-modal-title" style="margin:0; font-size:1.05rem; font-weight:700;">Add RSS Feed</h3>
+                <button onclick="closeRssModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--text-muted); line-height:1;">&times;</button>
+            </div>
+            <form id="rss-form">
+                <input type="hidden" id="rss-id">
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.82rem; color:var(--text-secondary);">Feed Name</label>
+                    <input type="text" id="rss-name" required class="form-input" placeholder="e.g. BBC World News">
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.82rem; color:var(--text-secondary);">Feed URL</label>
+                    <input type="url" id="rss-url" required class="form-input" placeholder="https://feeds.example.com/rss.xml">
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.82rem; color:var(--text-secondary);">Category</label>
+                    <select id="rss-category" required class="form-input">
+                        <!-- JS injected -->
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:500; font-size:0.85rem;">
+                        <input type="checkbox" id="rss-enabled" checked style="width:16px; height:16px; accent-color:var(--primary);">
+                        <span>Enabled</span>
+                    </label>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-light" onclick="closeRssModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="min-width:120px;">Save Feed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../js/admin.js"></script>
+</body>
+</html>

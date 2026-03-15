@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Base Styles & Variables - PrimeReport Premium
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
+
+:root {
+    /* Color Palette - Premium Light */
+    --primary-color: #c41e3a; /* Deep Crimson */
+    --secondary-color: #1a1a1a;
+    --text-main: #121212;
+    --text-muted: #555555;
+    --text-light: #717171;
+    --bg-main: #ffffff;
+    --bg-soft: #f8f9fa;
+    --bg-card: #ffffff;
+    --border-color: #ebebeb;
+    --header-bg: #ffffff;
+    --footer-bg: #111111;
+    --accent: #d32f2f;
+    
+    /* Typography */
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Layout */
+    --container-width: 1240px;
+    --box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    --hover-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    --border-radius: 4px; /* More professional sharp/subtle rounded corners */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode {
+    --bg-main: #0f0f0f;
+    --bg-soft: #1a1a1a;
+    --bg-card: #181818;
+    --text-main: #f1f1f1;
+    --text-muted: #aaaaaa;
+    --text-light: #888888;
+    --border-color: #2a2a2a;
+    --header-bg: #121212;
+    --box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text-main);
+    background-color: var(--bg-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--primary-color);
+}
+
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Base UI Components */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #a01830;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(196, 30, 58, 0.3);
+}
+
+/* Margin Utilities */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+
+/* Grid Layouts */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 48px;
+}
+
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== Breaking News Bar ===== */
+.breaking-news-bar {
+    display: flex;
+    align-items: center;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    height: 44px;
+}
+
+.breaking-label {
+    background: #e11d48;
+    padding: 8px 16px;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ticker-wrapper {
+    overflow: hidden;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.ticker-track {
+    display: inline-block;
+    padding-left: 32px;
+    animation: ticker-scroll 45s linear infinite;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ticker-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ===== News Grid ===== */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* ===== Hero Slider ===== */
+.hero-slider {
+    min-height: 480px;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+/* ===== Article Share Header ===== */
+.article-share-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+/* ===== Trending Sidebar ===== */
+#trending-list .flex {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+#trending-list .flex:last-child {
+    border-bottom: none;
+}
+

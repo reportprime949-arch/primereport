@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact PrimeReport - Get in touch with our news desk, press, or business teams.">
+    <title>Contact Us - PrimeReport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c41e3a',
+                        dark: '#0f0f0f',
+                        'dark-card': '#1a1a1a',
+                        'border-dark': '#2a2a2a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light bg-gray-50 dark:bg-dark text-gray-900 dark:text-gray-200">
+
+    <!-- Header (Standard) -->
+    <header class="bg-white dark:bg-dark border-b border-gray-200 dark:border-border-dark sticky top-0 z-50">
+        <div class="container py-6 flex justify-between items-center">
+            <a href="index.html" class="group">
+                <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 w-auto">
+            </a>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-dark-card">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="index.html" class="hidden sm:block text-xs font-black uppercase tracking-widest text-primary">Back to Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-20">
+        <div class="container max-w-6xl">
+            <div class="flex flex-col lg:flex-row gap-20">
+                
+                <!-- Contact Info -->
+                <div class="lg:w-1/2">
+                    <h1 class="text-5xl font-heading mb-8 dark:text-white">Get in <span class="text-primary">Touch</span></h1>
+                    <p class="text-lg text-gray-500 dark:text-gray-400 mb-12">Whether you have a news tip, a business inquiry, or just want to say hello, we're here to listen.</p>
+
+                    <div class="space-y-8">
+                        <div class="flex items-center gap-6 group">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm uppercase tracking-widest text-gray-400 mb-1">General Inquiries</h4>
+                                <p class="text-xl dark:text-white">contact@primereport.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6 group">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm uppercase tracking-widest text-gray-400 mb-1">Press & Media</h4>
+                                <p class="text-xl dark:text-white">press@primereport.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6 group">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm uppercase tracking-widest text-gray-400 mb-1">Partnerships</h4>
+                                <p class="text-xl dark:text-white">biz@primereport.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:w-1/2 bg-white dark:bg-dark-card p-10 rounded-3xl shadow-xl border border-gray-100 dark:border-border-dark">
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Your Name</label>
+                                <input type="text" class="w-full bg-gray-50 dark:bg-dark border border-gray-100 dark:border-border-dark rounded-xl px-5 py-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="John Doe" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
+                                <input type="email" class="w-full bg-gray-50 dark:bg-dark border border-gray-100 dark:border-border-dark rounded-xl px-5 py-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black uppercase tracking-widest text-gray-400">Subject</label>
+                            <select class="w-full bg-gray-50 dark:bg-dark border border-gray-100 dark:border-border-dark rounded-xl px-5 py-3 outline-none focus:ring-2 focus:ring-primary transition-all">
+                                <option>General Inquiry</option>
+                                <option>News Tip</option>
+                                <option>Advertising Inquiry</option>
+                                <option>Report an Error</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black uppercase tracking-widest text-gray-400">Your Message</label>
+                            <textarea rows="5" class="w-full bg-gray-50 dark:bg-dark border border-gray-100 dark:border-border-dark rounded-xl px-5 py-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="How can we help?" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:bg-black transition-all">Send Message</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Integrated -->
+    <footer class="bg-black text-white pt-20 pb-10">
+        <div class="container text-center">
+            <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 mb-8 mx-auto brightness-0 invert">
+            <p class="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em]">&copy; 2026 PrimeReport. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

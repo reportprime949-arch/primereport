@@ -1,0 +1,44 @@
+[
+  {
+    "id": "header",
+    "name": "Header Banner Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "sidebar",
+    "name": "Sidebar Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "in-feed",
+    "name": "In-Feed Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "article-top",
+    "name": "Article Top Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "article-mid",
+    "name": "Article Middle Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "article-bot",
+    "name": "Article Bottom Ad",
+    "code": "",
+    "enabled": false
+  },
+  {
+    "id": "footer",
+    "name": "Footer Ad",
+    "code": "",
+    "enabled": false
+  }
+]

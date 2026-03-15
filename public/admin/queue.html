@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Queue - PrimeAdmin</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/prime.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script type="module" src="../js/auth-check.js"></script>
+    <style>
+        .queue-item { display: flex; flex-direction: column; gap: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom:15px; }
+        .queue-header { display: flex; justify-content: space-between; align-items:flex-start; }
+        .queue-body { font-size: 0.9em; color: #555; }
+        .queue-actions { display: flex; gap: 10px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        .status-draft { background-color: #ffeb3b; color: #f57f17; }
+        .status-pending { background-color: #e3f2fd; color: #1976d2; }
+    </style>
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="logo">
+            <img src="../logo.png" alt="PrimeReport" style="height: 40px; margin-bottom: 10px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h2 style="display:none; color: white;">Prime<span style="color:var(--primary-color)">Admin</span></h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="articles.html"><i class="fas fa-newspaper"></i> Articles</a></li>
+                <li><a href="categories.html"><i class="fas fa-list"></i> Categories</a></li>
+                <li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="ads.html"><i class="fas fa-ad"></i> Advertisements</a></li>
+                <li><a href="rss.html"><i class="fas fa-rss"></i> RSS Controls</a></li>
+                <li><a href="ai-settings.html"><i class="fas fa-robot"></i> AI Engine Settings</a></li>
+                <li><a href="queue.html" class="active"><i class="fas fa-list-check"></i> Article Queue</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <h2>AI Processing Queue</h2>
+            </div>
+        </header>
+
+        <section class="admin-content">
+            <div class="content-card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Pending Articles</h3>
+                    <button class="btn btn-secondary" onclick="loadQueue()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                
+                <div id="queue-container" style="padding: 20px;">
+                    <!-- Queue injected here -->
+                    <div style="text-align: center; color: #888;">Loading article queue...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ad Choices - Transparency and control over personalized advertising on PrimeReport.">
+    <title>Ad Choices - PrimeReport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c41e3a',
+                        dark: '#0f0f0f',
+                        'dark-card': '#1a1a1a',
+                        'border-dark': '#2a2a2a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light bg-gray-50 dark:bg-dark text-gray-700 dark:text-gray-300 font-sans">
+
+    <header class="bg-primary py-20 text-white shadow-2xl overflow-hidden relative">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="container max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h1 class="text-4xl sm:text-5xl font-black uppercase tracking-widest mb-4 italic">Ad <span class="bg-white text-primary px-3 rounded-md">Choices</span></h1>
+            <p class="text-sm font-bold opacity-80 uppercase tracking-widest">Transparency & Your Advertising Privacy</p>
+        </div>
+    </header>
+
+    <main class="py-24">
+        <div class="container max-w-3xl mx-auto px-6">
+            <div class="bg-white dark:bg-dark-card p-12 rounded-[40px] shadow-xl border border-gray-100 dark:border-border-dark space-y-12">
+                
+                <section>
+                    <h2 class="text-2xl font-bold dark:text-white mb-6">Why You See Certain Ads</h2>
+                    <p class="leading-relaxed text-gray-500 dark:text-gray-400">PrimeReport partners with third-party advertising networks (like Google AdSense) to serve advertisements. These ads help us keep our core news service free for everyone. Some of these ads may be personalized based on your browsing interests on this and other sites.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold dark:text-white mb-6">Personalized Advertising</h2>
+                    <p class="leading-relaxed text-gray-500 dark:text-gray-400 mb-8">Personalized advertising (also known as interest-based advertising) uses information collected about your web browsing behavior to show you ads that are more relevant to you.</p>
+                    <div class="bg-gray-50 dark:bg-dark border border-gray-100 dark:border-border-dark p-8 rounded-2xl">
+                        <h4 class="font-bold mb-4">How to Opt-Out</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">You can opt-out of personalized advertising from many networks by visiting the Digital Advertising Alliance (DAA) or Network Advertising Initiative (NAI) websites.</p>
+                        <a href="https://optout.aboutads.info/" target="_blank" class="inline-block bg-primary text-white font-bold px-8 py-3 rounded-full text-sm hover:scale-105 transition-transform">Visit DAA Opt-Out Tool</a>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold dark:text-white mb-6">Google AdSense Specifically</h2>
+                    <p class="leading-relaxed text-gray-500 dark:text-gray-400">Google uses cookies to serve ads on PrimeReport. Google's use of advertising cookies enables it and its partners to serve ads to users based on their visit to your sites and/or other sites on the Internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" class="text-primary underline">Google My Ad Center</a>.</p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-black py-10 text-center">
+        <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Digital Advertising Transparency Portal &copy; 2026</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

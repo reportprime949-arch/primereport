@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About PrimeReport - Our mission and commitment to global news.">
+    <title>About Us - PrimeReport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c41e3a',
+                        dark: '#0f0f0f',
+                        'dark-card': '#1a1a1a',
+                        'border-dark': '#2a2a2a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-sans bg-gray-50 text-gray-900 transition-colors duration-300; }
+            h1, h2, h3, h4, h5 { @apply font-heading font-extrabold tracking-tight; }
+        }
+        @layer components {
+            .container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+        }
+    </style>
+</head>
+<body class="light">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark border-b border-gray-200 dark:border-border-dark sticky top-0 z-50">
+        <div class="bg-black text-white text-[11px] py-1.5 font-bold uppercase tracking-widest overflow-hidden">
+            <div class="container flex justify-between items-center">
+                <span id="current-date"></span>
+                <div class="space-x-4">
+                    <a href="support.html" class="hover:text-primary transition-colors">Support</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-6">
+            <div class="container flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="group">
+                        <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 sm:h-12 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="hidden text-3xl font-heading font-extrabold text-primary group-hover:text-black transition-colors">Prime<span class="text-gray-900">Report</span></span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4 flex-grow sm:flex-grow-0 justify-end">
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-dark-card text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white transition-all">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 dark:text-gray-200">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="hidden md:block border-t border-gray-100 dark:border-border-dark">
+            <div class="container">
+                <ul class="flex justify-center space-x-8 py-4 text-[13px] font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    <li><a href="index.html" class="nav-link hover:text-primary transition-colors">Home</a></li>
+                    <li><a href="index.html?category=World" class="nav-link hover:text-primary transition-colors">World</a></li>
+                    <li><a href="index.html?category=Technology" class="nav-link hover:text-primary transition-colors">Technology</a></li>
+                    <li><a href="index.html?category=Business" class="nav-link hover:text-primary transition-colors">Business</a></li>
+                    <li><a href="index.html?category=Politics" class="nav-link hover:text-primary transition-colors">Politics</a></li>
+                    <li><a href="index.html?category=Entertainment" class="nav-link hover:text-primary transition-colors">Entertainment</a></li>
+                    <li><a href="index.html?category=Sports" class="nav-link hover:text-primary transition-colors">Sports</a></li>
+                    <li><a href="index.html?category=Science" class="nav-link hover:text-primary transition-colors">Science</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Title Section -->
+    <section class="py-20 bg-black text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-primary/10 animate-pulse"></div>
+        <div class="container relative z-10 text-center">
+            <span class="inline-block px-4 py-1.5 bg-primary/20 text-primary text-xs font-black uppercase tracking-[0.3em] mb-6 rounded-full border border-primary/30">Company</span>
+            <h1 class="text-4xl sm:text-6xl md:text-7xl mb-8">About <span class="text-primary">PrimeReport</span></h1>
+            <p class="max-w-2xl mx-auto text-gray-400 text-lg sm:text-xl leading-relaxed">Defining the future of global news through AI-enabled clarity and real-time reporting.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="py-24 bg-white dark:bg-dark">
+        <div class="container max-w-4xl">
+            <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 space-y-12">
+                <section>
+                    <h2 class="text-3xl font-heading mb-6 text-black dark:text-white">Who We Are</h2>
+                    <p>PrimeReport is a premier global digital news platform dedicated to delivering timely updates on world news, technology, business, politics, entertainment, sports, and science. In an era of information overload, we pride ourselves on being a reliable beacon of clarity, filtering the noise to provide our readers with what truly matters.</p>
+                </section>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 not-prose">
+                    <div class="bg-gray-50 dark:bg-dark-card p-8 rounded-2xl border border-gray-100 dark:border-border-dark">
+                        <i class="fas fa-bullseye text-3xl text-primary mb-6"></i>
+                        <h3 class="text-xl font-bold mb-4 dark:text-white">Our Mission</h3>
+                        <p class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">Our mission is to provide accessible, informative, and high-impact news coverage for readers worldwide. We believe that well-informed citizens are the foundation of a thriving global community.</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-dark-card p-8 rounded-2xl border border-gray-100 dark:border-border-dark">
+                        <i class="fas fa-microchip text-3xl text-primary mb-6"></i>
+                        <h3 class="text-xl font-bold mb-4 dark:text-white">AI-Assisted Power</h3>
+                        <p class="text-sm leading-relaxed text-gray-500 dark:text-gray-400">PrimeReport utilizes advanced news aggregation engines and AI-assisted processing to synthesize data from multiple high-authority sources, providing concise yet comprehensive reports in real-time.</p>
+                    </div>
+                </div>
+
+                <section>
+                    <h2 class="text-3xl font-heading mb-6 text-black dark:text-white">Our Approach</h2>
+                    <p>Every story on PrimeReport undergoes a sophisticated multi-step process. We aggregate news from global feeds including the BBC, Reuters, and AP. Our AI engine then performs deep sentiment analysis and key-point extraction, which is then reviewed by our human editorial team to ensure accuracy, responsible reporting, and journalistic integrity.</p>
+                    <p>Whether it's a breakthrough in subatomic physics or a shifting political landscape in the heart of Europe, PrimeReport ensures you have the context you need to understand the world's most significant events.</p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white pt-20 pb-10">
+        <div class="container mb-20 text-center">
+            <img src="assets/images/logo.png" alt="PrimeReport" class="h-10 mb-8 mx-auto brightness-0 invert">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm font-bold uppercase tracking-wider text-gray-500">
+                <a href="about.html" class="hover:text-primary transition-colors">About Us</a>
+                <a href="editorial.html" class="hover:text-primary transition-colors">Editorial</a>
+                <a href="contact.html" class="hover:text-primary transition-colors">Contact</a>
+                <a href="privacy.html" class="hover:text-primary transition-colors">Privacy</a>
+            </div>
+        </div>
+        <div class="container border-t border-white/10 pt-10 text-center">
+            <p class="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em]">&copy; 2026 PrimeReport. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

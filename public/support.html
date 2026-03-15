@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Support Center - Find help, report issues, or inquire about PrimeReport services.">
+    <title>Support Center - PrimeReport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#c41e3a',
+                        dark: '#0f0f0f',
+                        'dark-card': '#1a1a1a',
+                        'border-dark': '#2a2a2a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light bg-gray-50 dark:bg-dark text-gray-900 dark:text-gray-200">
+
+    <header class="bg-white dark:bg-dark border-b border-gray-200 dark:border-border-dark sticky top-0 z-50">
+        <div class="container py-6 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white"><i class="fas fa-question"></i></div>
+                <span class="font-heading font-extrabold text-xl tracking-tight">Support<span class="text-primary">Center</span></span>
+            </a>
+            <a href="index.html" class="text-sm font-bold text-primary group flex items-center">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i> Home
+            </a>
+        </div>
+    </header>
+
+    <main class="py-20">
+        <div class="container max-w-4xl">
+            <div class="text-center mb-20">
+                <h1 class="text-5xl font-heading mb-6">How can we <span class="text-primary">Help?</span></h1>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">Browse topics or reach out to our support specialists directly.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                <div class="bg-white dark:bg-dark-card p-10 rounded-3xl border border-gray-100 dark:border-border-dark group hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-user-circle text-3xl text-primary mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Account Help</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Troubleshooting login issues, password resets, and managing your newsletter subscription status.</p>
+                    <a href="mailto:support@primereport.com" class="text-primary font-bold text-sm">Email Account Support →</a>
+                </div>
+                <div class="bg-white dark:bg-dark-card p-10 rounded-3xl border border-gray-100 dark:border-border-dark group hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-exclamation-triangle text-3xl text-primary mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Reporting an Issue</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Found a bug or a broken link? Let our technical team know so we can fix it immediately.</p>
+                    <a href="mailto:tech@primereport.com" class="text-primary font-bold text-sm">Open Technical Ticket →</a>
+                </div>
+                <div class="bg-white dark:bg-dark-card p-10 rounded-3xl border border-gray-100 dark:border-border-dark group hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-ad text-3xl text-primary mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Advertising Inquiries</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Inquire about display ads, sponsored content, and strategic brand partnerships.</p>
+                    <a href="ad-choices.html" class="text-primary font-bold text-sm">View Ad Choices →</a>
+                </div>
+                <div class="bg-white dark:bg-dark-card p-10 rounded-3xl border border-gray-100 dark:border-border-dark group hover:border-primary transition-all shadow-sm">
+                    <i class="fas fa-pen-nib text-3xl text-primary mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Content Corrections</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Our commitment is to accuracy. If you notice a factual error, we want to know.</p>
+                    <a href="editorial.html" class="text-primary font-bold text-sm">Editorial Guidelines →</a>
+                </div>
+            </div>
+
+            <div class="bg-black text-white p-12 rounded-[40px] text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-primary/20 opacity-50 blur-3xl"></div>
+                <h2 class="text-3xl font-heading mb-6 relative">Still need assistance?</h2>
+                <p class="text-gray-400 mb-10 relative">Our direct support line is available 24/7 for urgent inquiries.</p>
+                <a href="mailto:support@primereport.com" class="inline-block bg-primary text-white font-black px-12 py-5 rounded-full hover:scale-105 transition-transform relative">support@primereport.com</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-black text-white pt-20 pb-10">
+        <div class="container text-center">
+            <p class="text-gray-500 text-[11px] font-bold uppercase tracking-[0.2em]">&copy; 2026 PrimeReport. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

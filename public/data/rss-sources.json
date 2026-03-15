@@ -1,0 +1,32 @@
+[
+    {
+        "name": "BBC World",
+        "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "category": "World"
+    },
+    {
+        "name": "BBC Technology",
+        "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+        "category": "Technology"
+    },
+    {
+        "name": "BBC Business",
+        "url": "https://feeds.bbci.co.uk/news/business/rss.xml",
+        "category": "Business"
+    },
+    {
+        "name": "NYT World",
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "category": "World"
+    },
+    {
+        "name": "NYT Technology",
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+        "category": "Technology"
+    },
+    {
+        "name": "NYT Business",
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+        "category": "Business"
+    }
+]

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PrimeReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/prime.css">
+    <link rel="stylesheet" href="../css/admin-modern.css">
+    <script type="module" src="../js/auth-check.js"></script>
+</head>
+<body class="admin-body">
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="logo">
+            <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h2 style="display:none;">Prime<span>Report</span></h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html" class="active"><i class="fas fa-grid-2"></i> <span>Dashboard</span></a></li>
+                <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+                <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
+                <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
+                <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
+                <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
+                <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div style="display:flex; align-items:center;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-left">
+                    <p>Overview</p>
+                    <h2>Dashboard</h2>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge">3</span>
+                </button>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff&bold=true&size=64" alt="Avatar">
+                    <span>Administrator</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="admin-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#eff6ff; color:#2563eb;"><i class="fas fa-file-lines"></i></div>
+                    <div class="stat-info">
+                        <h2 id="totalArticles">0</h2>
+                        <p>Total Articles</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#fef3c7; color:#d97706;"><i class="fas fa-fire"></i></div>
+                    <div class="stat-info">
+                        <h3 id="breakingNewsCount">0</h3>
+                        <p>Breaking News</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#d1fae5; color:#059669;"><i class="fas fa-eye"></i></div>
+                    <div class="stat-info">
+                        <h3 id="totalViews">0</h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#ede9fe; color:#7c3aed;"><i class="fas fa-arrow-up-right-dots"></i></div>
+                    <div class="stat-info">
+                        <h3 id="dailyArticles">0</h3>
+                        <p>Today's Input</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Left: Recent Activity -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock-rotate-left" style="color:var(--primary);"></i> Recent Activity</h3>
+                        <a href="articles.html" class="btn btn-light" style="padding:6px 14px; font-size:0.78rem;">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <ul id="top-articles-list" style="list-style:none; padding:0; margin:0;">
+                            <p class="text-muted text-center py-4"><i class="fas fa-circle-notch fa-spin"></i> Loading activity...</p>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- System Status -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-server" style="color:var(--primary);"></i> System Status</h3>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <div class="status-row">
+                                <span><span class="status-dot green"></span> Core Engine</span>
+                                <span class="badge badge-success">Operational</span>
+                            </div>
+                            <div class="status-row">
+                                <span><span class="status-dot blue"></span> Data Storage</span>
+                                <span class="badge badge-blue">Active</span>
+                            </div>
+                            <div class="status-row">
+                                <span><span class="status-dot amber"></span> AI Rewriter</span>
+                                <span class="badge badge-amber">Synced</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="content-card quick-actions-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bolt" style="color:#fbbf24;"></i> Quick Actions</h3>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <button class="qa-btn" onclick="triggerManualFetch()">
+                                <i class="fas fa-arrows-rotate"></i>
+                                <span>Sync RSS</span>
+                            </button>
+                            <button class="qa-btn" onclick="window.location.href='ai-settings.html'">
+                                <i class="fas fa-sliders"></i>
+                                <span>AI Config</span>
+                            </button>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.location.href='articles.html#create'" style="width:100%; margin-top:12px; border-radius:var(--radius-sm);">
+                            <i class="fas fa-plus"></i> Compose Article
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../js/admin.js"></script>
+</body>
+</html>

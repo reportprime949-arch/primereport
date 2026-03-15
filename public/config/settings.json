@@ -1,0 +1,8 @@
+{
+    "adsEnabled": true,
+    "rssAutoSync": true,
+    "defaultCategory": "World",
+    "imageFallback": "/assets/images/news-placeholder.jpg",
+    "siteName": "PrimeReport",
+    "footerText": "&copy; 2026 PrimeReport Portal. All rights reserved."
+}

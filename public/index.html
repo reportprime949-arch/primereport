@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrimeReport – Global News Portal</title>
+    <link rel="icon" type="image/jpeg" href="favicon.jpeg">
+
+    <meta name="description"
+        content="PrimeReport delivers real-time news from around the world. Get breaking news, analysis, and in-depth reporting on World, Technology, Business, Politics, Sports, and more.">
+    <meta property="og:title" content="PrimeReport – Global News Portal">
+    <meta property="og:description"
+        content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://primereport.news/">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/prime.css">
+    <!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-KPL3F3WTF0');
+</script>
+
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799"
+crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <span id="current-date" class="top-date"></span>
+            <div class="top-links">
+                <span class="live-dot"><span class="dot-pulse"></span> LIVE</span>
+                <a href="support.html">Support</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" id="site-header">
+        <div class="container header-inner">
+            <!-- Logo -->
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="PrimeReport" class="logo-img"
+                    onerror="this.style.display='none';document.querySelector('.logo-text').style.display='flex'">
+                <span class="logo-text" style="display:none">Prime<span>Report</span></span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="main-nav" id="main-nav">
+                <a href="index.html" class="nav-link active" data-cat="all">Home</a>
+                <a href="index.html?category=World" class="nav-link" data-cat="World">World</a>
+                <a href="index.html?category=Technology" class="nav-link" data-cat="Technology">Tech</a>
+                <a href="index.html?category=Business" class="nav-link" data-cat="Business">Business</a>
+                <a href="index.html?category=Politics" class="nav-link" data-cat="Politics">Politics</a>
+                <a href="index.html?category=Entertainment" class="nav-link" data-cat="Entertainment">Entertainment</a>
+                <a href="index.html?category=Sports" class="nav-link" data-cat="Sports">Sports</a>
+                <a href="index.html?category=Science" class="nav-link" data-cat="Science">Science</a>
+            </nav>
+
+            <!-- Right Actions -->
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search news…" autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button id="theme-toggle" class="icon-btn" title="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="mobile-menu-btn" class="icon-btn mobile-only" title="Open menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div id="mobile-menu" class="mobile-menu-overlay hidden">
+        <div class="mobile-menu-drawer">
+            <div class="mobile-menu-header">
+                <span class="logo-text-sm">Prime<span>Report</span></span>
+                <button id="close-menu" class="icon-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <nav class="mobile-nav">
+                <a href="index.html" data-cat="all">🏠 Home</a>
+                <a href="index.html?category=World" data-cat="World">🌍 World</a>
+                <a href="index.html?category=Technology" data-cat="Technology">💻 Technology</a>
+                <a href="index.html?category=Business" data-cat="Business">💼 Business</a>
+                <a href="index.html?category=Politics" data-cat="Politics">🏛️ Politics</a>
+                <a href="index.html?category=Entertainment" data-cat="Entertainment">🎬 Entertainment</a>
+                <a href="index.html?category=Sports" data-cat="Sports">⚽ Sports</a>
+                <a href="index.html?category=Science" data-cat="Science">🔬 Science</a>
+            </nav>
+            <div class="mobile-menu-footer">
+                <a href="about.html">About</a>
+                <a href="support.html">Support</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BREAKING NEWS TICKER ===== -->
+    <div class="breaking-bar">
+        <span class="breaking-label"><i class="fas fa-bolt"></i> BREAKING</span>
+        <div class="ticker-wrapper">
+            <div class="ticker-track" id="breaking-ticker">Loading latest headlines…</div>
+        </div>
+    </div>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-section">
+        <div class="container">
+            <div id="hero-layout" class="hero-layout">
+                <!-- Populated by JS -->
+                <div class="hero-skeleton">
+                    <div class="skeleton-block skeleton-hero-main"></div>
+                    <div class="hero-side-skeleton">
+                        <div class="skeleton-block"></div>
+                        <div class="skeleton-block"></div>
+                        <div class="skeleton-block"></div>
+                        <div class="skeleton-block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="site-main">
+        <div class="container main-content-layout">
+
+            <!-- LEFT: News Feed -->
+            <div class="news-feed">
+                <div class="section-header">
+                    <h2 id="section-title" class="section-title">
+                        <span class="title-accent"></span> Latest News
+                    </h2>
+                    <div class="category-tabs" id="category-tabs">
+                        <button class="tab-btn active" data-cat="all">All</button>
+                        <button class="tab-btn" data-cat="World">World</button>
+                        <button class="tab-btn" data-cat="Technology">Tech</button>
+                        <button class="tab-btn" data-cat="Business">Business</button>
+                        <button class="tab-btn" data-cat="Sports">Sports</button>
+                    </div>
+                </div>
+
+                <div id="news-grid" class="news-grid">
+                    <!-- Skeletons -->
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+
+                <div class="load-more-wrap">
+                    <button id="load-more-btn" class="load-more-btn">
+                        <span>Load More</span> <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Sidebar -->
+            <aside class="sidebar">
+
+                <!-- Trending -->
+                <div class="sidebar-widget">
+                    <div class="widget-header">
+                        <h3><i class="fas fa-fire"></i> Trending Now</h3>
+                    </div>
+                    <div id="trending-list" class="trending-list">
+                        <div class="skeleton-trend"></div>
+                        <div class="skeleton-trend"></div>
+                        <div class="skeleton-trend"></div>
+                        <div class="skeleton-trend"></div>
+                        <div class="skeleton-trend"></div>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="sidebar-widget newsletter-widget">
+                    <div class="newsletter-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <h3>Stay Updated</h3>
+                    <p>Join 50,000+ readers getting the latest news daily.</p>
+                    <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
+                    </form>
+                    <div id="subscribe-success" class="subscribe-success hidden">
+                        <i class="fas fa-check-circle"></i> You're subscribed!
+                    </div>
+                </div>
+
+                <!-- Ad Placeholder -->
+                <div class="sidebar-widget ad-widget">
+                    <p class="ad-label">Advertisement</p>
+                    <div class="ad-box"></div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Prime<span>Report</span></div>
+                    <p>Premium global news portal delivering accurate, timely reporting from around the world.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="index.html?category=World">World News</a></li>
+                        <li><a href="index.html?category=Technology">Technology</a></li>
+                        <li><a href="index.html?category=Business">Business</a></li>
+                        <li><a href="index.html?category=Politics">Politics</a></li>
+                        <li><a href="index.html?category=Sports">Sports</a></li>
+                        <li><a href="index.html?category=Science">Science</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="editorial.html">Editorial Team</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="support.html">Support Center</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                        <li><a href="advertise.html">Advertise</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 PrimeReport. All rights reserved.</p>
+                <p>Made with <i class="fas fa-heart" style="color:#e11d48"></i> for global readers</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+
+    <script>
+        // Schema.org NewsMediaOrganization
+        document.addEventListener('DOMContentLoaded', () => {
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "NewsMediaOrganization",
+                "name": "PrimeReport",
+                "url": window.location.origin,
+                "logo": window.location.origin + "/assets/images/logo.png"
+            };
+            const el = document.createElement('script');
+            el.type = 'application/ld+json';
+            el.text = JSON.stringify(schema);
+            document.head.appendChild(el);
+        });
+    </script>
+</body>
+
+</html>

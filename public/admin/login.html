@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - PrimeReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/prime.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #f8fafc;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #dbeafe 100%);
+        }
+
+        /* decorative blobs */
+        .login-page::before {
+            content: '';
+            position: absolute;
+            width: 480px; height: 480px;
+            background: radial-gradient(circle, rgba(37,99,235,0.08), transparent 70%);
+            border-radius: 50%;
+            top: -120px; right: -80px;
+        }
+        .login-page::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(37,99,235,0.06), transparent 70%);
+            border-radius: 50%;
+            bottom: -100px; left: -60px;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 44px 40px;
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(15,23,42,0.08), 0 0 0 1px rgba(255,255,255,0.6) inset;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid rgba(226,232,240,0.8);
+            animation: appear 0.5s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login-logo { margin-bottom: 28px; }
+        .login-logo img { height: 44px; margin: 0 auto; }
+
+        .login-card h2 {
+            font-weight: 800;
+            color: var(--bg-dark);
+            margin-bottom: 6px;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+        }
+
+        .login-card > p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.25s;
+            background: #f8fafc;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            color: #0f172a;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37,99,235,0.25);
+        }
+
+        .error-msg {
+            color: #ef4444;
+            margin-top: 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .back-link {
+            margin-top: 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--primary); }
+
+        @media (max-width: 480px) {
+            .login-card { margin: 16px; padding: 32px 24px; }
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <div class="login-logo">
+            <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h1 style="display:none; color: var(--primary); font-size:1.4rem;">PrimeReport</h1>
+        </div>
+        <h2>Welcome back</h2>
+        <p>Sign in to access the admin panel</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="admin@primereport.in" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="button" onclick="loginAdmin()" class="login-btn">
+                <span>Sign In</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <p id="error-msg" class="error-msg"><i class="fas fa-circle-exclamation"></i> Invalid credentials</p>
+        </form>
+
+        <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to website</a>
+    </div>
+
+    <script type="module" src="../js/login.js"></script>
+</body>
+</html>

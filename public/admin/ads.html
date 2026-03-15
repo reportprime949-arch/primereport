@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ads Manager - PrimeReport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/prime.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script type="module" src="../js/auth-check.js"></script>
+</head>
+<body class="admin-body">
+    <aside class="admin-sidebar">
+        <!-- Sidebar identical -->
+        <div class="logo">
+            <img src="../logo.png" alt="PrimeReport" style="height: 40px; margin-bottom: 10px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h2 style="display:none; color: white;">Prime<span style="color:var(--primary-color)">Admin</span></h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="articles.html"><i class="fas fa-newspaper"></i> Articles</a></li>
+                <li><a href="categories.html"><i class="fas fa-list"></i> Categories</a></li>
+                <li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="ads.html" class="active"><i class="fas fa-ad"></i> Advertisements</a></li>
+                <li><a href="rss.html"><i class="fas fa-rss"></i> RSS Controls</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <h2>Advertisements Manager</h2>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=d32f2f&color=fff" alt="Avatar" style="width: 35px; border-radius: 50%;">
+                </div>
+            </div>
+        </header>
+
+        <section class="admin-content">
+            <div class="content-card">
+                <div class="card-header">
+                    <h3>Ad Placements</h3>
+                    <p class="text-muted">Enter Google AdSense code or direct HTML banners. Enable or disable as needed.</p>
+                </div>
+                <!-- Container for all ad blocks -->
+                <div id="ads-container" style="padding:15px; display:flex; flex-direction:column; gap:20px;">
+                    <!-- JS injected -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../js/admin.js"></script>
+</body>
+</html>

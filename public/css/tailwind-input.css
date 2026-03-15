@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-color: #c41e3a;
+    --secondary-color: #1a1a1a;
+  }
+  body { @apply font-sans bg-gray-50 text-gray-900 transition-colors duration-300; }
+  h1, h2, h3, h4, h5 { @apply font-heading font-extrabold tracking-tight; }
+}
+
+@layer components {
+  .container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .badge { @apply inline-block px-3 py-1 bg-primary text-white text-[10px] uppercase font-bold tracking-wider rounded-sm; }
+  .card-hover { @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl; }
+  .img-zoom { @apply overflow-hidden; }
+  .img-zoom img { @apply transition-transform duration-700 hover:scale-110; }
+}
