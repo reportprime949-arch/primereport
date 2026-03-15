@@ -4,6 +4,32 @@ const router = express.Router();
 const { fetchAndProcessNews, NewsFetcher } = require("../rss-fetcher");
 
 /* ============================= */
+/* Breaking News */
+/* ============================= */
+router.get("/breaking", async (req, res) => {
+  try {
+    const articles = await fetchAndProcessNews("breaking");
+    res.json(articles.slice(0, 10));
+  } catch (error) {
+    console.error("Breaking news error:", error);
+    res.status(500).json([]);
+  }
+});
+
+/* ============================= */
+/* Trending News */
+/* ============================= */
+router.get("/trending", async (req, res) => {
+  try {
+    const articles = await fetchAndProcessNews("trending");
+    res.json(articles.slice(0, 10));
+  } catch (error) {
+    console.error("Trending news error:", error);
+    res.status(500).json([]);
+  }
+});
+
+/* ============================= */
 /* Get All News (with pagination) */
 /* ============================= */
 router.get("/", async (req, res) => {
@@ -33,31 +59,12 @@ router.get("/", async (req, res) => {
 /* ============================= */
 /* Get Single Article */
 /* ============================= */
-router.get("/article/:id", async (req, res) => {
-  try {
-    const decodedId = decodeURIComponent(req.params.id);
-
-    const articles = NewsFetcher.getArticlesCache();
-    const article = articles.find(a => a.id === decodedId);
-
-    if (!article) {
-      return res.status(404).json({ error: "Article not found" });
-    }
-
-    res.json(article);
-
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch article" });
-  }
-});
-
-/* ============================= */
-/* Get Single Article (Short Link) */
-/* ============================= */
 router.get("/:id", async (req, res) => {
   try {
     const decodedId = decodeURIComponent(req.params.id);
+
     const articles = NewsFetcher.getArticlesCache();
+
     const article = articles.find(a => a.id === decodedId);
 
     if (!article) {
@@ -65,33 +72,10 @@ router.get("/:id", async (req, res) => {
     }
 
     res.json(article);
+
   } catch (error) {
+    console.error("Single article error:", error);
     res.status(500).json({ error: "Failed to fetch article" });
-  }
-});
-
-
-/* ============================= */
-/* Breaking News */
-/* ============================= */
-router.get("/breaking", async (req, res) => {
-  try {
-    const articles = await fetchAndProcessNews("breaking");
-    res.json(articles.slice(0, 10));
-  } catch (error) {
-    res.status(500).json([]);
-  }
-});
-
-/* ============================= */
-/* Trending News */
-/* ============================= */
-router.get("/trending", async (req, res) => {
-  try {
-    const articles = await fetchAndProcessNews("trending");
-    res.json(articles.slice(0, 10));
-  } catch (error) {
-    res.status(500).json([]);
   }
 });
 
@@ -101,11 +85,15 @@ router.get("/trending", async (req, res) => {
 router.post("/refresh", async (req, res) => {
   try {
     const count = await NewsFetcher.refreshAll();
+
     res.json({
       message: "Sync complete",
       articlesFetched: count
     });
+
   } catch (error) {
+    console.error("Refresh error:", error);
+
     res.status(500).json({
       error: "Sync failed"
     });
