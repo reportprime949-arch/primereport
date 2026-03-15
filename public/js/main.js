@@ -261,7 +261,8 @@ function renderCards(articles, append) {
             </div>`;
         card.addEventListener('click', e => {
             if (e.target.closest('.read-btn')) return;
-            openArticle(a.id);
+            sessionStorage.setItem("selectedArticle", JSON.stringify(a));
+window.location.href = "article.html";
         });
         grid.appendChild(card);
     });

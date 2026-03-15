@@ -2,23 +2,21 @@
    PrimeReport – article.js (Stable Article Loader)
    ============================================================== */
 
-const API_BASE = "https://primereport-server.onrender.com";
-const PLACEHOLDER = "/assets/images/news-placeholder.jpg";
-
 document.addEventListener("DOMContentLoaded", () => {
 
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+  const stored = sessionStorage.getItem("selectedArticle");
 
-  if (!id) {
-    window.location.href = "index.html";
+  if (!stored) {
+    showNotFound();
     return;
   }
 
-  fetchArticle(id);
+  const article = JSON.parse(stored);
+
+  renderArticle(article);
+  loadRelated(article.category, article.id);
+
 });
-
-
 /* ==============================================================
    Fetch Article
    ============================================================== */
