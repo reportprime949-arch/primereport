@@ -66,51 +66,56 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * GET /api/article/:slugOrId
- * High-performance slug/id lookup with greedy fallback fetch
+ * GET /api/news/:id
+ * Single article lookup with greedy RSS fallback
  */
-router.get("/:slugOrId", async (req, res) => {
-    try {
-        const id = decodeURIComponent(req.params.slugOrId);
-        
-        // 1. Try instant cache lookup (O(1))
-        let article = ArticleStore.get(id);
-        
-        // 2. Greedy fallback: Search across all categories
-        if (!article) {
-            console.log(`[Cache Miss] Sweeping categories for: ${id}`);
-            const categories = [
-                "world", "technology", "business", 
-                "politics", "science", "sports", "entertainment"
-            ];
+router.get("/:id", async (req, res) => {
+  try {
+    const id = decodeURIComponent(req.params.id);
 
-            for (const cat of categories) {
-                // fetchAndProcessNews already populates ArticleStore internally
-                const list = await fetchAndProcessNews(cat);
-                
-                // Re-check store (could be found by slug or id now)
-                article = ArticleStore.get(id);
-                if (!article) {
-                    // Manual find in the returned list as a safety measure
-                    article = list.find(a => a.id === id || a.slug === id);
-                }
+    const store = require("../articleStore");
 
-                if (article) {
-                    console.log(`[Cache Hit] Found article in ${cat} after sweep.`);
-                    break;
-                }
-            }
-        }
+    let article = store.get(id);
 
-        if (!article) {
-            return res.status(404).json({ error: "Article not found" });
-        }
+    if (!article) {
 
-        res.json(article);
-    } catch (error) {
-        console.error("Lookup error:", error);
-        res.status(500).json({ error: "Server error" });
+      const categories = [
+        "world",
+        "technology",
+        "business",
+        "politics",
+        "science",
+        "sports",
+        "entertainment"
+      ];
+
+      for (const category of categories) {
+
+        const list = await fetchAndProcessNews(category);
+
+        store.saveMany(list);
+
+        article = list.find(a => a.id === id);
+
+        if (article) break;
+      }
     }
+
+    if (!article) {
+      return res.status(404).json({
+        error: "Article not found"
+      });
+    }
+
+    res.json(article);
+
+  } catch (error) {
+    console.error("Article lookup error:", error);
+
+    res.status(500).json({
+      error: "Server error"
+    });
+  }
 });
 
 module.exports = router;
