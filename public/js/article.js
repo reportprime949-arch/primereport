@@ -1,13 +1,13 @@
-const API_BASE = "https://primereport-server.onrender.com/api/news/";
+const API = "https://primereport-server.onrender.com/api/news/";
 
-function getArticleId() {
+function getId() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id");
 }
 
 async function loadArticle() {
 
-    const id = getArticleId();
+    const id = getId();
 
     if (!id) {
         showError();
@@ -16,7 +16,7 @@ async function loadArticle() {
 
     try {
 
-        const res = await fetch(API_BASE + encodeURIComponent(id));
+        const res = await fetch(API + encodeURIComponent(id));
         const article = await res.json();
 
         if (!article || article.error) {
@@ -24,53 +24,51 @@ async function loadArticle() {
             return;
         }
 
-        renderArticle(article);
+        displayArticle(article);
 
-    } catch (err) {
-        console.error(err);
+    } catch (e) {
+        console.error(e);
         showError();
     }
 }
 
-function renderArticle(article) {
+function displayArticle(a) {
 
-    const container = document.getElementById("article-content");
     const loader = document.getElementById("article-loading");
+    const container = document.getElementById("article-content");
 
     loader.style.display = "none";
     container.classList.remove("hidden");
 
     container.innerHTML = `
-        <article class="article-main">
+        <article class="article">
 
-            <h1 class="article-title">${article.title}</h1>
+            <h1>${a.title}</h1>
 
-            <div class="article-meta">
-                <span>${article.source || "PrimeReport"}</span>
-                •
-                <span>${new Date(article.publishedAt || article.date).toLocaleString()}</span>
+            <p style="color:#666;margin-bottom:15px">
+                ${a.source || "PrimeReport"} • 
+                ${new Date(a.publishedAt || a.date).toLocaleString()}
+            </p>
+
+            <img src="${a.image}" 
+                 style="width:100%;border-radius:10px;margin-bottom:20px">
+
+            <p style="font-weight:600">${a.summary || ""}</p>
+
+            <div style="margin-top:20px;line-height:1.7">
+                ${a.content || a.description}
             </div>
 
-            <img class="article-image"
-                 src="${article.image || "/assets/images/news-placeholder.jpg"}"
-                 alt="${article.title}">
-
-            <p class="article-summary">${article.summary || ""}</p>
-
-            <div class="article-body">
-                ${article.content || article.description || ""}
-            </div>
-
-            <a class="read-original"
-               href="${article.link}"
-               target="_blank">
-               Read full story at ${article.source}
-            </a>
+            <p style="margin-top:30px">
+                <a href="${a.link}" target="_blank">
+                Read original source
+                </a>
+            </p>
 
         </article>
     `;
 
-    document.title = article.title + " – PrimeReport";
+    document.title = a.title + " - PrimeReport";
 }
 
 function showError() {
@@ -80,12 +78,11 @@ function showError() {
 
     loader.style.display = "none";
 
-    container.classList.remove("hidden");
     container.innerHTML = `
-        <div style="text-align:center;padding:80px 20px">
+        <div style="text-align:center;padding:80px">
             <h2>Article Not Found</h2>
-            <p>This article may have expired from the feed.</p>
-            <a href="/" style="color:#e11d48">Back to Home</a>
+            <p>The article may have expired.</p>
+            <a href="index.html">Back to Home</a>
         </div>
     `;
 }
