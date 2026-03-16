@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://primereport-news.netlify.app/sitemap.xml
+Sitemap: https://primereport-news.netlify.app/news-sitemap.xml

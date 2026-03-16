@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { fetchAndProcessNews, ArticleStore } = require("../rss-fetcher");
+const { fetchAndProcessNews, ArticleStore, InternalLinkEngine } = require("../rss-fetcher");
 
 /**
  * GET /api/news/hero
@@ -20,11 +20,12 @@ router.get("/trending", (req, res) => {
  * GET /api/news/breaking
  */
 router.get("/breaking", (req, res) => {
-    // Return latest 10 articles as breaking
-    const latest = ArticleStore.getAll()
-        .sort((a, b) => new Date(b.publishedAt || b.date) - new Date(a.publishedAt || a.date))
-        .slice(0, 10);
-    res.json(latest);
+    // Return articles marked as breaking or latest 10
+    const all = ArticleStore.getAll();
+    const breaking = all.filter(a => a.isBreaking);
+    const latest = all.sort((a, b) => new Date(b.publishedAt || b.date) - new Date(a.publishedAt || a.date)).slice(0, 10);
+    
+    res.json(breaking.length > 0 ? breaking : latest);
 });
 
 const NEWS_CACHE = new Map();
@@ -84,50 +85,51 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = decodeURIComponent(req.params.id);
-
     const store = require("../articleStore");
 
     let article = store.get(id);
 
     if (!article) {
-
       const categories = [
-        "world",
-        "technology",
-        "business",
-        "politics",
-        "science",
-        "sports",
-        "entertainment"
+        "world", "technology", "business", "politics", "science", "sports", "entertainment", "ai"
       ];
 
       for (const category of categories) {
-
         const list = await fetchAndProcessNews(category);
-
         store.saveMany(list);
-
         article = list.find(a => a.id === id);
-
         if (article) break;
       }
     }
 
     if (!article) {
-      return res.status(404).json({
-        error: "Article not found"
-      });
+      return res.status(404).json({ error: "Article not found" });
     }
 
     res.json(article);
 
   } catch (error) {
     console.error("Article lookup error:", error);
-
-    res.status(500).json({
-      error: "Server error"
-    });
+    res.status(500).json({ error: "Server error" });
   }
+});
+
+/**
+ * GET /api/news/:id/related
+ */
+router.get("/:id/related", async (req, res) => {
+    try {
+        const id = decodeURIComponent(req.params.id);
+        const store = require("../articleStore");
+        const article = store.get(id);
+        
+        if (!article) return res.status(404).json({ error: "Article not found" });
+
+        const related = InternalLinkEngine.getRelatedArticles(article, 5);
+        res.json(related);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch related articles" });
+    }
 });
 
 module.exports = router;

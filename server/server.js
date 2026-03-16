@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 /* server port */
-const PORT = 4000;
+const PORT = process.env.PORT || 3000;
 
 /* start server */
 app.listen(PORT, () => {
