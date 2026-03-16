@@ -1,39 +1,46 @@
-const mongoose = require('mongoose');
+const API_BASE = "https://primereport-server.onrender.com/api/news/";
 
-const articleSchema = new mongoose.Schema({
-    id: { type: String, required: true, unique: true }, // Keeping string ID for backward compatibility with frontend
-    title: { type: String, required: true },
-    summary: { type: String },
-    description: { type: String },
-    content: { type: String },
-    link: { type: String },
-    image: { type: String },
-    category: { type: String, required: true },
-    date: { type: Date, default: Date.now },
-    publishedAt: { type: Date },
-    source: { type: String },
-    author: { type: String },
-    seo_title: { type: String },
-    seo_description: { type: String },
-    keywords: { type: String },
-    isBreaking: { type: Boolean, default: false },
-    isEvergreen: { type: Boolean, default: false },
-    clusterId: { type: String, index: true },
-    views: { type: Number, default: 0 },
-    trafficSources: {
-        search: { type: Number, default: 0 },
-        social: { type: Number, default: 0 },
-        direct: { type: Number, default: 0 }
-    },
-    headline_variations: [String],
-    faqs: [Object],
-    explainer: String,
-    schema_data: Object,
-    video_script: String,
-    key_points: [String]
-}, { timestamps: true });
+function getArticleId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("id");
+}
 
-// Create text index for trending news keyword extraction
-articleSchema.index({ title: 'text', description: 'text', summary: 'text' });
+async function loadArticle() {
+    const id = getArticleId();
 
-module.exports = mongoose.model('Article', articleSchema);
+    if (!id) {
+        showError();
+        return;
+    }
+
+    try {
+        const res = await fetch(API_BASE + encodeURIComponent(id));
+        const article = await res.json();
+
+        if (!article || article.error) {
+            showError();
+            return;
+        }
+
+        renderArticle(article);
+
+    } catch (err) {
+        console.error(err);
+        showError();
+    }
+}
+
+function renderArticle(article) {
+
+    document.getElementById("article-title").innerText = article.title;
+    document.getElementById("article-image").src = article.image;
+    document.getElementById("article-content").innerText = article.content;
+    document.getElementById("article-source").innerText = article.source;
+}
+
+function showError() {
+    document.getElementById("article-container").innerHTML =
+        "<h2>Article Not Found</h2>";
+}
+
+loadArticle();
