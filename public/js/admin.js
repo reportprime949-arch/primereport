@@ -3,8 +3,8 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 
 const API_URL =
     (window.location.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : 'https://primereport-server.onrender.com') + '/api';
+        ? 'http://localhost:4000'
+        : 'https://primereport-server.onrender.com') + '/api/admin';
 
 // == Authentication & Fetch Wrapper ==
 
@@ -108,7 +108,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('rss-table-body')) loadRssFeeds();
         if (document.getElementById('ai-settings-form')) loadAiSettings();
         if (document.getElementById('queue-container')) loadQueue();
+
+        // Initialize Notifications
+        initNotifications();
     });
+
+    // Dashboard Refresh Interval
+    if (document.getElementById('totalArticles')) {
+        setInterval(loadDashboardStats, 60000); // Refresh every minute
+    }
 
     // Event Listeners Mapping
     const articleForm = document.getElementById('article-form');
@@ -250,9 +258,14 @@ window.saveArticle = async () => {
     };
     try {
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `/articles/${id}` : '/articles';
+        const url = id ? `/articles/${id}` : '/articles'; 
         const res = await authFetch(url, { method, body: JSON.stringify(payload) });
-        if (res.ok) { showToast('Article saved!'); closeModal(); loadArticles(); }
+        if (res.ok) { 
+            showToast('Article saved!'); 
+            closeModal(); 
+            loadArticles(); 
+            loadDashboardStats();
+        }
     } catch (e) { showToast('Error saving article', 'error'); }
 };
 
@@ -260,7 +273,11 @@ window.deleteArticle = async (id) => {
     if (!confirm('Delete this article?')) return;
     try {
         const res = await authFetch(`/articles/${id}`, { method: 'DELETE' });
-        if (res.ok) { showToast('Article deleted'); loadArticles(); }
+        if (res.ok) { 
+            showToast('Article deleted'); 
+            loadArticles(); 
+            loadDashboardStats();
+        }
     } catch (e) { showToast('Error deleting article', 'error'); }
 };
 
@@ -489,17 +506,50 @@ window.saveRssFeed = async () => {
         const method = id ? 'PUT' : 'POST';
         const url = id ? `/rss/${id}` : '/rss';
         const res = await authFetch(url, { method, body: JSON.stringify(payload) });
-        if (res.ok) { showToast('Feed saved!'); closeRssModal(); loadRssFeeds(); }
+        if (res.ok) { 
+            showToast('Feed saved!'); 
+            closeRssModal(); 
+            loadRssFeeds(); 
+            updateSystemStatus('Core Engine', 'Active');
+        }
     } catch (e) { showToast('Error saving feed', 'error'); }
 };
 
-window.deleteRss = async (id) => {
-    if (!confirm('Delete this feed?')) return;
+window.triggerManualFetch = async () => {
+    const btn = event?.currentTarget;
+    const icon = btn?.querySelector('i');
+    if (icon) icon.classList.add('fa-spin');
+    
     try {
-        const res = await authFetch(`/rss/${id}`, { method: 'DELETE' });
-        if (res.ok) { showToast('Feed deleted'); loadRssFeeds(); }
-    } catch (e) { showToast('Error deleting feed', 'error'); }
+        const res = await authFetch('/rss/fetch', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast(`Sync complete! Found ${data.count} new articles.`);
+            loadDashboardStats();
+            updateSystemStatus('Core Engine', 'Operational');
+        }
+    } catch (e) {
+        showToast('Sync failed', 'error');
+        updateSystemStatus('Core Engine', 'Error', 'red');
+    } finally {
+        if (icon) icon.classList.remove('fa-spin');
+    }
 };
+
+function updateSystemStatus(engine, label, color = 'green') {
+    const rows = document.querySelectorAll('.status-row');
+    rows.forEach(row => {
+        if (row.textContent.includes(engine)) {
+            const dot = row.querySelector('.status-dot');
+            const badge = row.querySelector('.badge');
+            if (dot) dot.className = `status-dot ${color}`;
+            if (badge) {
+                badge.textContent = label;
+                badge.className = `badge badge-${color}`;
+            }
+        }
+    });
+}
 
 // == AI Settings & Queue ==
 
@@ -520,7 +570,7 @@ window.saveAiSettings = async () => {
         aiAutoPublish: document.getElementById('auto-publish-toggle').checked
     };
     try {
-        const res = await authFetch('/api/admin/ai-settings', { method: 'POST', body: JSON.stringify(payload) });
+        const res = await authFetch('/ai-settings', { method: 'POST', body: JSON.stringify(payload) });
         if (res.ok) showToast('AI settings saved!');
     } catch (e) { showToast('Error saving AI settings', 'error'); }
 };
@@ -550,14 +600,14 @@ async function loadQueue() {
 
 window.approveQueueItem = async (id) => {
     try {
-        const res = await authFetch(`/api/admin/queue/${id}/approve`, { method: 'POST' });
+        const res = await authFetch(`/queue/${id}/approve`, { method: 'POST' });
         if (res.ok) { showToast('Approved!'); loadQueue(); }
     } catch (e) { showToast('Error', 'error'); }
 };
 
 window.rejectQueueItem = async (id) => {
     try {
-        const res = await authFetch(`/api/admin/queue/${id}`, { method: 'DELETE' });
+        const res = await authFetch(`/queue/${id}`, { method: 'DELETE' });
         if (res.ok) { showToast('Rejected'); loadQueue(); }
     } catch (e) { showToast('Error', 'error'); }
 };
@@ -688,7 +738,7 @@ async function loadDashboardStats() {
         };
 
         updateText('totalArticles', s.totalArticles);
-        updateText('breakingNewsCount', s.breakingNews);
+        updateText('rssImportsCount', s.rssImports);
         updateText('totalViews', s.totalViews);
         updateText('dailyArticles', s.dailyArticles);
         
@@ -726,8 +776,8 @@ async function loadAnalytics() {
                 tbody.innerHTML = stats.topArticles.map((a, i) => `
                     <tr>
                         <td>#${i + 1}</td>
-                        <td><strong>${a.title}</strong></td>
-                        <td><span class="badge" style="background:var(--primary-color)">${a.views || 0} Views</span></td>
+                        <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><strong>${a.title}</strong></td>
+                        <td><span class="badge" style="background:var(--primary); color:#fff">${a.views || 0} Views</span></td>
                     </tr>
                 `).join('');
             } else {
@@ -737,38 +787,58 @@ async function loadAnalytics() {
 
         if (typeof Chart !== 'undefined') {
             const trafficCanvas = document.getElementById('trafficChart');
-            if (trafficCanvas) {
-                new Chart(trafficCanvas.getContext('2d'), {
+            if (trafficCanvas && stats.graphData) {
+                // Clear old chart if exists
+                if (window.trafficChartInstance) window.trafficChartInstance.destroy();
+                
+                window.trafficChartInstance = new Chart(trafficCanvas.getContext('2d'), {
                     type: 'line',
                     data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: stats.graphData.map(d => d.date.split('-').slice(1).join('/')),
                         datasets: [{
-                            label: 'Page Views',
-                            data: [65, 59, 80, 81, 56, 55, 40].map(v => Math.floor(v * (stats.totalViews / 500))),
-                            borderColor: '#d32f2f',
-                            tension: 0.3,
+                            label: 'Views',
+                            data: stats.graphData.map(d => d.views),
+                            borderColor: '#2563eb',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#2563eb',
+                            tension: 0.4,
                             fill: true,
-                            backgroundColor: 'rgba(211, 47, 47, 0.1)'
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)'
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { display: false } },
+                            x: { grid: { display: false } }
+                        }
+                    }
                 });
             }
 
             const categoryCanvas = document.getElementById('categoryChart');
-            if (categoryCanvas) {
+            if (categoryCanvas && stats.categoryCount) {
+                if (window.catChartInstance) window.catChartInstance.destroy();
+                
                 const catLabels = Object.keys(stats.categoryCount);
                 const catData = Object.values(stats.categoryCount);
-                new Chart(categoryCanvas.getContext('2d'), {
+                window.catChartInstance = new Chart(categoryCanvas.getContext('2d'), {
                     type: 'doughnut',
                     data: {
                         labels: catLabels,
                         datasets: [{
                             data: catData,
-                            backgroundColor: ['#f44336', '#2196f3', '#4caf50', '#ff9800', '#9c27b0', '#00bcd4']
+                            backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b'],
+                            borderWidth: 0
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } } }
+                    }
                 });
             }
         }
@@ -797,8 +867,69 @@ window.triggerManualFetch = async () => {
         const data = await res.json();
         showToast(`Sync complete! ${data.count} articles.`);
         loadDashboardStats();
+        if (document.getElementById('articles-table-body')) loadArticles();
     } catch (e) { showToast('Sync failed', 'error'); }
 };
+
+// == Notifications ==
+
+async function initNotifications() {
+    const btn = document.querySelector('.header-icon-btn[title="Notifications"]');
+    if (!btn) return;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'notifications-dropdown';
+    dropdown.innerHTML = `
+        <div class="dropdown-header">
+            <h4>Notifications</h4>
+            <span class="notif-count">0</span>
+        </div>
+        <div class="notif-list" id="notif-container">
+            <p class="text-center py-4 text-muted"><i class="fas fa-circle-notch fa-spin"></i></p>
+        </div>
+    `;
+    btn.parentElement.appendChild(dropdown);
+
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+        if (dropdown.classList.contains('active')) loadNotifications(dropdown.querySelector('#notif-container'));
+    };
+
+    document.addEventListener('click', () => dropdown.classList.remove('active'));
+}
+
+async function loadNotifications(container) {
+    try {
+        const res = await authFetch('/notifications');
+        const data = await res.json();
+        
+        const count = document.querySelector('.notif-count');
+        const badge = document.querySelector('.notif-badge');
+        if (count) count.textContent = data.length;
+        if (badge) badge.textContent = data.length;
+
+        if (data.length === 0) {
+            container.innerHTML = '<p class="text-center py-4 text-muted">No new notifications</p>';
+            return;
+        }
+
+        container.innerHTML = data.map(n => `
+            <div class="notif-item">
+                <div class="notif-icon ${n.type || 'info'}">
+                    <i class="fas ${n.type === 'success' ? 'fa-check' : 'fa-info'}"></i>
+                </div>
+                <div class="notif-body">
+                    <p>${n.text}</p>
+                    <span>${n.time}</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = '<p class="text-center py-4 text-danger">Error loading</p>';
+    }
+}
+
 
 // Sidebar Toggle
 window.toggleSidebar = () => {

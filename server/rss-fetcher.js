@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const { XMLParser } = require("fast-xml-parser");
-const fetch = require("node-fetch");
+const Parser = require("rss-parser");
+const axios = require("axios");
 
 const { resolveGoogleNewsURL, extractArticleData } = require("./services/image-service");
 const store = require("./articleStore");
@@ -10,9 +10,14 @@ const TrendingEngine = require("./services/trending-engine");
 const DATA_DIR = path.join(__dirname, "data");
 const FEEDS_FILE = path.join(DATA_DIR, "feeds.json");
 
-const parser = new XMLParser({
-  ignoreAttributes: false,
-  attributeNamePrefix: "@_"
+const parser = new Parser({
+  customFields: {
+    item: [
+      ["media:content", "mediaContent"],
+      ["media:thumbnail", "mediaThumbnail"],
+      ["dc:publisher", "publisher"]
+    ]
+  }
 });
 
 const trendingEngine = new TrendingEngine(store);
@@ -81,94 +86,62 @@ class NewsFetcher {
     let newCount = 0;
 
     for (const feed of feeds) {
-
       try {
+        console.log(`[RSS] Fetching ${feed.category}: ${feed.name}`);
 
-        console.log(`[RSS] Fetching ${feed.category}`);
-
-        const res = await fetch(feed.url, {
-          headers: { "User-Agent": "Mozilla/5.0" }
+        const response = await axios.get(feed.url, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+          timeout: 15000
         });
 
-        const xml = await res.text();
+        const feedData = await parser.parseString(response.data);
+        const items = feedData.items || [];
 
-        const parsed = parser.parse(xml);
-
-        let items = parsed?.rss?.channel?.item || parsed?.feed?.entry || [];
-
-        if (!Array.isArray(items)) {
-          items = [items];
-        }
-
-        for (const item of items.slice(0, 10)) {
-
-          const rawLink = item.link || item.link?.href;
-
+        for (const item of items.slice(0, 15)) {
+          const rawLink = item.link;
           if (!rawLink) continue;
 
+          // Universal De-duplication check by link
           const realLink = await resolveGoogleNewsURL(rawLink);
-
-          if (!realLink) continue;
-
-          if (existingLinks.has(realLink)) continue;
-
-          const guid = item.guid?.["#text"] || item.guid || realLink;
+          if (!realLink || existingLinks.has(realLink)) continue;
 
           const title = this.decodeEntities(item.title || "");
-
-          const rawDescription = this.decodeEntities(
-            (item.description || "").replace(/<[^>]*>/g, "")
-          );
-
-          const media = item["media:content"] || item["media:thumbnail"];
-
+          const summary = this.decodeEntities((item.contentSnippet || item.content || item.summary || "").replace(/<[^>]*>/g, ""));
+          
+          // Image Extraction
           let rssImage = null;
-
-          if (media) {
-            rssImage = media["@_url"] || media.url;
-          }
-
+          if (item.mediaContent) rssImage = item.mediaContent.$?.url;
+          if (!rssImage && item.mediaThumbnail) rssImage = item.mediaThumbnail.$?.url;
+          
           const { image, content } = await extractArticleData(realLink);
+          const finalImage = rssImage || image || "/assets/image/news-placeholder.jpg";
 
-          const finalImage = rssImage || image || "/assets/images/news-placeholder.jpg";
-
-          let sourceName = item.source?.["#text"] || item["dc:publisher"] || "";
-
+          let sourceName = item.publisher || item.source?.["#text"] || feedData.title || "";
           if (!sourceName && realLink) {
-            try {
-              sourceName = new URL(realLink).hostname.replace("www.", "");
-            } catch {}
+            try { sourceName = new URL(realLink).hostname.replace("www.", ""); } catch {}
           }
 
           const article = {
-            id: guid,
+            id: item.guid || item.id || `feed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             title,
-            summary: rawDescription.substring(0, 220),
-            description: rawDescription.substring(0, 500),
-            content: content || rawDescription,
+            summary: summary.substring(0, 240),
+            description: summary.substring(0, 500),
+            content: content || summary,
             link: realLink,
             category: feed.category || "World",
             source: sourceName || "News",
-            publishedAt: new Date(
-              item.pubDate || item.published || item.updated || Date.now()
-            ),
-            image: finalImage
+            publishedAt: new Date(item.pubDate || item.isoDate || Date.now()),
+            image: finalImage,
+            views: Math.floor(Math.random() * 50) // Initial randomized views for engagement
           };
 
-          store.setArticle(article);
-
+          store.saveArticle(article);
           existingLinks.add(realLink);
-
           newCount++;
-
         }
-
       } catch (err) {
-
         console.error(`[RSS] Feed error (${feed.url})`, err.message);
-
       }
-
     }
 
     if (newCount > 0) {
@@ -179,6 +152,8 @@ class NewsFetcher {
 
       store.persist();
 
+    } else {
+      console.log(`[RSS] No new articles found during fetch.`);
     }
 
     return store.getAll();
@@ -221,16 +196,20 @@ class NewsFetcher {
 
 const fetcher = new NewsFetcher();
 
-setTimeout(() => fetcher.refreshAll(), 5000);
+setTimeout(() => { // Initial refresh
+  fetcher.refreshAll();
+}, 5000);
 
+// Set interval for regular updates (5 minutes for ultra-fresh news)
+const UPDATE_INTERVAL = 5 * 60 * 1000;
 setInterval(() => {
-
-  fetcher.refreshAll().catch(console.error);
-
-}, 10 * 60 * 1000);
+  console.log("[RSS] High-frequency sync triggered (5m cycle)...");
+  fetcher.refreshAll().catch(err => {
+    console.error("[RSS] Auto-sync failed:", err.message);
+  });
+}, UPDATE_INTERVAL);
 
 module.exports = {
-  fetchNews: (cat) => fetcher.fetchCategory(cat),
   fetchAndProcessNews: (cat) => fetcher.fetchCategory(cat),
   NewsFetcher: fetcher,
   ArticleStore: store

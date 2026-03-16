@@ -13,40 +13,50 @@
     <script type="module" src="../js/auth-check.js"></script>
 </head>
 <body class="admin-body">
-    <!-- Sidebar -->
-    <aside class="admin-sidebar">
-        <div class="logo">
-            <img src="../logo.png" alt="PrimeReport" style="height: 40px; margin-bottom: 10px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <h2 style="display:none; color: white;">Prime<span style="color:var(--primary-color)">Admin</span></h2>
-        </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="articles.html"><i class="fas fa-newspaper"></i> Articles</a></li>
-                <li><a href="categories.html" class="active"><i class="fas fa-list"></i> Categories</a></li>
-                <li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                <li><a href="ads.html"><i class="fas fa-ad"></i> Advertisements</a></li>
-                <li><a href="rss.html"><i class="fas fa-rss"></i> RSS Controls</a></li>
-                <li><a href="ai-settings.html"><i class="fas fa-robot"></i> AI Engine</a></li>
-                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="logo">
+                <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <h2 style="display:none;">Prime<span>Report</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+                    <li><a href="categories.html" class="active"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
+                    <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
+                    <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
+                    <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+                    <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
+                </ul>
+            </nav>
+        </aside>
 
     <!-- Main Content -->
     <main class="admin-main">
         <header class="admin-header">
-            <div class="header-left">
-                <p class="text-muted" style="font-size: 0.85rem; font-weight: 500; margin-bottom: 2px;">PrimeReport Admin</p>
-                <h2 style="font-size: 1.5rem;">Manage Categories</h2>
+            <div style="display:flex; align-items:center;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-left">
+                    <p>Configuration</p>
+                    <h2>Categories</h2>
+                </div>
             </div>
-            <div class="header-right" style="display:flex; align-items:center; gap:20px;">
-                <div class="user-profile" style="background: var(--bg-light); border: 1px solid var(--border-color);">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=d32f2f&color=fff" alt="Avatar" style="width: 32px; height:32px; border-radius: 50%;">
-                    <span><strong>Admin</strong></span>
-                    <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--text-muted);"></i>
+            <div class="header-right">
+                <button class="header-icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge">3</span>
+                </button>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff&bold=true&size=64" alt="Avatar">
+                    <span>Administrator</span>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
             </div>
         </header>
@@ -80,6 +90,7 @@
             </div>
         </section>
     </main>
+</div>
 
     <!-- Modal -->
     <div id="cat-modal" class="modal" style="display:none;">

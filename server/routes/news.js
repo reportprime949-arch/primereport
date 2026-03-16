@@ -4,62 +4,74 @@ const { fetchAndProcessNews, ArticleStore } = require("../rss-fetcher");
 
 /**
  * GET /api/news/hero
- * Top 5 high-score articles for hero section
  */
-router.get("/hero", async (req, res) => {
-    try {
-        const items = ArticleStore.getHero();
-        res.json(items);
-    } catch (e) {
-        res.status(500).json([]);
-    }
+router.get("/hero", (req, res) => {
+    res.json(ArticleStore.getHero());
 });
 
 /**
  * GET /api/news/trending
- * Top 5 trending articles
  */
-router.get("/trending", async (req, res) => {
-    try {
-        const items = ArticleStore.getTrending();
-        res.json(items);
-    } catch (e) {
-        res.status(500).json([]);
-    }
+router.get("/trending", (req, res) => {
+    res.json(ArticleStore.getTrending());
 });
 
 /**
  * GET /api/news/breaking
- * Top 10 latest articles
  */
-router.get("/breaking", async (req, res) => {
-    try {
-        const articles = await fetchAndProcessNews("breaking");
-        res.json(articles);
-    } catch (error) {
-        res.status(500).json([]);
-    }
+router.get("/breaking", (req, res) => {
+    // Return latest 10 articles as breaking
+    const latest = ArticleStore.getAll()
+        .sort((a, b) => new Date(b.publishedAt || b.date) - new Date(a.publishedAt || a.date))
+        .slice(0, 10);
+    res.json(latest);
 });
+
+const NEWS_CACHE = new Map();
+const CACHE_TTL = 60 * 1000; // 60 seconds
 
 /**
  * GET /api/news
- * Paginated news from cache
  */
 router.get("/", async (req, res) => {
     try {
         const category = (req.query.category || "world").toLowerCase();
         const page = parseInt(req.query.page || "1");
         const limit = parseInt(req.query.limit || "12");
+        const cacheKey = `${category}-${page}-${limit}`;
 
-        const articles = await fetchAndProcessNews(category);
-        const start = (page - 1) * limit;
+        // Check cache
+        const cached = NEWS_CACHE.get(cacheKey);
+        if (cached && Date.now() - cached.time < CACHE_TTL) {
+            return res.json(cached.data);
+        }
+
+        let articles = category === "all" ? ArticleStore.getAll() : ArticleStore.getByCategory(category);
         
-        res.json({
+        // Greedy fallback if store is empty for this category
+        if (articles.length === 0) {
+            await fetchAndProcessNews(category);
+            articles = ArticleStore.getByCategory(category);
+        }
+
+        articles.sort((a, b) => {
+            const dateA = new Date(a.publishedAt || a.date || 0);
+            const dateB = new Date(b.publishedAt || b.date || 0);
+            return dateB - dateA;
+        });
+
+        const start = (page - 1) * limit;
+        const result = {
             page,
             limit,
             total: articles.length,
             articles: articles.slice(start, start + limit)
-        });
+        };
+
+        // Save to cache
+        NEWS_CACHE.set(cacheKey, { time: Date.now(), data: result });
+        
+        res.json(result);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch news" });
     }

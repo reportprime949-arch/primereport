@@ -1,4 +1,9 @@
-const API = "https://primereport-server.onrender.com/api/news/";
+const API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://primereport-server.onrender.com";
+
+const API = `${API_BASE}/api/news/`;
+const PLACEHOLDER = "/assets/image/news-placeholder.jpg";
 
 function getId() {
     const params = new URLSearchParams(window.location.search);
@@ -17,6 +22,7 @@ async function loadArticle() {
     try {
 
         const res = await fetch(API + encodeURIComponent(id));
+        if (!res.ok) throw new Error(`Article API failed: ${res.status}`);
         const article = await res.json();
 
         if (!article || article.error) {
@@ -50,8 +56,9 @@ function displayArticle(a) {
                 ${new Date(a.publishedAt || a.date).toLocaleString()}
             </p>
 
-            <img src="${a.image}" 
-                 style="width:100%;border-radius:10px;margin-bottom:20px">
+            <img src="${a.image || PLACEHOLDER}" 
+                 style="width:100%;border-radius:10px;margin-bottom:20px"
+                 onerror="this.src='${PLACEHOLDER}'">
 
             <p style="font-weight:600">${a.summary || ""}</p>
 

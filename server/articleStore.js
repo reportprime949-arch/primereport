@@ -33,13 +33,39 @@ class ArticleStore {
     saveArticle(a) {
         if (!a.id) return;
 
+        const idStr = String(a.id);
+        
         // Ensure slug exists for SEO engine
         if (!a.slug) {
-            a.slug = `${slugify(a.title)}-${String(a.id).substring(0, 8)}`;
+            a.slug = `${slugify(a.title)}-${idStr.substring(0, 8)}`;
         }
 
-        this.articles.set(String(a.id), a);
+        this.articles.set(idStr, a);
         this.slugs.set(String(a.slug), a);
+    }
+
+    updateArticle(id, updates) {
+        const idStr = String(id);
+        const existing = this.articles.get(idStr);
+        if (!existing) return null;
+
+        const updated = { ...existing, ...updates, id: idStr };
+        
+        // If title changed, we might want to update slug, but usually slugs should stay stable.
+        // For now, let's just save.
+        this.saveArticle(updated);
+        return updated;
+    }
+
+    deleteArticle(id) {
+        const idStr = String(id);
+        const article = this.articles.get(idStr);
+        if (article) {
+            this.slugs.delete(article.slug);
+            this.articles.delete(idStr);
+            return true;
+        }
+        return false;
     }
 
     get(idOrSlug) {

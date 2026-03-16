@@ -11,29 +11,29 @@
     <script type="module" src="../js/auth-check.js"></script>
 </head>
 <body class="admin-body">
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar -->
-    <aside class="admin-sidebar" id="admin-sidebar">
-        <div class="logo">
-            <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <h2 style="display:none;">Prime<span>Report</span></h2>
-        </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="index.html"><i class="fas fa-grid-2"></i> <span>Dashboard</span></a></li>
-                <li><a href="articles.html" class="active"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
-                <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
-                <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
-                <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
-                <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
-                <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
-                <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
-                <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
-                <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
-            </ul>
-        </nav>
-    </aside>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="logo">
+                <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <h2 style="display:none;">Prime<span>Report</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="articles.html" class="active"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+                    <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
+                    <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="queue.html"><i class="fas fa-list-check"></i> <span>Article Queue</span></a></li>
+                    <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
+                    <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
+                    <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+                    <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
+                </ul>
+            </nav>
+        </aside>
 
     <!-- Main Content -->
     <main class="admin-main">
@@ -104,6 +104,7 @@
             </div>
         </section>
     </main>
+</div>
 
     <!-- Modal for Create/Edit -->
     <div id="article-modal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center;">

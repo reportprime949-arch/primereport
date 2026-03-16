@@ -8,7 +8,7 @@ const API_BASE = window.location.hostname === "localhost"
     ? "http://localhost:3000"
     : "https://primereport-server.onrender.com";
 
-const PLACEHOLDER = '/assets/images/news-placeholder.jpg';
+const PLACEHOLDER = '/assets/image/news-placeholder.jpg';
 
 let allArticles   = [];
 let currentPage   = 1;
@@ -143,50 +143,61 @@ async function loadHero() {
     if (!layout) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/news/hero`);
-        const articles = await res.json();
+        // 1. Fetch hero articles (high-score ones)
+        let res = await fetch(`${API_BASE}/api/news/hero`);
+        if (!res.ok) throw new Error("Hero fetch failed");
+        let articles = await res.json();
 
-        if (!articles || !articles.length) return;
+        // 2. Fallback to breaking news if hero is empty
+        if (!articles || articles.length === 0) {
+            res = await fetch(`${API_BASE}/api/news/breaking`);
+            articles = await res.json();
+        }
 
-        const [main, ...sides] = articles;
+        if (!articles || articles.length === 0) {
+            layout.innerHTML = `<p class="col-span-full py-20 text-center opacity-60">No featured stories available.</p>`;
+            return;
+        }
+
+        const featured = articles.slice(0, 5);
+        const [main, ...sides] = featured;
 
         layout.innerHTML = `
         <div class="hero-main" onclick="openArticle('${main.slug || main.id}')">
-            <img src="${main.image || PLACEHOLDER}" 
+            <img src="${main.image || main.urlToImage || PLACEHOLDER}" 
                  alt="${escHtml(main.title)}" 
                  class="hero-main-img" 
-                 loading="lazy"
-                 onerror="this.src='${PLACEHOLDER}'">
+                 onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
             <div class="hero-main-overlay"></div>
             <div class="hero-main-content">
                 <div class="cat-badge ${catClass(main.category)}">${main.category || 'World'}</div>
                 <h2>${escHtml(main.title)}</h2>
-                <p class="excerpt">${escHtml(main.summary || '')}</p>
                 <div class="hero-meta">
                     <span><i class="far fa-clock"></i> ${timeAgo(main.publishedAt || main.date)}</span>
-                    <span>${escHtml(main.source || 'PrimeReport')}</span>
+                    <span class="meta-divider"></span>
+                    <span><i class="fas fa-newspaper"></i> ${escHtml(main.source || 'PrimeReport')}</span>
                 </div>
             </div>
         </div>
 
         <div class="hero-side">
-            ${sides.slice(0,4).map(a => `
-            <div class="hero-side-card" onclick="openArticle('${a.slug || a.id}')">
-                <img src="${a.image || PLACEHOLDER}" 
-                     alt="${escHtml(a.title)}" 
+            ${sides.map(article => `
+            <div class="hero-side-card" onclick="openArticle('${article.slug || article.id}')">
+                <img src="${article.image || article.urlToImage || PLACEHOLDER}" 
+                     alt="${escHtml(article.title)}" 
                      class="side-img" 
-                     loading="lazy"
-                     onerror="this.src='${PLACEHOLDER}'">
+                     onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
                 <div class="hero-side-content">
-                    <div class="cat-badge ${catClass(a.category)}" style="margin-bottom:6px;">${a.category || 'News'}</div>
-                    <h3>${escHtml(a.title)}</h3>
-                    <div class="side-meta"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt || a.date)}</div>
+                    <div class="cat-badge ${catClass(article.category)}" style="margin-bottom:6px;">${article.category || 'News'}</div>
+                    <h3>${escHtml(article.title)}</h3>
+                    <div class="side-meta"><i class="far fa-clock"></i> ${timeAgo(article.publishedAt || article.date)}</div>
                 </div>
             </div>
             `).join('')}
         </div>`;
     } catch (e) {
-        console.warn('[Hero] Failed to load:', e.message);
+        console.warn('[Hero] Error:', e);
+        layout.innerHTML = `<p class="col-span-full py-20 text-center opacity-60">Featured section temporarily unavailable.</p>`;
     }
 }
 
@@ -203,6 +214,7 @@ async function loadNewsGrid(cat) {
 
     try {
         const res = await fetch(`${API_BASE}/api/news?category=${cat}&page=${currentPage}&limit=12`);
+        if (!res.ok) throw new Error(`NewsGrid API failed: ${res.status}`);
         const data = await res.json();
         const articles = Array.isArray(data) ? data : (data.articles || []);
         const total = data.total || articles.length;
@@ -236,28 +248,27 @@ function renderCards(articles, append) {
     if (!grid) return;
     if (!append) grid.innerHTML = '';
 
-    articles.forEach((a, i) => {
+    articles.forEach((article, i) => {
         const card = document.createElement('div');
         card.className = 'news-card';
-        card.style.animationDelay = `${(i % 9) * 0.06}s`;
-        const slugOrId = a.slug || a.id;
+        card.style.animation = `fadeUp 0.5s ease forwards ${i * 0.05}s`;
+        const slugOrId = article.slug || article.id;
         card.innerHTML = `
             <div class="card-img" onclick="openArticle('${slugOrId}')">
                 <img class="card-img-inner" 
-                     src="${a.image || PLACEHOLDER}" 
-                     alt="${escHtml(a.title)}" 
-                     loading="lazy"
-                     onerror="this.src='/assets/images/news-placeholder.jpg'">
+                     src="${article.image || article.urlToImage || PLACEHOLDER}" 
+                     alt="${escHtml(article.title)}" 
+                     onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
             </div>
             <div class="card-body">
-                <div class="cat-badge ${catClass(a.category)}">${a.category || 'News'}</div>
-                <h3 onclick="openArticle('${slugOrId}')">${escHtml(a.title)}</h3>
-                <p class="card-excerpt">${escHtml(a.summary || '')}</p>
+                <div class="cat-badge ${catClass(article.category)}">${article.category || 'News'}</div>
+                <h3 onclick="openArticle('${slugOrId}')">${escHtml(article.title)}</h3>
+                <p class="card-excerpt">${escHtml(article.summary || '')}</p>
                 <div class="card-footer">
-                    <span class="card-time"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt || a.date)}</span>
-                    <a class="read-btn" href="article.html?id=${encodeId(slugOrId)}">
+                    <span class="card-time"><i class="far fa-clock"></i> ${timeAgo(article.publishedAt || article.date)}</span>
+                    <span class="read-btn">
                         Read <i class="fas fa-arrow-right"></i>
-                    </a>
+                    </span>
                 </div>
             </div>`;
         grid.appendChild(card);
@@ -292,11 +303,12 @@ async function loadBreakingTicker() {
 
     try {
         const res = await fetch(`${API_BASE}/api/news/breaking`);
+        if (!res.ok) throw new Error(`Breaking API failed: ${res.status}`);
         const articles = await res.json();
 
         if (articles?.length) {
             const spans = articles
-                .map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')" style="cursor:pointer">${escHtml(a.title)}</span>`)
+                .map(article => `<span class="ticker-item" onclick="openArticle('${article.slug || article.id}')" style="cursor:pointer">${escHtml(article.title)}</span>`)
                 .join('');
             track.innerHTML = spans + spans;  // duplicate for seamless loop
         }
@@ -311,21 +323,37 @@ async function loadTrending() {
     if (!list) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/news/trending`);
-        const items = await res.json();
+        // 1. Try to fetch trending news
+        let res = await fetch(`${API_BASE}/api/news/trending`);
+        if (!res.ok) throw new Error(`Trending API failed: ${res.status}`);
+        let items = await res.json();
 
-        if (!items?.length) {
-            list.innerHTML = `<p style="padding:20px;color:var(--text-muted);font-size:13px">Trends loading…</p>`;
+        // 2. Fallback to latest news if trending is empty
+        if (!items || !items.length) {
+            console.log("[Trending] Empty, falling back to latest news...");
+            res = await fetch(`${API_BASE}/api/news?limit=10`);
+            if (!res.ok) throw new Error(`Trending fallback API failed: ${res.status}`);
+            const data = await res.json();
+            items = Array.isArray(data) ? data : (data.articles || []);
+        }
+
+        if (!items || !items.length) {
+            list.innerHTML = `<p style="padding:20px;color:var(--text-muted);font-size:13px">No trends available at development.</p>`;
             return;
         }
 
-        list.innerHTML = items.slice(0, 5).map((item, i) => {
-            const title    = item.title || 'Breaking News';
-            const category = item.category || 'Trending';
-            const slugOrId = item.slug || item.id;
+        list.innerHTML = items.slice(0, 5).map((article, i) => {
+            const title    = article.title || 'Breaking News';
+            const category = article.category || 'Trending';
+            const slugOrId = article.slug || article.id;
+            const thumb    = article.image || article.urlToImage || PLACEHOLDER;
+
             return `
             <div class="trend-item" onclick="openArticle('${slugOrId}')">
-                <span class="trend-num">0${i + 1}</span>
+                <div class="trend-num">0${i + 1}</div>
+                <div class="trend-thumb">
+                    <img src="${thumb}" onerror="this.onerror=null;this.src='${PLACEHOLDER}'" alt="Trend">
+                </div>
                 <div class="trend-content">
                     <h4>${escHtml(title)}</h4>
                     <div class="trend-cat">${escHtml(category)}</div>
@@ -333,7 +361,8 @@ async function loadTrending() {
             </div>`;
         }).join('');
     } catch (e) {
-        list.innerHTML = `<p style="padding:20px;color:var(--text-muted);font-size:13px">Trends updating…</p>`;
+        console.warn('[Trending] Error:', e.message);
+        list.innerHTML = `<p style="padding:20px;color:var(--text-muted);font-size:13px">Unable to load trending news.</p>`;
     }
 }
 

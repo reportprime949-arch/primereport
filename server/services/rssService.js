@@ -83,7 +83,7 @@ class RSSService {
         } catch (e) {}
 
         // 6. Fallback placeholder
-        return "/assets/images/news-placeholder.jpg";
+        return "/assets/image/news-placeholder.jpg";
     }
 
     async seedDummyArticles() {

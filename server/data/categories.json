@@ -1,44 +1,8 @@
 [
-  {
-    "id": "1",
-    "name": "World",
-    "slug": "world",
-    "icon": "fas fa-globe"
-  },
-  {
-    "id": "2",
-    "name": "Technology",
-    "slug": "technology",
-    "icon": "fas fa-microchip"
-  },
-  {
-    "id": "3",
-    "name": "Business",
-    "slug": "business",
-    "icon": "fas fa-briefcase"
-  },
-  {
-    "id": "4",
-    "name": "Politics",
-    "slug": "politics",
-    "icon": "fas fa-landmark"
-  },
-  {
-    "id": "5",
-    "name": "Entertainment",
-    "slug": "entertainment",
-    "icon": "fas fa-film"
-  },
-  {
-    "id": "6",
-    "name": "Sports",
-    "slug": "sports",
-    "icon": "fas fa-running"
-  },
-  {
-    "id": "7",
-    "name": "Science",
-    "slug": "science",
-    "icon": "fas fa-flask"
-  }
+  { "id": "cat_1", "name": "World", "slug": "world", "icon": "fas fa-globe" },
+  { "id": "cat_2", "name": "India", "slug": "india", "icon": "fas fa-flag" },
+  { "id": "cat_3", "name": "Technology", "slug": "technology", "icon": "fas fa-microchip" },
+  { "id": "cat_4", "name": "Business", "slug": "business", "icon": "fas fa-briefcase" },
+  { "id": "cat_5", "name": "Health", "slug": "health", "icon": "fas fa-heartbeat" },
+  { "id": "cat_6", "name": "Science", "slug": "science", "icon": "fas fa-flask" }
 ]

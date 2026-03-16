@@ -8,24 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/prime.css">
     <link rel="stylesheet" href="../css/admin-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../js/auth-check.js"></script>
 </head>
 <body class="admin-body">
-    <!-- Sidebar Overlay (mobile) -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Sidebar -->
-    <aside class="admin-sidebar" id="admin-sidebar">
+    <!-- Admin Layout Wrapper -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
         <div class="logo">
             <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <h2 style="display:none;">Prime<span>Report</span></h2>
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="index.html" class="active"><i class="fas fa-grid-2"></i> <span>Dashboard</span></a></li>
+                <li><a href="index.html" class="active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
                 <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
                 <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
                 <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                <li><a href="queue.html"><i class="fas fa-list-check"></i> <span>Article Queue</span></a></li>
                 <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
                 <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
                 <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
@@ -62,50 +63,73 @@
         </header>
 
         <section class="admin-content">
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#eff6ff; color:#2563eb;"><i class="fas fa-file-lines"></i></div>
-                    <div class="stat-info">
-                        <h2 id="totalArticles">0</h2>
-                        <p>Total Articles</p>
+            <!-- Stats Grid -->
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                <div class="stat-card content-card" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Total Articles</span>
+                        <i class="fas fa-newspaper" style="color:var(--primary); font-size:1.2rem;"></i>
                     </div>
+                    <h2 id="totalArticles" style="font-size:2rem; margin:0;">0</h2>
+                    <p style="font-size:0.75rem; color:#10b981; margin:8px 0 0;"><i class="fas fa-arrow-up"></i> Lifetime Growth</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#fef3c7; color:#d97706;"><i class="fas fa-fire"></i></div>
-                    <div class="stat-info">
-                        <h3 id="breakingNewsCount">0</h3>
-                        <p>Breaking News</p>
+
+                <div class="stat-card content-card" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Today's Content</span>
+                        <i class="fas fa-calendar-day" style="color:#ef4444; font-size:1.2rem;"></i>
                     </div>
+                    <h2 id="dailyArticles" style="font-size:2rem; margin:0;">0</h2>
+                    <p style="font-size:0.75rem; color:var(--text-muted); margin:8px 0 0;">New articles today</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#d1fae5; color:#059669;"><i class="fas fa-eye"></i></div>
-                    <div class="stat-info">
-                        <h3 id="totalViews">0</h3>
-                        <p>Total Views</p>
+
+                <div class="stat-card content-card" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">RSS Imports</span>
+                        <i class="fas fa-rss" style="color:#f59e0b; font-size:1.2rem;"></i>
                     </div>
+                    <h2 id="rssImportsCount" style="font-size:2rem; margin:0;">0</h2>
+                    <p style="font-size:0.75rem; color:#3b82f6; margin:8px 0 0;">Automated pipeline</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#ede9fe; color:#7c3aed;"><i class="fas fa-arrow-up-right-dots"></i></div>
-                    <div class="stat-info">
-                        <h3 id="dailyArticles">0</h3>
-                        <p>Today's Input</p>
+
+                <div class="stat-card content-card" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Total Engagement</span>
+                        <i class="fas fa-eye" style="color:#10b981; font-size:1.2rem;"></i>
                     </div>
+                    <h2 id="totalViews" style="font-size:2rem; margin:0;">0</h2>
+                    <p style="font-size:0.75rem; color:var(--text-muted); margin:8px 0 0;">Aggregated page views</p>
                 </div>
             </div>
 
             <!-- Dashboard Grid -->
             <div class="dashboard-grid">
-                <!-- Left: Recent Activity -->
-                <div class="content-card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-clock-rotate-left" style="color:var(--primary);"></i> Recent Activity</h3>
-                        <a href="articles.html" class="btn btn-light" style="padding:6px 14px; font-size:0.78rem;">View All</a>
+                <!-- Left: Analytics & Recent Activity -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- Analytics Graph -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-area" style="color:var(--primary);"></i> Overview Traffic</h3>
+                            <select class="btn btn-light" style="padding:4px 8px; font-size:0.7rem; border-radius:4px;">
+                                <option>Last 7 Days</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
                     </div>
-                    <div class="table-container">
-                        <ul id="top-articles-list" style="list-style:none; padding:0; margin:0;">
-                            <p class="text-muted text-center py-4"><i class="fas fa-circle-notch fa-spin"></i> Loading activity...</p>
-                        </ul>
+
+                    <!-- Recent Activity -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clock-rotate-left" style="color:var(--primary);"></i> Recent Activity</h3>
+                            <a href="articles.html" class="btn btn-light" style="padding:6px 14px; font-size:0.78rem;">View All</a>
+                        </div>
+                        <div class="table-container" style="padding:10px;">
+                            <ul id="top-articles-list" style="list-style:none; padding:0; margin:0;">
+                                <p class="text-muted text-center py-4"><i class="fas fa-circle-notch fa-spin"></i> Loading activity...</p>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -155,6 +179,7 @@
             </div>
         </section>
     </main>
+</div>
 
     <script type="module" src="../js/admin.js"></script>
 </body>

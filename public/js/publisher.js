@@ -104,7 +104,7 @@ class PublisherEngine {
                 }
 
                 if (!image) {
-                    image = "assets/images/news-placeholder.jpg";
+                    image = "assets/image/news-placeholder.jpg";
                 }
 
                 return {
