@@ -29,7 +29,7 @@ router.get("/breaking", (req, res) => {
 });
 
 const NEWS_CACHE = new Map();
-const CACHE_TTL = 60 * 1000; // 60 seconds
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * GET /api/news

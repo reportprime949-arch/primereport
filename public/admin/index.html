@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../css/admin-modern.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../js/auth-check.js"></script>
+    <script src="../js/sidebar.js" defer></script>
+    <script type="module" src="../js/toastManager.js"></script>
 </head>
 <body class="admin-body">
     <!-- Admin Layout Wrapper -->
@@ -22,7 +24,7 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="index.html" class="active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
                 <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
                 <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
                 <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
@@ -50,9 +52,12 @@
                 </div>
             </div>
             <div class="header-right">
-                <button class="header-icon-btn" title="Notifications">
+                <button class="header-icon-btn" id="sound-toggle-btn" title="Toggle Sound">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <button class="header-icon-btn" title="Notifications" onclick="window.location.href='notifications.html'">
                     <i class="fas fa-bell"></i>
-                    <span class="notif-badge">3</span>
+                    <span class="notif-badge" id="global-notif-badge" style="display:none;">0</span>
                 </button>
                 <div class="user-profile">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff&bold=true&size=64" alt="Avatar">
@@ -63,56 +68,64 @@
         </header>
 
         <section class="admin-content">
+            <!-- Sidebar Overlay for mobile -->
+            <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
             <!-- Stats Grid -->
-            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px;">
-                <div class="stat-card content-card" style="padding: 24px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Total Articles</span>
-                        <i class="fas fa-newspaper" style="color:var(--primary); font-size:1.2rem;"></i>
+            <div class="stats-grid">
+                <div class="stat-card content-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width: 100%;">
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Total Articles</span>
+                        <i class="fas fa-newspaper" style="color:var(--primary); font-size:1.1rem;"></i>
                     </div>
-                    <h2 id="totalArticles" style="font-size:2rem; margin:0;">0</h2>
-                    <p style="font-size:0.75rem; color:#10b981; margin:8px 0 0;"><i class="fas fa-arrow-up"></i> Lifetime Growth</p>
+                    <div class="stat-info">
+                        <h2 id="totalArticles">0</h2>
+                        <p style="color:#10b981;"><i class="fas fa-arrow-up"></i> Lifetime Growth</p>
+                    </div>
                 </div>
 
-                <div class="stat-card content-card" style="padding: 24px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Today's Content</span>
-                        <i class="fas fa-calendar-day" style="color:#ef4444; font-size:1.2rem;"></i>
+                <div class="stat-card content-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width: 100%;">
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Today's Content</span>
+                        <i class="fas fa-calendar-day" style="color:#ef4444; font-size:1.1rem;"></i>
                     </div>
-                    <h2 id="dailyArticles" style="font-size:2rem; margin:0;">0</h2>
-                    <p style="font-size:0.75rem; color:var(--text-muted); margin:8px 0 0;">New articles today</p>
+                    <div class="stat-info">
+                        <h2 id="dailyArticles">0</h2>
+                        <p>New articles today</p>
+                    </div>
                 </div>
 
-                <div class="stat-card content-card" style="padding: 24px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">RSS Imports</span>
-                        <i class="fas fa-rss" style="color:#f59e0b; font-size:1.2rem;"></i>
+                <div class="stat-card content-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width: 100%;">
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">RSS Imports</span>
+                        <i class="fas fa-rss" style="color:#f59e0b; font-size:1.1rem;"></i>
                     </div>
-                    <h2 id="rssImportsCount" style="font-size:2rem; margin:0;">0</h2>
-                    <p style="font-size:0.75rem; color:#3b82f6; margin:8px 0 0;">Automated pipeline</p>
+                    <div class="stat-info">
+                        <h2 id="rssImportsCount">0</h2>
+                        <p style="color:#3b82f6;">Automated pipeline</p>
+                    </div>
                 </div>
 
-                <div class="stat-card content-card" style="padding: 24px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Total Engagement</span>
-                        <i class="fas fa-eye" style="color:#10b981; font-size:1.2rem;"></i>
+                <div class="stat-card content-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; width: 100%;">
+                        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Engagement</span>
+                        <i class="fas fa-eye" style="color:#10b981; font-size:1.1rem;"></i>
                     </div>
-                    <h2 id="totalViews" style="font-size:2rem; margin:0;">0</h2>
-                    <p style="font-size:0.75rem; color:var(--text-muted); margin:8px 0 0;">Aggregated page views</p>
+                    <div class="stat-info">
+                        <h2 id="totalViews">0</h2>
+                        <p>Total page views</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Dashboard Grid -->
             <div class="dashboard-grid">
                 <!-- Left: Analytics & Recent Activity -->
-                <div style="display:flex; flex-direction:column; gap:20px;">
+                <div style="display:flex; flex-direction:column; gap:20px; min-width: 0;">
                     <!-- Analytics Graph -->
                     <div class="content-card">
                         <div class="card-header">
                             <h3><i class="fas fa-chart-area" style="color:var(--primary);"></i> Overview Traffic</h3>
-                            <select class="btn btn-light" style="padding:4px 8px; font-size:0.7rem; border-radius:4px;">
-                                <option>Last 7 Days</option>
-                            </select>
                         </div>
                         <div class="chart-container">
                             <canvas id="trafficChart"></canvas>
@@ -123,35 +136,38 @@
                     <div class="content-card">
                         <div class="card-header">
                             <h3><i class="fas fa-clock-rotate-left" style="color:var(--primary);"></i> Recent Activity</h3>
-                            <a href="articles.html" class="btn btn-light" style="padding:6px 14px; font-size:0.78rem;">View All</a>
+                            <a href="articles.html" class="btn btn-light" style="padding:6px 14px; font-size:0.75rem;">View All</a>
                         </div>
-                        <div class="table-container" style="padding:10px;">
+                        <div class="table-container">
                             <ul id="top-articles-list" style="list-style:none; padding:0; margin:0;">
-                                <p class="text-muted text-center py-4"><i class="fas fa-circle-notch fa-spin"></i> Loading activity...</p>
+                                <div class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Gathering data...</p>
+                                </div>
                             </ul>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Column -->
-                <div style="display:flex; flex-direction:column; gap:20px;">
+                <div style="display:flex; flex-direction:column; gap:20px; min-width: 0;">
                     <!-- System Status -->
                     <div class="content-card">
                         <div class="card-header">
                             <h3><i class="fas fa-server" style="color:var(--primary);"></i> System Status</h3>
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; flex-direction:column; gap:10px;">
                             <div class="status-row">
-                                <span><span class="status-dot green"></span> Core Engine</span>
+                                <span><span class="status-dot green"></span> RSS Engine</span>
                                 <span class="badge badge-success">Operational</span>
                             </div>
                             <div class="status-row">
-                                <span><span class="status-dot blue"></span> Data Storage</span>
-                                <span class="badge badge-blue">Active</span>
+                                <span><span class="status-dot blue"></span> Database</span>
+                                <span class="badge badge-blue">Connected</span>
                             </div>
                             <div class="status-row">
-                                <span><span class="status-dot amber"></span> AI Rewriter</span>
-                                <span class="badge badge-amber">Synced</span>
+                                <span><span class="status-dot amber"></span> AI Pipeline</span>
+                                <span class="badge badge-amber">Standby</span>
                             </div>
                         </div>
                     </div>
@@ -161,10 +177,14 @@
                         <div class="card-header">
                             <h3><i class="fas fa-bolt" style="color:#fbbf24;"></i> Quick Actions</h3>
                         </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <button class="qa-btn" onclick="triggerManualFetch()">
+                        <div class="qa-grid">
+                            <button class="qa-btn" onclick="triggerManualSync()" title="Incremental Sync">
                                 <i class="fas fa-arrows-rotate"></i>
                                 <span>Sync RSS</span>
+                            </button>
+                            <button class="qa-btn" onclick="triggerSystemReset()" title="Full Reset & Reload" style="color:#ef4444;">
+                                <i class="fas fa-trash-can"></i>
+                                <span>Deep Refresh</span>
                             </button>
                             <button class="qa-btn" onclick="window.location.href='ai-settings.html'">
                                 <i class="fas fa-sliders"></i>

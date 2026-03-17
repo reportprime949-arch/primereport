@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - PrimeReport Admin</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/prime.css">
+    <link rel="stylesheet" href="../css/admin-modern.css">
+    <script type="module" src="../js/auth-check.js"></script>
+    <script src="../js/sidebar.js" defer></script>
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="logo">
+                <img src="../logo.png" alt="PrimeReport" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <h2 style="display:none;">Prime<span>Report</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="articles.html"><i class="fas fa-newspaper"></i> <span>Articles</span></a></li>
+                    <li><a href="categories.html"><i class="fas fa-folder"></i> <span>Categories</span></a></li>
+                    <li><a href="users.html"><i class="fas fa-users"></i> <span>Users</span></a></li>
+                    <li><a href="queue.html"><i class="fas fa-list-check"></i> <span>Article Queue</span></a></li>
+                    <li><a href="analytics.html"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a href="ads.html"><i class="fas fa-rectangle-ad"></i> <span>Advertisements</span></a></li>
+                    <li><a href="rss.html"><i class="fas fa-rss"></i> <span>RSS Controls</span></a></li>
+                    <li><a href="ai-settings.html"><i class="fas fa-robot"></i> <span>AI Engine</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+                    <li class="mt-5"><a href="#" id="logout-btn"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div style="display:flex; align-items:center;">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-left">
+                        <p>System Alerts</p>
+                        <h2>Notifications</h2>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-icon-btn" id="sound-toggle-btn" title="Toggle Sound">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <button class="header-icon-btn active" title="Notifications" onclick="window.location.href='notifications.html'">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="global-notif-badge" style="display:none;">0</span>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=2563eb&color=fff&bold=true&size=64" alt="Avatar">
+                        <span>Administrator</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <section class="admin-content">
+                <div class="content-card">
+                    <div class="card-header" style="flex-wrap: wrap; gap: 15px;">
+                        <div class="tabs" id="notif-tabs">
+                            <button class="tab-btn active" data-filter="all">All</button>
+                            <button class="tab-btn" data-filter="unread">Unread</button>
+                            <button class="tab-btn" data-filter="read">Read</button>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-light" onclick="markAllRead()">
+                                <i class="fas fa-check-double"></i> Mark all as read
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="notifications-list" class="notif-page-list">
+                        <!-- Polling/Loading State -->
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Loading notifications...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="../js/notifications.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 
 const API_URL =
     (window.location.hostname === 'localhost'
-        ? 'http://localhost:4000'
+        ? 'http://localhost:3000'
         : 'https://primereport-server.onrender.com') + '/api/admin';
 
 // == Authentication & Fetch Wrapper ==
@@ -64,23 +64,11 @@ async function fetchWithToken(url, options, token) {
 // == UI Utilities ==
 
 function showToast(message, type = 'success') {
-    const toastContainer = document.getElementById('toast-container') || createToastContainer();
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `<span>${message}</span>`;
-    toastContainer.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
-}
-
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toast-container';
-    container.style.cssText = 'position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;';
-    document.body.appendChild(container);
-    return container;
+    if (window.toastManager) {
+        window.toastManager.show(message, type);
+    } else {
+        console.log(`Toast [${type}]: ${message}`);
+    }
 }
 
 // == Initialization Logic ==
@@ -109,14 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('ai-settings-form')) loadAiSettings();
         if (document.getElementById('queue-container')) loadQueue();
 
-        // Initialize Notifications
-        initNotifications();
-    });
+    // Initialize Notifications
+    initNotifications();
+    startNotifPolling();
+});
 
-    // Dashboard Refresh Interval
-    if (document.getElementById('totalArticles')) {
-        setInterval(loadDashboardStats, 60000); // Refresh every minute
-    }
+let lastNotifCount = 0;
+function startNotifPolling() {
+    // Initial load
+    loadNotificationsCount();
+    // Poll every 30 seconds
+    setInterval(loadNotificationsCount, 30000);
+}
+
+// Notifications Count (Global Badge)
+async function loadNotificationsCount() {
+    const badge = document.getElementById('global-notif-badge');
+    if (!badge) return;
+    try {
+        const res = await authFetch('/notifications');
+        const data = await res.json();
+        const unread = data.filter(n => !n.read).length;
+        badge.textContent = unread;
+        badge.style.display = unread > 0 ? 'flex' : 'none';
+        
+        // Sound Alert Logic
+        const lastCount = parseInt(localStorage.getItem('last_notif_count') || '0');
+        if (unread > lastCount) {
+             if (window.soundManager) window.soundManager.play('info');
+        }
+        localStorage.setItem('last_notif_count', unread);
+    } catch (e) {}
+}
 
     // Event Listeners Mapping
     const articleForm = document.getElementById('article-form');
@@ -160,6 +172,7 @@ async function logout() {
 let allArticles = [];
 let currentPage = 1;
 const itemsPerPage = 10;
+let trafficChart = null;
 
 async function loadArticles() {
     try {
@@ -195,35 +208,83 @@ async function loadArticles() {
 window.filterArticles = () => {
     const search = document.getElementById('search-input')?.value.toLowerCase() || '';
     const category = document.getElementById('category-filter')?.value || '';
+    const date = document.getElementById('date-filter')?.value || '';
+    
     let filtered = allArticles.filter(a => {
         const titleMatch = (a.title || '').toLowerCase().includes(search);
         const categoryMatch = category === '' || a.category === category;
-        return titleMatch && categoryMatch;
+        const dateMatch = date === '' || (a.publishedAt || a.date || '').includes(date);
+        return titleMatch && categoryMatch && dateMatch;
     });
+    
+    currentPage = 1; // Reset to first page on filter
     renderArticlesTable(filtered);
 };
+
+function renderPagination(totalItems, filteredArticles) {
+    const pagination = document.getElementById('pagination-controls');
+    if (!pagination) return;
+    
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    // Prev
+    html += `<button class="btn btn-light btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1}, 'articles')"><i class="fas fa-chevron-left"></i></button>`;
+    
+    // Page Numbers
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            html += `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-light'} btn-sm" onclick="changePage(${i}, 'articles')">${i}</button>`;
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+            html += `<span class="px-2">...</span>`;
+        }
+    }
+    
+    // Next
+    html += `<button class="btn btn-light btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1}, 'articles')"><i class="fas fa-chevron-right"></i></button>`;
+    
+    pagination.innerHTML = html;
+    window.changePage = (page, type) => {
+        currentPage = page;
+        if (type === 'articles') renderArticlesTable(filteredArticles);
+    };
+}
 
 function renderArticlesTable(articles) {
     const tableBody = document.getElementById('articles-table-body');
     if (!tableBody) return;
+    
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const currentItems = articles.slice(start, end);
+    
+    if (currentItems.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No articles found.</td></tr>';
+        renderPagination(0, articles);
+        return;
+    }
+
     tableBody.innerHTML = currentItems.map(a => `
         <tr>
             <td><strong>${a.title}</strong></td>
             <td><span class="badge" style="background:var(--primary-color)">${a.category}</span></td>
-            <td>${new Date(a.publishedAt || a.publish_date).toLocaleDateString()}</td>
+            <td>${new Date(a.publishedAt || a.date).toLocaleDateString()}</td>
             <td>${a.author || 'Admin'}</td>
             <td><span class="badge" style="background:${a.isBreaking ? '#f44336' : '#4caf50'}">${a.isBreaking ? 'Breaking' : 'Standard'}</span></td>
             <td>
                 <div class="action-btns">
-                    <button class="btn-icon" onclick="editArticle('${a.id}')"><i class="fas fa-edit"></i></button>
-                    <button class="btn-icon" onclick="deleteArticle('${a.id}')"><i class="fas fa-trash"></i></button>
+                    <button class="btn-icon" onclick="editArticle('${a.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon trash" onclick="deleteArticle('${a.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>
             </td>
         </tr>
     `).join('');
+    
+    renderPagination(articles.length, articles);
 }
 
 window.openCreateModal = () => {
@@ -248,6 +309,11 @@ window.editArticle = (id) => {
 };
 
 window.saveArticle = async () => {
+    const saveBtn = document.getElementById('save-btn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
     const id = document.getElementById('edit-id').value;
     const payload = {
         title: document.getElementById('form-title').value,
@@ -266,7 +332,12 @@ window.saveArticle = async () => {
             loadArticles(); 
             loadDashboardStats();
         }
-    } catch (e) { showToast('Error saving article', 'error'); }
+    } catch (e) { 
+        showToast('Error saving article', 'error'); 
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+    }
 };
 
 window.deleteArticle = async (id) => {
@@ -520,12 +591,14 @@ window.triggerManualFetch = async () => {
     const icon = btn?.querySelector('i');
     if (icon) icon.classList.add('fa-spin');
     
+    showToast('Incremental sync started...');
     try {
         const res = await authFetch('/rss/fetch', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
             showToast(`Sync complete! Found ${data.count} new articles.`);
             loadDashboardStats();
+            if (typeof loadArticles === 'function') loadArticles();
             updateSystemStatus('Core Engine', 'Operational');
         }
     } catch (e) {
@@ -786,20 +859,22 @@ async function loadAnalytics() {
         }
 
         if (typeof Chart !== 'undefined') {
-            const trafficCanvas = document.getElementById('trafficChart');
-            if (trafficCanvas && stats.graphData) {
-                // Clear old chart if exists
-                if (window.trafficChartInstance) window.trafficChartInstance.destroy();
+            const data = stats; // Reuse already parsed JSON
+            
+            // 1. Render Traffic Chart
+            const ctx = document.getElementById('trafficChart')?.getContext('2d');
+            if (ctx) {
+                if (trafficChart) trafficChart.destroy();
                 
-                window.trafficChartInstance = new Chart(trafficCanvas.getContext('2d'), {
+                trafficChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: stats.graphData.map(d => d.date.split('-').slice(1).join('/')),
-                        datasets: [{
-                            label: 'Views',
-                            data: stats.graphData.map(d => d.views),
+                        labels: data.graphData ? data.graphData.map(d => d.date) : [],
+                        datasets: [
+                            {
+                                label: 'Views',
+                                data: data.graphData ? data.graphData.map(d => d.views) : [],
                             borderColor: '#2563eb',
-                            borderWidth: 3,
                             pointBackgroundColor: '#2563eb',
                             tension: 0.4,
                             fill: true,
@@ -860,76 +935,59 @@ window.quickPublish = async () => {
     } catch (e) { showToast('Error', 'error'); }
 };
 
-window.triggerManualFetch = async () => {
+// Unified RSS trigger
+
+async function loadRecentActivity() {
+    const list = document.getElementById('top-articles-list');
+    if (!list) return;
+
     try {
-        showToast('Syncing...');
-        const res = await authFetch('/rss-sync', { method: 'POST' });
-        const data = await res.json();
-        showToast(`Sync complete! ${data.count} articles.`);
-        loadDashboardStats();
-        if (document.getElementById('articles-table-body')) loadArticles();
-    } catch (e) { showToast('Sync failed', 'error'); }
-};
-
-// == Notifications ==
-
-async function initNotifications() {
-    const btn = document.querySelector('.header-icon-btn[title="Notifications"]');
-    if (!btn) return;
-
-    const dropdown = document.createElement('div');
-    dropdown.className = 'notifications-dropdown';
-    dropdown.innerHTML = `
-        <div class="dropdown-header">
-            <h4>Notifications</h4>
-            <span class="notif-count">0</span>
-        </div>
-        <div class="notif-list" id="notif-container">
-            <p class="text-center py-4 text-muted"><i class="fas fa-circle-notch fa-spin"></i></p>
-        </div>
-    `;
-    btn.parentElement.appendChild(dropdown);
-
-    btn.onclick = (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('active');
-        if (dropdown.classList.contains('active')) loadNotifications(dropdown.querySelector('#notif-container'));
-    };
-
-    document.addEventListener('click', () => dropdown.classList.remove('active'));
-}
-
-async function loadNotifications(container) {
-    try {
-        const res = await authFetch('/notifications');
-        const data = await res.json();
+        const res = await authFetch('/articles');
+        if (!res.ok) throw new Error("Failed trace");
+        const articles = await res.json();
         
-        const count = document.querySelector('.notif-count');
-        const badge = document.querySelector('.notif-badge');
-        if (count) count.textContent = data.length;
-        if (badge) badge.textContent = data.length;
+        // Take latest 5
+        const latest = articles.sort((a,b) => new Date(b.publishedAt) - new Date(a.publishedAt)).slice(0, 5);
 
-        if (data.length === 0) {
-            container.innerHTML = '<p class="text-center py-4 text-muted">No new notifications</p>';
+        if (latest.length === 0) {
+            list.innerHTML = '<li style="padding:20px; text-align:center; color:#64748b;">No recent activity</li>';
             return;
         }
 
-        container.innerHTML = data.map(n => `
-            <div class="notif-item">
-                <div class="notif-icon ${n.type || 'info'}">
-                    <i class="fas ${n.type === 'success' ? 'fa-check' : 'fa-info'}"></i>
+        list.innerHTML = latest.map(a => `
+            <li class="activity-item" style="padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-weight:600; font-size:0.9rem; color:var(--text);">${a.title}</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${new Date(a.publishedAt).toLocaleString()}</span>
                 </div>
-                <div class="notif-body">
-                    <p>${n.text}</p>
-                    <span>${n.time}</span>
-                </div>
-            </div>
+                <a href="articles.html?edit=${a.id}" class="btn btn-light" style="padding:4px 10px; font-size:0.7rem;">Edit</a>
+            </li>
         `).join('');
     } catch (e) {
-        container.innerHTML = '<p class="text-center py-4 text-danger">Error loading</p>';
+        list.innerHTML = '<li style="padding:20px; text-align:center; color:var(--accent);">Error loading activity</li>';
     }
 }
 
+// Notifications Count (Global Badge)
+async function loadNotificationsCount() {
+    const badge = document.getElementById('global-notif-badge');
+    if (!badge) return;
+    try {
+        const res = await authFetch('/notifications');
+        const data = await res.json();
+        const unread = data.filter(n => !n.read).length;
+        badge.textContent = unread;
+        badge.style.display = unread > 0 ? 'flex' : 'none';
+        
+        // Notification Sound Logic
+        const lastCount = parseInt(localStorage.getItem('last_notif_count') || '0');
+        if (unread > lastCount) {
+             const audio = new Audio('/sounds/notify.mp3');
+             audio.play().catch(e => console.log('Audio play blocked'));
+        }
+        localStorage.setItem('last_notif_count', unread);
+    } catch (e) {}
+}
 
 // Sidebar Toggle
 window.toggleSidebar = () => {
@@ -937,7 +995,40 @@ window.toggleSidebar = () => {
     const overlay = document.getElementById('sidebar-overlay');
     if (sidebar) {
         sidebar.classList.toggle('open');
-        if (overlay) overlay.classList.toggle('active', sidebar.classList.contains('open'));
+        const isOpen = sidebar.classList.contains('open');
+        if (overlay) overlay.classList.toggle('active', isOpen);
+    }
+};
+
+// Handled by unified trigger
+
+window.triggerSystemReset = async () => {
+    if (!confirm('CRITICAL: This will delete ALL current news and reload fresh articles from RSS. Continue?')) return;
+    
+    showToast('System Resetting... Please wait.', 'warning');
+    const resetBtn = document.querySelector('[onclick="triggerSystemReset()"]');
+    const originalContent = resetBtn ? resetBtn.innerHTML : '';
+    
+    if (resetBtn) {
+        resetBtn.disabled = true;
+        resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+    }
+
+    try {
+        const res = await authFetch('/news/reset', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Reset successful! Fresh news loaded.');
+            loadDashboardStats();
+            if (typeof loadArticles === 'function') loadArticles();
+        }
+    } catch (e) {
+        showToast('Reset failed', 'error');
+    } finally {
+        if (resetBtn) {
+            resetBtn.disabled = false;
+            resetBtn.innerHTML = originalContent;
+        }
     }
 };
 

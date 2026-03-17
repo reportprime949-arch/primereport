@@ -1,6 +1,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 const { GoogleDecoder } = require('google-news-url-decoder');
+
+const UPLOADS_DIR = path.join(__dirname, '../../public/uploads/processed');
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 // In-memory cache for resolved URLs to avoid hitting Google's undocumented API too often
 const resolvedUrlCache = new Map();
@@ -74,7 +81,7 @@ async function resolveGoogleNewsURL(googleUrl) {
  */
 async function extractArticleData(url) {
     if (!url || url.includes('news.google.com') || url.includes('consent.google.com')) {
-        return { image: null, content: null }; // Don't try to scrape Google pages
+        return { image: null, content: null };
     }
 
     // Check cache
@@ -93,29 +100,72 @@ async function extractArticleData(url) {
                 'Accept': 'text/html,application/xhtml+xml',
                 'Accept-Language': 'en-US,en;q=0.9',
             },
-            timeout: 8000,
+            timeout: 10000,
             maxRedirects: 5,
         });
 
         const $ = cheerio.load(data);
-        const candidate =
-            $('meta[property="og:image"]').attr('content') ||
-            $('meta[property="og:image:secure_url"]').attr('content') ||
-            $('meta[name="twitter:image"]').attr('content') ||
-            $('meta[itemprop="image"]').attr('content') ||
-            $('article img').first().attr('src') ||
-            $('main img').first().attr('src') ||
-            $('img').first().attr('src');
+        const urlObj = new URL(url);
 
-        if (candidate && !isLogoUrl(candidate)) {
-            // Make URL absolute if relative
-            if (candidate.startsWith('//')) {
-                foundImage = 'https:' + candidate;
-            } else if (candidate.startsWith('/')) {
-                const urlObj = new URL(url);
-                foundImage = urlObj.origin + candidate;
-            } else {
+        // Priority 1: Meta Tags (og:image is king)
+        const candidates = [
+            $('meta[property="og:image"]').attr('content'),
+            $('meta[property="og:image:secure_url"]').attr('content'),
+            $('meta[name="twitter:image"]').attr('content'),
+            $('meta[name="twitter:image:src"]').attr('content'),
+            $('meta[itemprop="image"]').attr('content'),
+            $('link[rel="image_src"]').attr('href'),
+            $('link[rel="apple-touch-icon"]').attr('href')
+        ];
+
+        for (let candidate of candidates) {
+            if (candidate && !isLogoUrl(candidate)) {
                 foundImage = candidate;
+                break;
+            }
+        }
+
+        // Priority 2: Semantic Lead Image
+        if (!foundImage) {
+            const semanticSelectors = [
+                'article img', 'main img', '.post-content img', '.article-body img', 
+                '.entry-content img', '[itemprop="articleBody"] img'
+            ];
+            for (const selector of semanticSelectors) {
+                const img = $(selector).first();
+                const src = img.attr('src') || img.attr('data-src') || img.attr('srcset')?.split(' ')[0];
+                if (src && !isLogoUrl(src)) {
+                    foundImage = src;
+                    break;
+                }
+            }
+        }
+
+        // Priority 3: Fallback Scrape
+        if (!foundImage) {
+            $('img').each((i, el) => {
+                const src = $(el).attr('src') || $(el).attr('data-src');
+                if (src && !isLogoUrl(src) && src.length > 10) {
+                    foundImage = src;
+                    return false;
+                }
+            });
+        }
+
+        // Clean and Resolve URL (Mandatory absolute path)
+        if (foundImage) {
+            foundImage = foundImage.trim();
+            if (foundImage.startsWith('//')) {
+                foundImage = 'https:' + foundImage;
+            } else if (foundImage.startsWith('/')) {
+                foundImage = urlObj.origin + foundImage;
+            } else if (!foundImage.startsWith('http')) {
+                try {
+                    foundImage = new URL(foundImage, url).href;
+                } catch (e) {
+                    const base = url.substring(0, url.lastIndexOf('/') + 1);
+                    foundImage = base + foundImage;
+                }
             }
         }
 
@@ -130,19 +180,58 @@ async function extractArticleData(url) {
                 foundContent = article.content;
             }
         } catch (readErr) {
-            // Ignore readability errors silently or log safely
+            // Readability error
         }
 
-    } catch (_) {
-        // Silent catch to prevent flooding logs on 404s/403s
+    } catch (err) {
+        // Silent catch for scraping errors
     }
 
-    // Cache the result (even if null)
+    // Cache the result
     imageCache.set(url, { image: foundImage, content: foundContent, ts: Date.now() });
+    
+    // Proactively optimize if image found
+    if (foundImage) {
+        optimizeAndStoreImage(foundImage).catch(() => {});
+    }
+
     return { image: foundImage, content: foundContent };
+}
+
+/**
+ * Downloads, resizes, and compresses an image for local serving
+ */
+async function optimizeAndStoreImage(imageUrl) {
+    if (!imageUrl || imageUrl.includes('news-placeholder') || imageUrl.startsWith('/')) return imageUrl;
+
+    const hash = crypto.createHash('md5').update(imageUrl).digest('hex');
+    const fileName = `${hash}.webp`;
+    const filePath = path.join(UPLOADS_DIR, fileName);
+    const publicPath = `/uploads/processed/${fileName}`;
+
+    if (fs.existsSync(filePath)) return publicPath;
+
+    try {
+        const response = await axios.get(imageUrl, { 
+            responseType: 'arraybuffer',
+            timeout: 10000,
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
+
+        await sharp(response.data)
+            .resize(800, 450, { fit: 'cover', withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toFile(filePath);
+
+        return publicPath;
+    } catch (err) {
+        console.error(`[Image Opt] Failed ${imageUrl}:`, err.message);
+        return imageUrl; // Fallback to original
+    }
 }
 
 module.exports = {
     resolveGoogleNewsURL,
-    extractArticleData
+    extractArticleData,
+    optimizeAndStoreImage
 };

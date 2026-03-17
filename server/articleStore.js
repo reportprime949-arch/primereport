@@ -91,6 +91,25 @@ class ArticleStore {
     updateTrending(list) { this.trending = list; }
     updateHero(list) { this.hero = list; }
 
+    clear() {
+        this.articles.clear();
+        this.slugs.clear();
+        this.trending = [];
+        this.hero = [];
+        this.persist();
+    }
+
+    enforceLimit(maxCount = 100) {
+        if (this.articles.size <= maxCount) return;
+        
+        const sorted = this.getAll().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        const toKeep = sorted.slice(0, maxCount);
+        
+        this.articles.clear();
+        this.slugs.clear();
+        toKeep.forEach(a => this.saveArticle(a));
+    }
+
     persist() {
         try {
             const data = this.getAll().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));

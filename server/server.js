@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 /* serve static files */
 app.use(express.static(path.join(__dirname, "../public")));
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 
 /* API routes */
 const newsRoutes = require("./routes/news");

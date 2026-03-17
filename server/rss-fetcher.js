@@ -3,8 +3,9 @@ const path = require("path");
 const Parser = require("rss-parser");
 const axios = require("axios");
 const crypto = require("crypto");
+const cron = require("node-cron");
 
-const { resolveGoogleNewsURL, extractArticleData } = require("./services/image-service");
+const { resolveGoogleNewsURL, extractArticleData, optimizeAndStoreImage } = require("./services/image-service");
 const store = require("./articleStore");
 const TrendingEngine = require("./services/trending-engine");
 const generateHighCTRHeadline = require("./services/ai-headline-generator");
@@ -17,12 +18,14 @@ const InternalLinkEngine = require("./services/internal-linker");
 const DATA_DIR = path.join(__dirname, "data");
 const FEEDS_FILE = path.join(DATA_DIR, "feeds.json");
 const CACHE_DIR = path.join(DATA_DIR, "rss_cache");
+const FALLBACK_IMAGE = "/assets/image/news-placeholder.jpg";
 
 const parser = new Parser({
   customFields: {
     item: [
       ["media:content", "mediaContent"],
       ["media:thumbnail", "mediaThumbnail"],
+      ["enclosure", "enclosure"],
       ["dc:publisher", "publisher"]
     ]
   }
@@ -35,21 +38,22 @@ class NewsFetcher {
   constructor() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
     if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+    this.isSyncing = false;
   }
 
   async fetchWithCache(url) {
     const hash = crypto.createHash('md5').update(url).digest('hex');
     const cacheFile = path.join(CACHE_DIR, `${hash}.xml`);
     
-    // Cache for 15 minutes to reduce network load
-    if (fs.existsSync(cacheFile) && (Date.now() - fs.statSync(cacheFile).mtimeMs < 15 * 60 * 1000)) {
+    // Cache for 8 minutes (slightly less than the 10-min cron to ensure fresh data)
+    if (fs.existsSync(cacheFile) && (Date.now() - fs.statSync(cacheFile).mtimeMs < 8 * 60 * 1000)) {
         return fs.readFileSync(cacheFile, 'utf8');
     }
 
     try {
         const response = await axios.get(url, {
-            headers: { "User-Agent": "Mozilla/5.0" },
-            timeout: 15000
+            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
+            timeout: 20000
         });
         fs.writeFileSync(cacheFile, response.data);
         return response.data;
@@ -85,9 +89,19 @@ class NewsFetcher {
   }
 
   async refreshAll() {
-    console.log("[RSS] Starting high-frequency [ULTRA] sync...");
+    if (this.isSyncing) {
+        console.log("[RSS] Sync already in progress, skipping...");
+        return store.getAll();
+    }
+
+    this.isSyncing = true;
+    console.log("[RSS] Starting production-grade sync process...");
+    
     const feeds = this.loadFeeds();
-    if (feeds.length === 0) return [];
+    if (feeds.length === 0) {
+        this.isSyncing = false;
+        return store.getAll();
+    }
 
     const existingArticles = store.getAll();
     const existingLinks = new Set(existingArticles.map(a => a.link));
@@ -95,82 +109,131 @@ class NewsFetcher {
 
     for (const feed of feeds) {
       try {
+        console.log(`[RSS] Processing feed: ${feed.name} (${feed.url})`);
         const xmlData = await this.fetchWithCache(feed.url);
         const feedData = await parser.parseString(xmlData);
         const items = feedData.items || [];
 
-        for (const item of items.slice(0, 10)) {
-          const rawLink = item.link;
-          if (!rawLink) continue;
+        for (const item of items.slice(0, 15)) {
+          try {
+            const rawLink = item.link;
+            if (!rawLink) continue;
 
-          const realLink = await resolveGoogleNewsURL(rawLink);
-          if (!realLink || existingLinks.has(realLink)) continue;
+            const realLink = await resolveGoogleNewsURL(rawLink);
+            if (!realLink || existingLinks.has(realLink)) continue;
 
-          const rawTitle = this.decodeEntities(item.title || "");
-          const rawSummary = this.decodeEntities((item.contentSnippet || item.content || item.summary || "").replace(/<[^>]*>/g, ""));
-          const sourceName = item.publisher || feed.name || "News";
-          
-          // 1. AI Headline Generation
-          const finalTitle = await generateHighCTRHeadline(rawTitle, feed.category);
+            const rawTitle = this.decodeEntities(item.title || "");
+            const rawSummary = this.decodeEntities((item.contentSnippet || item.content || item.summary || "").replace(/<[^>]*>/g, ""));
+            const sourceName = item.publisher || feed.name || "News";
+            
+            // 1. AI Headline Generation
+            const finalTitle = await generateHighCTRHeadline(rawTitle, feed.category);
 
-          // 2. Article Content Expansion
-          const { image: scrapedImage, content: scrapedContent } = await extractArticleData(realLink);
-          let expandedContent = await expandArticle(scrapedContent || rawSummary, finalTitle, feed.category);
-          
-          // 3. Ultra Internal Linking
-          expandedContent = linkEngine.linkify(expandedContent || scrapedContent || rawSummary, feed.category);
+            // 2. Article Content Extraction & Expansion
+            const { image: scrapedImage, content: scrapedContent } = await extractArticleData(realLink);
+            let expandedContent = await expandArticle(scrapedContent || rawSummary, finalTitle, feed.category);
+            
+            // 3. Internal Linking
+            expandedContent = linkEngine.linkify(expandedContent || scrapedContent || rawSummary, feed.category);
 
-          // 4. Image Pipeline
-          let finalImage = null;
-          if (item.mediaContent && item.mediaContent.$?.url) finalImage = item.mediaContent.$.url;
-          else if (item.mediaThumbnail && item.mediaThumbnail.$?.url) finalImage = item.mediaThumbnail.$.url;
-          else if (scrapedImage) finalImage = scrapedImage;
+            // 4. Image Guarantee Pipeline (The Priority Chain)
+            let finalImage = null;
 
-          if (!finalImage || finalImage.includes('favicon') || finalImage.length < 10) {
-            finalImage = await generateImage(finalTitle);
+            // Priority 1: RSS media:content, media:thumbnail or enclosure
+            if (item.mediaContent && item.mediaContent.$?.url) {
+                finalImage = item.mediaContent.$.url;
+            } else if (item.mediaThumbnail && item.mediaThumbnail.$?.url) {
+                finalImage = item.mediaThumbnail.$.url;
+            } else if (item.enclosure && item.enclosure.url) {
+                finalImage = item.enclosure.url;
+            }
+            
+            // Priority 2: Scraped og:image / meta image
+            if (!finalImage || isLogoUrl(finalImage)) {
+                finalImage = scrapedImage;
+            }
+
+            // Priority 3: AI Generated Image (Fallback if scraping yielded nothing)
+            if (!finalImage || isLogoUrl(finalImage) || finalImage.length < 10) {
+                finalImage = await generateImage(finalTitle);
+            }
+
+            // Priority 4: Mandatory Fallback (/images/default.jpg)
+            if (!finalImage || isLogoUrl(finalImage)) {
+                finalImage = "/images/default.jpg";
+            }
+
+            // Phase 6: Localize and Optimize Image
+            const { optimizeAndStoreImage } = require("./services/image-service");
+            const optimizedImage = await optimizeAndStoreImage(finalImage);
+            finalImage = optimizedImage;
+
+            const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
+            const isBreaking = (Date.now() - pubDate.getTime()) < (45 * 60 * 1000);
+
+            const article = {
+              id: item.guid || item.id || crypto.createHash('md5').update(realLink).digest('hex'),
+              title: finalTitle,
+              summary: rawSummary.substring(0, 300),
+              content: expandedContent,
+              link: realLink,
+              category: feed.category || "World",
+              source: sourceName,
+              publishedAt: pubDate,
+              image: finalImage,
+              isBreaking: isBreaking,
+              views: Math.floor(Math.random() * 500) + 100,
+              seo: seoEngine.generateMeta({ 
+                  title: finalTitle, 
+                  summary: rawSummary, 
+                  category: feed.category, 
+                  image: finalImage,
+                  link: realLink
+              })
+            };
+
+            store.saveArticle(article);
+            existingLinks.add(realLink);
+            newCount++;
+          } catch (itemErr) {
+            console.error(`[RSS] Item processing error:`, itemErr.message);
           }
-
-          const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
-          const isBreaking = (Date.now() - pubDate.getTime()) < (30 * 60 * 1000);
-
-          const article = {
-            id: item.guid || item.id || `feed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            title: finalTitle,
-            summary: rawSummary.substring(0, 240),
-            content: expandedContent,
-            link: realLink,
-            category: feed.category || "World",
-            source: sourceName,
-            publishedAt: pubDate,
-            image: finalImage || "/assets/image/news-placeholder.jpg",
-            isBreaking: isBreaking,
-            views: Math.floor(Math.random() * 200) + 50,
-            seo: seoEngine.generateMeta({ 
-                title: finalTitle, 
-                summary: rawSummary, 
-                category: feed.category, 
-                image: finalImage,
-                link: realLink
-            })
-          };
-
-          store.saveArticle(article);
-          existingLinks.add(realLink);
-          newCount++;
         }
-      } catch (err) {
-        console.error(`[RSS] Feed error (${feed.url}):`, err.message);
+      } catch (feedErr) {
+        console.error(`[RSS] Feed failure (${feed.url}):`, feedErr.message);
       }
     }
 
-    if (newCount > 0) {
-      console.log(`[RSS] Successfully ingested ${newCount} fresh articles.`);
+    if (newCount > 0 || this.isForced) {
+      console.log(`[RSS] Sync complete. Ingested ${newCount} new items.`);
       trendingEngine.calculateScores();
+      store.enforceLimit(100);
       store.persist();
       updateNewsSitemap();
     }
 
+    this.isSyncing = false;
+    this.isForced = false;
     return store.getAll();
+  }
+
+  async deepReset() {
+    console.log("[RSS] Initiating deep system reset...");
+    
+    // 1. Clear Article Store
+    store.clear();
+
+    // 2. Wipe RSS Cache folder
+    if (fs.existsSync(CACHE_DIR)) {
+        const files = fs.readdirSync(CACHE_DIR);
+        files.forEach(file => {
+            try { fs.unlinkSync(path.join(CACHE_DIR, file)); } catch(e) {}
+        });
+    }
+
+    // 3. Trigger Fresh Fetch immediately
+    this.isForced = true;
+    return await this.refreshAll();
   }
 
   async fetchCategory(category) {
@@ -179,19 +242,36 @@ class NewsFetcher {
     if (cat === "hero") return store.getHero();
     
     let articles = cat === "all" ? store.getAll() : store.getByCategory(cat);
-    if (articles.length === 0) {
-      await this.refreshAll();
-      articles = cat === "all" ? store.getAll() : store.getByCategory(cat);
-    }
     return articles;
   }
+
+  initSchedule() {
+    // Run every 10 minutes
+    cron.schedule("*/10 * * * *", () => {
+      console.log("[Cron] Starting scheduled news update...");
+      this.refreshAll().catch(err => console.error("[Cron] Sync failed:", err.message));
+    });
+    console.log("[RSS] Scheduled task initialized (every 10 minutes)");
+  }
+}
+
+// Helper to check for logo/bad domains (duplicated here for safety or import properly)
+function isLogoUrl(url) {
+    if (!url) return true;
+    const l = url.toLowerCase();
+    const BAD_DOMAINS = ['gstatic.com', 'google.com/images', 'lh3.googleusercontent', 'googlelogo', 'favicon', '1x1', 'blank.gif', 'pixel.gif'];
+    return BAD_DOMAINS.some(b => l.includes(b));
 }
 
 const fetcher = new NewsFetcher();
 
-setInterval(() => {
-  fetcher.refreshAll().catch(err => console.error("[RSS] Interval sync failed:", err.message));
-}, 5 * 60 * 1000);
+// Initialize cron
+fetcher.initSchedule();
+
+// Initial sync on startup
+setTimeout(() => {
+    fetcher.refreshAll().catch(err => console.error("[RSS] Initial sync failed:", err.message));
+}, 5000);
 
 module.exports = {
   fetchAndProcessNews: (cat) => fetcher.fetchCategory(cat),
