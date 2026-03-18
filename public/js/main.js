@@ -181,6 +181,7 @@ async function loadCategory(category) {
             return;
         }
 
+        data.articles.forEach(a => console.log("Article Image:", a.image));
         renderFilteredCards(data.articles || []);
 
     } catch (err) {
@@ -220,8 +221,8 @@ async function loadPortalTop() {
             heroContainer.innerHTML = `
                 <div class="editorial-hero-card" onclick="openArticle('${hero.slug || hero.id}')">
                     <img src="${hero.image || hero.urlToImage || PLACEHOLDER}" alt="${escHtml(hero.title)}" 
-                         class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high" 
-                         onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
+                         class="editorial-hero-img" width="800" height="500" loading="lazy" fetchpriority="high" 
+                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                     <div class="editorial-hero-overlay"></div>
                     <div class="editorial-hero-content">
                         <span class="cat-badge">${hero.category || 'Breaking'}</span>
@@ -240,15 +241,17 @@ async function loadPortalTop() {
         const topStories = articles.slice(1, 5);
         const topContainer = document.getElementById('portal-top-stories');
         if (topContainer) {
-            topContainer.innerHTML = topStories.map(a => `
+            topContainer.innerHTML = topStories.map(a => {
+                console.log("Article Image (Top):", a.image);
+                return `
                 <div class="editorial-top-story" onclick="openArticle('${a.slug || a.id}')">
-                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
+                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" alt="${escHtml(a.title)}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
                     <div class="top-story-content">
                         <h4>${escHtml(a.title)}</h4>
                         <div class="editorial-meta-sm">${timeAgo(a.publishedAt)} &bull; ${escHtml(a.source || 'Prime')}</div>
                     </div>
                 </div>
-            `).join('');
+            `;}).join('');
         }
     } catch (e) {
         console.warn('[Portal Top] Failed to load data', e);
@@ -267,7 +270,9 @@ async function loadCategoryBlock(category, containerId) {
             container.innerHTML = `<div style="padding:20px; color:var(--text-muted); font-size:13px;">No ${category} updates available.</div>`;
             return;
         }
-        container.innerHTML = articles.map(a => `
+        container.innerHTML = articles.map(a => {
+            console.log("Article Image (Grid):", a.image);
+            return `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
                     <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" 
@@ -280,7 +285,7 @@ async function loadCategoryBlock(category, containerId) {
                     <div class="editorial-meta-sm editorial-time"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt)}</div>
                 </div>
             </div>
-        `).join('');
+        `;}).join('');
     } catch(e) {
         console.warn(`[Category] Failed to load ${category}`, e);
     }

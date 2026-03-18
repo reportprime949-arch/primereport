@@ -104,6 +104,12 @@ class NewsFetcher {
       .trim();
   }
 
+  extractImageFromDescription(desc) {
+    if (!desc) return null;
+    const match = desc.match(/<img[^>]+src="([^">]+)"/);
+    return match ? match[1] : null;
+  }
+
   loadFeeds() {
     try {
       if (!fs.existsSync(FEEDS_FILE)) return [];
@@ -164,22 +170,14 @@ class NewsFetcher {
             // 3. Internal Linking
             expandedContent = linkEngine.linkify(expandedContent || scrapedContent || rawSummary, feed.category);
 
-            // 4. Image Guarantee Pipeline (The Priority Chain)
-            let finalImage = null;
-
-            // Priority 1: RSS media:content, media:thumbnail or enclosure
-            if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
-                finalImage = item.mediaContent.$.url;
-            } else if (item.mediaThumbnail && item.mediaThumbnail.$ && item.mediaThumbnail.$.url) {
-                finalImage = item.mediaThumbnail.$.url;
-            } else if (item.enclosure && item.enclosure.url) {
-                finalImage = item.enclosure.url;
-            }
-            
-            // Priority 2: Scraped og:image / meta image
-            if (!finalImage || isLogoUrl(finalImage)) {
-                finalImage = scrapedImage;
-            }
+            // 4. Advanced Image Extraction Pipeline
+            let finalImage = 
+                (item.enclosure && item.enclosure.url) ||
+                (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) ||
+                (item.mediaThumbnail && item.mediaThumbnail.$ && item.mediaThumbnail.$.url) ||
+                item.image ||
+                this.extractImageFromDescription(item.content || item.summary || item.contentSnippet) ||
+                scrapedImage;
 
             // Priority 3: AI Generated Image (Fallback if scraping yielded nothing)
             if (!finalImage || isLogoUrl(finalImage) || finalImage.length < 10) {
@@ -231,8 +229,8 @@ class NewsFetcher {
               category: (feed.category || "world").toLowerCase(),
               source: sourceName,
               publishedAt: pubDate,
-              // User requirement: image fallback to thumbnails/enclosures
-              image: finalImage || item.mediaThumbnail?.url || item.enclosure?.url || "https://via.placeholder.com/400x250?text=PrimeReport",
+              // User requirement: image fallback to thumbnails/enclosures/descriptions
+              image: finalImage || "https://via.placeholder.com/400x250?text=PrimeReport",
               isBreaking: isBreaking,
               views: Math.floor(Math.random() * 500) + 100,
               seo: seoEngine.generateMeta({ 
@@ -243,6 +241,8 @@ class NewsFetcher {
                   link: realLink
               })
             };
+            
+            console.log("Article Image Ingested:", article.image);
 
             store.saveArticle(article);
             existingLinks.add(realLink);
