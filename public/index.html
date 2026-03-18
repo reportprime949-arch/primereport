@@ -7,11 +7,9 @@
     <title>PrimeReport – Global News Portal</title>
     <link rel="icon" type="image/jpeg" href="favicon.jpeg">
 
-    <meta name="description"
-        content="PrimeReport delivers real-time news from around the world. Get breaking news, analysis, and in-depth reporting on World, Technology, Business, Politics, Sports, and more.">
+    <meta name="description" content="PrimeReport delivers real-time news from around the world. Get breaking news, analysis, and in-depth reporting on World, Technology, Business, Politics, Sports, and more.">
     <meta property="og:title" content="PrimeReport – Global News Portal">
-    <meta property="og:description"
-        content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
+    <meta property="og:description" content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="robots" content="index, follow, max-image-preview:large">
@@ -20,39 +18,42 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/prime.css">
-    <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-KPL3F3WTF0');
-</script>
 
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799"
-crossorigin="anonymous"></script>
-<meta name="google-site-verification" content="RUl9Kp6f7bHEyfOggzUtAHqBUPWXCNSBOCTPE_Le1Ns" />
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-KPL3F3WTF0');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799" crossorigin="anonymous"></script>
+    <meta name="google-site-verification" content="RUl9Kp6f7bHEyfOggzUtAHqBUPWXCNSBOCTPE_Le1Ns" />
 </head>
 
 <body>
 
+    <!-- Global Progress Bar -->
+    <div id="top-progress-bar"></div>
+
     <!-- ===== TOP BAR ===== -->
     <div class="top-bar">
         <div class="container top-bar-inner">
-            <span id="current-date" class="top-date"></span>
+            <div class="top-links">
+                <span id="current-date"></span>
+                <a href="support.html">Support</a>
+            </div>
             <div class="top-links">
                 <span class="live-dot"><span class="dot-pulse"></span> LIVE</span>
-                <a href="support.html">Support</a>
             </div>
         </div>
     </div>
@@ -95,22 +96,34 @@ crossorigin="anonymous"></script>
         </div>
     </header>
 
+    <!-- ===== BREAKING NEWS TICKER ===== -->
+    <div class="breaking-bar">
+        <div class="breaking-label">
+            <i class="fas fa-bolt"></i> BREAKING
+        </div>
+        <div class="ticker-wrapper">
+            <div class="ticker-track" id="ticker-track">
+                <span class="ticker-item">Loading latest headlines…</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== MOBILE MENU ===== -->
-    <div id="mobile-menu" class="mobile-menu-overlay hidden">
+    <div class="mobile-menu-overlay hidden" id="mobile-menu">
         <div class="mobile-menu-drawer">
             <div class="mobile-menu-header">
                 <span class="logo-text-sm">Prime<span>Report</span></span>
                 <button id="close-menu" class="icon-btn"><i class="fas fa-times"></i></button>
             </div>
             <nav class="mobile-nav">
-                <a href="index.html" data-cat="all">🏠 Home</a>
-                <a href="index.html?category=World" data-cat="World">🌍 World</a>
-                <a href="index.html?category=Technology" data-cat="Technology">💻 Technology</a>
-                <a href="index.html?category=Business" data-cat="Business">💼 Business</a>
-                <a href="index.html?category=Politics" data-cat="Politics">🏛️ Politics</a>
-                <a href="index.html?category=Entertainment" data-cat="Entertainment">🎬 Entertainment</a>
-                <a href="index.html?category=Sports" data-cat="Sports">⚽ Sports</a>
-                <a href="index.html?category=Science" data-cat="Science">🔬 Science</a>
+                <a href="index.html">🏠 Home</a>
+                <a href="index.html?category=World">🌍 World</a>
+                <a href="index.html?category=Technology">💻 Technology</a>
+                <a href="index.html?category=Business">💼 Business</a>
+                <a href="index.html?category=Politics">🏛️ Politics</a>
+                <a href="index.html?category=Entertainment">🎬 Entertainment</a>
+                <a href="index.html?category=Sports">⚽ Sports</a>
+                <a href="index.html?category=Science">🔬 Science</a>
             </nav>
             <div class="mobile-menu-footer">
                 <a href="about.html">About</a>
@@ -119,26 +132,18 @@ crossorigin="anonymous"></script>
         </div>
     </div>
 
-    <!-- ===== BREAKING NEWS TICKER ===== -->
-    <div class="breaking-bar">
-        <span class="breaking-label"><i class="fas fa-bolt"></i> BREAKING</span>
-        <div class="ticker-wrapper">
-            <div class="ticker-track" id="breaking-ticker">Loading latest headlines…</div>
-        </div>
-    </div>
-
     <!-- ===== HERO SECTION ===== -->
     <section class="hero-section">
         <div class="container">
-            <div id="hero-layout" class="hero-layout">
-                <!-- Populated by JS -->
+            <div id="hero-container">
+                <!-- Skeleton -->
                 <div class="hero-skeleton">
-                    <div class="skeleton-block skeleton-hero-main"></div>
+                    <div class="skeleton-block skeleton-hero-main shimmer"></div>
                     <div class="hero-side-skeleton">
-                        <div class="skeleton-block"></div>
-                        <div class="skeleton-block"></div>
-                        <div class="skeleton-block"></div>
-                        <div class="skeleton-block"></div>
+                        <div class="skeleton-block shimmer"></div>
+                        <div class="skeleton-block shimmer"></div>
+                        <div class="skeleton-block shimmer"></div>
+                        <div class="skeleton-block shimmer"></div>
                     </div>
                 </div>
             </div>
@@ -147,77 +152,84 @@ crossorigin="anonymous"></script>
 
     <!-- ===== MAIN CONTENT ===== -->
     <main class="site-main">
-        <div class="container main-content-layout">
+        <div class="container">
+            <div class="main-content-layout">
 
-            <!-- LEFT: News Feed -->
-            <div class="news-feed">
-                <div class="section-header">
-                    <h2 id="section-title" class="section-title">
-                        <span class="title-accent"></span> Latest News
-                    </h2>
-                    <div class="category-tabs" id="category-tabs">
-                        <button class="tab-btn active" data-cat="all">All</button>
-                        <button class="tab-btn" data-cat="World">World</button>
-                        <button class="tab-btn" data-cat="Technology">Tech</button>
-                        <button class="tab-btn" data-cat="Business">Business</button>
-                        <button class="tab-btn" data-cat="Sports">Sports</button>
+                <!-- Feed -->
+                <div class="feed-col">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-accent"></span>
+                            Latest News
+                        </h2>
+                        <div class="category-tabs" id="category-tabs">
+                            <button class="tab-btn active" data-cat="all">All</button>
+                            <button class="tab-btn" data-cat="World">World</button>
+                            <button class="tab-btn" data-cat="Technology">Tech</button>
+                            <button class="tab-btn" data-cat="Business">Business</button>
+                            <button class="tab-btn" data-cat="Politics">Politics</button>
+                            <button class="tab-btn" data-cat="Sports">Sports</button>
+                        </div>
+                    </div>
+
+                    <div class="news-grid" id="news-grid">
+                        <!-- Skeleton Cards -->
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+                    </div>
+
+                    <div class="load-more-wrap">
+                        <button class="load-more-btn" id="load-more-btn">
+                            <i class="fas fa-arrow-down"></i> Load more
+                        </button>
                     </div>
                 </div>
 
-                <div id="news-grid" class="news-grid">
-                    <!-- Skeletons -->
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                </div>
+                <!-- Sidebar -->
+                <aside class="sidebar">
 
-                <div class="load-more-wrap">
-                    <button id="load-more-btn" class="load-more-btn">
-                        <span>Load More</span> <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>
+                    <!-- Trending Widget -->
+                    <div class="sidebar-widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-fire"></i> Trending Now</h3>
+                        </div>
+                        <div class="trending-list" id="trending-list">
+                            <div class="trend-item"><div class="trend-num">01</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
+                            <div class="trend-item"><div class="trend-num">02</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
+                            <div class="trend-item"><div class="trend-num">03</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Widget -->
+                    <div class="sidebar-widget newsletter-widget">
+                        <div class="newsletter-icon"><i class="fas fa-envelope"></i></div>
+                        <h3>Stay Updated</h3>
+                        <p>Join 50,000+ readers getting the latest news daily.</p>
+                        <form class="newsletter-form" id="newsletter-form" onsubmit="handleSubscribe(event)">
+                            <input type="email" placeholder="Your email address" required>
+                            <button type="submit"><i class="fas fa-paper-plane"></i> Subscribe Free</button>
+                        </form>
+                    </div>
+
+                    <!-- Ad Widget -->
+                    <div class="sidebar-widget ad-widget">
+                        <div class="ad-label">Advertisement</div>
+                        <div class="ad-box">
+                            <ins class="adsbygoogle"
+                                style="display:block"
+                                data-ad-client="ca-pub-3174617678465799"
+                                data-ad-slot="1234567890"
+                                data-ad-format="auto"
+                                data-full-width-responsive="true"></ins>
+                        </div>
+                    </div>
+
+                </aside>
             </div>
-
-            <!-- RIGHT: Sidebar -->
-            <aside class="sidebar">
-
-                <!-- Trending -->
-                <div class="sidebar-widget">
-                    <div class="widget-header">
-                        <h3><i class="fas fa-fire"></i> Trending Now</h3>
-                    </div>
-                    <div id="trending-list" class="trending-list">
-                        <div class="skeleton-trend"></div>
-                        <div class="skeleton-trend"></div>
-                        <div class="skeleton-trend"></div>
-                        <div class="skeleton-trend"></div>
-                        <div class="skeleton-trend"></div>
-                    </div>
-                </div>
-
-                <!-- Newsletter -->
-                <div class="sidebar-widget newsletter-widget">
-                    <div class="newsletter-icon"><i class="fas fa-envelope-open-text"></i></div>
-                    <h3>Stay Updated</h3>
-                    <p>Join 50,000+ readers getting the latest news daily.</p>
-                    <form class="newsletter-form" onsubmit="handleSubscribe(event)">
-                        <input type="email" placeholder="Your email address" required>
-                        <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
-                    </form>
-                    <div id="subscribe-success" class="subscribe-success hidden">
-                        <i class="fas fa-check-circle"></i> You're subscribed!
-                    </div>
-                </div>
-
-                <!-- Ad Placeholder -->
-                <div class="sidebar-widget ad-widget">
-                    <p class="ad-label">Advertisement</p>
-                    <div class="ad-box"></div>
-                </div>
-            </aside>
         </div>
     </main>
 
@@ -229,13 +241,12 @@ crossorigin="anonymous"></script>
                     <div class="footer-logo">Prime<span>Report</span></div>
                     <p>Premium global news portal delivering accurate, timely reporting from around the world.</p>
                     <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
-
                 <div class="footer-col">
                     <h4>Categories</h4>
                     <ul>
@@ -247,7 +258,6 @@ crossorigin="anonymous"></script>
                         <li><a href="index.html?category=Science">Science</a></li>
                     </ul>
                 </div>
-
                 <div class="footer-col">
                     <h4>Company</h4>
                     <ul>
@@ -257,7 +267,6 @@ crossorigin="anonymous"></script>
                         <li><a href="support.html">Support Center</a></li>
                     </ul>
                 </div>
-
                 <div class="footer-col">
                     <h4>Legal</h4>
                     <ul>
@@ -268,32 +277,17 @@ crossorigin="anonymous"></script>
                     </ul>
                 </div>
             </div>
-
             <div class="footer-bottom">
-                <p>&copy; 2026 PrimeReport. All rights reserved.</p>
-                <p>Made with <i class="fas fa-heart" style="color:#e11d48"></i> for global readers</p>
+                <span>© 2026 PrimeReport. All rights reserved.</span>
+                <span>Made with <i class="fas fa-heart"></i> for global readers</span>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="js/main.js"></script>
-
     <script>
-        // Schema.org NewsMediaOrganization
-        document.addEventListener('DOMContentLoaded', () => {
-            const schema = {
-                "@context": "https://schema.org",
-                "@type": "NewsMediaOrganization",
-                "name": "PrimeReport",
-                "url": window.location.origin,
-                "logo": window.location.origin + "/logo.png"
-            };
-            const el = document.createElement('script');
-            el.type = 'application/ld+json';
-            el.text = JSON.stringify(schema);
-            document.head.appendChild(el);
-        });
+        // Adsbygoogle init
+        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
     </script>
 </body>
 

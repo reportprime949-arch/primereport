@@ -19,7 +19,8 @@ const newsRoutes = require("./routes/news");
 const adminRoutes = require("./routes/admin");
 
 app.use("/api/news", newsRoutes);
-app.use("/api/admin", adminRoutes);
+// Mount admin routes under /api to support /api/rss/fetch, /api/notifications, etc.
+app.use("/api", adminRoutes);
 
 
 /* health check (important for Render) */

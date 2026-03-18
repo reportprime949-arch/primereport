@@ -5,6 +5,28 @@ const API_BASE = window.location.hostname === "localhost"
 const API = `${API_BASE}/api/news/`;
 const PLACEHOLDER = "/images/default.jpg";
 
+/* ─── Progress Bar ─────────────────────────────────────────── */
+const ProgressBar = {
+    el: document.getElementById('top-progress-bar'),
+    start() {
+        if (!this.el) return;
+        this.el.style.width = '30%';
+        this.el.classList.add('loading');
+    },
+    set(percent) {
+        if (!this.el) return;
+        this.el.style.width = percent + '%';
+    },
+    finish() {
+        if (!this.el) return;
+        this.el.style.width = '100%';
+        this.el.classList.remove('loading');
+        setTimeout(() => {
+            this.el.style.width = '0%';
+        }, 500);
+    }
+};
+
 function getId() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id");
@@ -20,6 +42,7 @@ async function loadArticle() {
     }
 
     try {
+        ProgressBar.start();
 
         const res = await fetch(API + encodeURIComponent(id));
         if (!res.ok) throw new Error(`Article API failed: ${res.status}`);
@@ -33,6 +56,7 @@ async function loadArticle() {
         displayArticle(article);
 
     } catch (e) {
+        ProgressBar.finish();
         console.error(e);
         showError();
     }
@@ -45,9 +69,10 @@ function displayArticle(a) {
     if (loader) loader.style.display = "none";
     if (!container) return;
     
+    ProgressBar.finish();
     container.classList.remove("hidden");
+    container.classList.add("fade-in");
     container.style.opacity = '0';
-    container.style.transition = 'opacity 0.6s ease';
 
     const publishDate = new Date(a.publishedAt || a.date);
     const dateStr = !isNaN(publishDate) ? publishDate.toLocaleString('en-US', {

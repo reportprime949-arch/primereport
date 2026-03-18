@@ -18,7 +18,35 @@ const InternalLinkEngine = require("./services/internal-linker");
 const DATA_DIR = path.join(__dirname, "data");
 const FEEDS_FILE = path.join(DATA_DIR, "feeds.json");
 const CACHE_DIR = path.join(DATA_DIR, "rss_cache");
-const FALLBACK_IMAGE = "/assets/image/news-placeholder.jpg";
+const FALLBACK_IMAGE = "https://via.placeholder.com/600x400?text=PrimeReport";
+
+/**
+ * Validates if an image URL is working by sending a HEAD request.
+ * Returns true if status is 200, false otherwise.
+ */
+async function validateImageUrl(url) {
+    if (!url || typeof url !== 'string' || !url.startsWith('http')) return false;
+    try {
+        const response = await axios.head(url, {
+            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
+            timeout: 5000
+        });
+        return response.status === 200;
+    } catch (err) {
+        // Fallback to GET if HEAD fails (some servers block HEAD)
+        try {
+            const response = await axios.get(url, {
+                headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
+                timeout: 5000,
+                maxContentLength: 1024 * 1024 // Limit to 1MB
+            });
+            return response.status === 200;
+        } catch (getErr) {
+            console.warn(`[RSS] Image validation failed for ${url}: ${getErr.message}`);
+            return false;
+        }
+    }
+}
 
 const parser = new Parser({
   customFields: {
@@ -140,9 +168,9 @@ class NewsFetcher {
             let finalImage = null;
 
             // Priority 1: RSS media:content, media:thumbnail or enclosure
-            if (item.mediaContent && item.mediaContent.$?.url) {
+            if (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) {
                 finalImage = item.mediaContent.$.url;
-            } else if (item.mediaThumbnail && item.mediaThumbnail.$?.url) {
+            } else if (item.mediaThumbnail && item.mediaThumbnail.$ && item.mediaThumbnail.$.url) {
                 finalImage = item.mediaThumbnail.$.url;
             } else if (item.enclosure && item.enclosure.url) {
                 finalImage = item.enclosure.url;
@@ -155,18 +183,37 @@ class NewsFetcher {
 
             // Priority 3: AI Generated Image (Fallback if scraping yielded nothing)
             if (!finalImage || isLogoUrl(finalImage) || finalImage.length < 10) {
-                finalImage = await generateImage(finalTitle);
+                try {
+                    finalImage = await generateImage(finalTitle);
+                } catch (aiImgErr) {
+                    console.warn(`[RSS] AI Image generation failed: ${aiImgErr.message}`);
+                }
             }
 
-            // Priority 4: Mandatory Fallback (/images/default.jpg)
-            if (!finalImage || isLogoUrl(finalImage)) {
-                finalImage = "/images/default.jpg";
+            // --- STRICT IMAGE VALIDATION ---
+            // Requirement 5: Skip any article that does NOT have a valid image URL
+            if (!finalImage || isLogoUrl(finalImage) || finalImage.trim() === "") {
+                console.log(`[RSS] Skipping article (No image): ${finalTitle}`);
+                continue;
             }
+
+            const isValid = await validateImageUrl(finalImage);
+            if (!isValid) {
+                console.log(`[RSS] Skipping article (Invalid/Unreachable image): ${finalTitle} - ${finalImage}`);
+                continue;
+            }
+            // -------------------------------
 
             // Phase 6: Localize and Optimize Image
-            const { optimizeAndStoreImage } = require("./services/image-service");
             const optimizedImage = await optimizeAndStoreImage(finalImage);
-            finalImage = optimizedImage;
+            if (!optimizedImage || optimizedImage === finalImage && !finalImage.startsWith('/')) {
+                 // If optimization failed and we still have a remote URL, 
+                 // we can either keep it or skip it based on strictness.
+                 // For now, let's keep it if validated, but update finalImage.
+                 finalImage = optimizedImage || finalImage;
+            } else {
+                 finalImage = optimizedImage;
+            }
 
             const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
             const isBreaking = (Date.now() - pubDate.getTime()) < (45 * 60 * 1000);

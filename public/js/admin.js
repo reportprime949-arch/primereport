@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 const API_URL =
     (window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
-        : 'https://primereport-server.onrender.com') + '/api/admin';
+        : 'https://primereport-server.onrender.com') + '/api';
 
 // == Authentication & Fetch Wrapper ==
 
@@ -13,52 +13,39 @@ async function authFetch(url, options = {}) {
     try {
         let token = localStorage.getItem("adminToken");
         
-        // If no token in local storage, wait for it from Firebase
         if (!token) {
-            token = await new Promise((resolve, reject) => {
+            token = await new Promise((resolve) => {
                 const unsubscribe = onAuthStateChanged(auth, async (user) => {
                     unsubscribe();
-                    if (user) {
-                        const t = await user.getIdToken();
-                        localStorage.setItem("adminToken", t);
-                        resolve(t);
-                    } else {
-                        reject(new Error("No user"));
-                    }
+                    if (user) resolve(await user.getIdToken());
+                    else resolve(null);
                 });
             });
+            if (token) localStorage.setItem("adminToken", token);
         }
 
-        const response = await fetchWithToken(url, options, token);
+        if (!token) throw new Error("Not authenticated");
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            ...(options.headers || {})
+        };
+        const res = await fetch(url.startsWith('http') ? url : `${API_URL}${url}`, { ...options, headers });
         
-        // Handle token expiration
-        if (response.status === 401) {
+        if (res.status === 401) {
             localStorage.removeItem("adminToken");
-            // Retry once with a fresh token
-            const freshToken = await new Promise((resolve, reject) => {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) resolve(await user.getIdToken());
-                    else reject(new Error("Unauthorized"));
-                });
-            });
-            return await fetchWithToken(url, options, freshToken);
+            // Recursive retry once with fresh auth
+            return authFetch(url, options);
         }
-        
-        return response;
+        return res;
     } catch (err) {
         console.warn("Auth fetch failed:", err);
-        window.location.href = 'login.html';
+        if (!url.includes('/notifications')) { // Avoid redirect loops on background checks
+            window.location.href = 'login.html';
+        }
         throw err;
     }
-}
-
-async function fetchWithToken(url, options, token) {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...(options.headers || {})
-    };
-    return await fetch(url.startsWith('http') ? url : `${API_URL}${url}`, { ...options, headers });
 }
 
 // == UI Utilities ==
@@ -586,24 +573,52 @@ window.saveRssFeed = async () => {
     } catch (e) { showToast('Error saving feed', 'error'); }
 };
 
-window.triggerManualFetch = async () => {
+window.triggerManualSync = async () => {
     const btn = event?.currentTarget;
     const icon = btn?.querySelector('i');
     if (icon) icon.classList.add('fa-spin');
+    if (btn) btn.disabled = true;
     
-    showToast('Incremental sync started...');
+    showToast('Syncing with RSS feeds...');
     try {
         const res = await authFetch('/rss/fetch', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-            showToast(`Sync complete! Found ${data.count} new articles.`);
-            loadDashboardStats();
-            if (typeof loadArticles === 'function') loadArticles();
-            updateSystemStatus('Core Engine', 'Operational');
+            showToast(`Sync successful! ${data.count} new articles added.`);
+            // Auto Update Main Website Requirement: Use window.location.reload()
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            throw new Error(data.error || 'Sync failed');
         }
     } catch (e) {
-        showToast('Sync failed', 'error');
-        updateSystemStatus('Core Engine', 'Error', 'red');
+        showToast('Sync error: ' + e.message, 'error');
+    } finally {
+        if (icon) icon.classList.remove('fa-spin');
+        if (btn) btn.disabled = false;
+    }
+};
+
+window.triggerManualFetch = window.triggerManualSync; // Compatibility alias for rss.html
+
+window.triggerSystemReset = async () => {
+    if (!confirm("Are you sure? This will wipe the current database and perform a deep re-fetch. This cannot be undone.")) return;
+    
+    const btn = event?.currentTarget;
+    const icon = btn?.querySelector('i');
+    if (icon) icon.classList.add('fa-spin');
+    
+    showToast('Initiating deep refresh...', 'info');
+    try {
+        const res = await authFetch('/refresh', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            showToast('System reset complete! Reloading content...');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            throw new Error(data.error || 'Reset failed');
+        }
+    } catch (e) {
+        showToast('Deep Refresh failed: ' + e.message, 'error');
     } finally {
         if (icon) icon.classList.remove('fa-spin');
     }
@@ -637,15 +652,33 @@ async function loadAiSettings() {
 }
 
 window.saveAiSettings = async () => {
+    const saveBtn = event?.target.querySelector('button[type="submit"]') || document.querySelector('#ai-settings-form button[type="submit"]');
+    const originalText = saveBtn ? saveBtn.innerHTML : '';
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    }
+
     const payload = {
         aiApiKey: document.getElementById('ai-api-key').value,
         aiPrompt: document.getElementById('ai-prompt').value,
         aiAutoPublish: document.getElementById('auto-publish-toggle').checked
     };
     try {
-        const res = await authFetch('/ai-settings', { method: 'POST', body: JSON.stringify(payload) });
-        if (res.ok) showToast('AI settings saved!');
-    } catch (e) { showToast('Error saving AI settings', 'error'); }
+        const res = await authFetch('/settings/ai-settings', { method: 'POST', body: JSON.stringify(payload) });
+        if (res.ok) {
+            showToast('AI Intelligence Config updated!');
+        } else {
+            throw new Error('Save failed');
+        }
+    } catch (e) { 
+        showToast('Error: ' + e.message, 'error'); 
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText || '<i class="fas fa-save"></i> Save Settings';
+        }
+    }
 };
 
 async function loadQueue() {
@@ -780,6 +813,13 @@ async function loadSettings() {
 }
 
 window.saveGlobalSettings = async () => {
+    const saveBtn = event?.target.querySelector('button[type="submit"]') || document.querySelector('#settings-form button[type="submit"]');
+    const originalText = saveBtn ? saveBtn.innerHTML : '';
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    }
+
     const payload = {
         siteName: document.getElementById('siteName').value,
         logoUrl: document.getElementById('logoUrl').value,
@@ -791,10 +831,18 @@ window.saveGlobalSettings = async () => {
     };
     try {
         const res = await authFetch('/settings', { method: 'POST', body: JSON.stringify(payload) });
-        if (res.ok) showToast('Settings saved successfully!');
-        else showToast('Failed to save settings', 'error');
+        if (res.ok) {
+            showToast('Global Settings updated!');
+        } else {
+            throw new Error('Save failed');
+        }
     } catch (e) {
-        showToast('Error saving settings', 'error');
+        showToast('Error: ' + e.message, 'error');
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText || '<i class="fas fa-save"></i> Save Settings';
+        }
     }
 };
 

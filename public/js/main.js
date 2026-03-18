@@ -8,13 +8,35 @@ const API_BASE = window.location.hostname === "localhost"
     ? "http://localhost:3000"
     : "https://primereport-server.onrender.com";
 
-const PLACEHOLDER = '/images/default.jpg';
+const PLACEHOLDER = 'https://via.placeholder.com/600x400?text=PrimeReport';
 
 let allArticles   = [];
 let currentPage   = 1;
 let currentCat    = 'all';
 let isLoadingMore = false;
 let hasMore       = true;
+
+/* ─── Progress Bar ─────────────────────────────────────────── */
+const ProgressBar = {
+    el: document.getElementById('top-progress-bar'),
+    start() {
+        if (!this.el) return;
+        this.el.style.width = '30%';
+        this.el.classList.add('loading');
+    },
+    set(percent) {
+        if (!this.el) return;
+        this.el.style.width = percent + '%';
+    },
+    finish() {
+        if (!this.el) return;
+        this.el.style.width = '100%';
+        this.el.classList.remove('loading');
+        setTimeout(() => {
+            this.el.style.width = '0%';
+        }, 500);
+    }
+};
 
 /* ─── Bootstrap ─────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -64,11 +86,8 @@ function initTheme() {
 
 /* ─── Header scroll shadow ──────────────────────────────────── */
 function initHeader() {
-    const header = document.getElementById('site-header');
-    if (!header) return;
-    window.addEventListener('scroll', () => {
-        header.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
+    // Header is now solid sticky via CSS
+    return;
 }
 
 /* ─── Mobile Menu ───────────────────────────────────────────── */
@@ -137,82 +156,76 @@ function initCategoryTabs() {
     });
 }
 
-/* ─── HERO SECTION ─────────────────────────────────────────── */
 async function loadHero() {
-    const layout = document.getElementById('hero-layout');
-    if (!layout) return;
+    const container = document.getElementById('hero-container');
+    if (!container) return;
 
-    // Show Hero Skeletons
-    layout.innerHTML = `
-        <div class="hero-main skeleton-block shimmer"></div>
-        <div class="hero-side">
-            <div class="skeleton-block shimmer" style="height:90px; border-radius:8px;"></div>
-            <div class="skeleton-block shimmer" style="height:90px; border-radius:8px;"></div>
-            <div class="skeleton-block shimmer" style="height:90px; border-radius:8px;"></div>
-            <div class="skeleton-block shimmer" style="height:90px; border-radius:8px;"></div>
-        </div>
-    `;
+    ProgressBar.start();
 
     try {
-        // 1. Fetch hero articles
         const res = await fetch(`${API_BASE}/api/news/hero`);
         if (!res.ok) throw new Error("Hero fetch failed");
         let articles = await res.json();
 
-        // 2. Fallback to breaking news if hero is empty
         if (!articles || articles.length === 0) {
-            const breakingRes = await fetch(`${API_BASE}/api/news/breaking`);
-            articles = await breakingRes.json();
+            const br = await fetch(`${API_BASE}/api/news/breaking`);
+            articles = await br.json();
         }
 
         if (!articles || articles.length === 0) {
-            layout.innerHTML = `<p class="col-span-full py-20 text-center opacity-60">No featured stories available.</p>`;
+            container.innerHTML = `<p style="padding:40px;text-align:center;opacity:.6">No featured stories available.</p>`;
             return;
         }
 
-        const featured = articles.slice(0, 5);
-        const [main, ...sides] = featured;
+        const [main, ...sides] = articles.slice(0, 5);
+        const catCls = catClass(main.category);
 
-        layout.innerHTML = `
-        <div class="hero-main" onclick="openArticle('${main.slug || main.id}')">
-            <img src="${main.image || main.urlToImage || PLACEHOLDER}" 
-                 alt="${escHtml(main.title)}" 
-                 class="hero-main-img" 
-                 loading="eager"
-                 onerror="this.onerror=null;this.src='/images/default.jpg'">
-            <div class="hero-main-overlay"></div>
-            <div class="hero-main-content">
-                <div class="cat-badge ${catClass(main.category)}">${main.category || 'World'}</div>
-                <h2>${escHtml(main.title)}</h2>
-                <div class="hero-meta">
-                    <span><i class="far fa-clock"></i> ${timeAgo(main.publishedAt || main.date)}</span>
-                    <span class="meta-divider"></span>
-                    <span><i class="fas fa-newspaper"></i> ${escHtml(main.source || 'PrimeReport')}</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-side">
-            ${sides.map(article => `
-            <div class="hero-side-card" onclick="openArticle('${article.slug || article.id}')">
-                <img src="${article.image || article.urlToImage || PLACEHOLDER}" 
-                     alt="${escHtml(article.title)}" 
-                     class="side-img" 
-                     loading="lazy"
+        container.innerHTML = `
+        <div class="hero-layout">
+            <div class="hero-main" onclick="openArticle('${main.slug || main.id}')">
+                <img src="${main.image || main.urlToImage || PLACEHOLDER}"
+                     alt="${escHtml(main.title)}"
+                     class="hero-main-img"
+                     loading="eager"
                      onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
-                <div class="hero-side-content">
-                    <div class="cat-badge ${catClass(article.category)}" style="margin-bottom:6px;">${article.category || 'News'}</div>
-                    <h3>${escHtml(article.title)}</h3>
-                    <div class="side-meta"><i class="far fa-clock"></i> ${timeAgo(article.publishedAt || article.date)}</div>
+                <div class="hero-main-overlay"></div>
+                <div class="hero-main-content">
+                    <div class="cat-badge ${catCls}">${main.category || 'World'}</div>
+                    <h2>${escHtml(main.title)}</h2>
+                    <p class="excerpt">${escHtml(main.summary || main.description || '')}</p>
+                    <div class="hero-meta">
+                        <span><i class="far fa-clock"></i> ${timeAgo(main.publishedAt || main.date)}</span>
+                        <span><i class="fas fa-newspaper"></i> ${escHtml(main.source || 'PrimeReport')}</span>
+                    </div>
                 </div>
             </div>
-            `).join('')}
+            <div class="hero-side">
+                ${sides.map(a => {
+                    const cls = catClass(a.category);
+                    return `
+                    <div class="hero-side-card" onclick="openArticle('${a.slug || a.id}')">
+                        <img src="${a.image || a.urlToImage || PLACEHOLDER}"
+                             alt="${escHtml(a.title)}"
+                             class="side-img"
+                             loading="lazy"
+                             onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+                        <div class="hero-side-content">
+                            <div class="cat-badge ${cls}">${a.category || 'News'}</div>
+                            <h3>${escHtml(a.title)}</h3>
+                            <div class="side-meta">${timeAgo(a.publishedAt || a.date)}</div>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
         </div>`;
+        ProgressBar.finish();
     } catch (e) {
+        ProgressBar.finish();
         console.warn('[Hero] Error:', e);
-        layout.innerHTML = `<p class="col-span-full py-20 text-center opacity-60">Featured section temporarily unavailable.</p>`;
+        container.innerHTML = `<p style="padding:40px;text-align:center;opacity:.6">Featured section temporarily unavailable.</p>`;
     }
 }
+
 
 /* ─── NEWS GRID ─────────────────────────────────────────────── */
 async function loadNewsGrid(cat) {
@@ -229,6 +242,7 @@ async function loadNewsGrid(cat) {
 
     if (isLoadingMore || (!hasMore && currentPage > 1)) return;
     isLoadingMore = true;
+    ProgressBar.start();
 
     try {
         // Optimized fetch with cache busting and better error handling
@@ -272,6 +286,7 @@ async function loadNewsGrid(cat) {
         }
     } finally {
         isLoadingMore = false;
+        ProgressBar.finish();
         const btn = document.getElementById('load-more-btn');
         btn?.classList.remove('loading');
     }
@@ -294,21 +309,19 @@ function renderCards(articles, append) {
         const slugOrId = article.slug || article.id;
         card.innerHTML = `
             <div class="card-img" onclick="openArticle('${slugOrId}')">
-                <img class="card-img-inner" 
-                     src="${article.image || article.urlToImage || PLACEHOLDER}" 
-                     alt="${escHtml(article.title)}" 
+                <img src="${article.image || article.urlToImage || PLACEHOLDER}"
+                     alt="${escHtml(article.title)}"
+                     class="card-img-inner"
                      loading="lazy"
                      onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
             </div>
             <div class="card-body">
                 <div class="cat-badge ${catClass(article.category)}">${article.category || 'News'}</div>
                 <h3 onclick="openArticle('${slugOrId}')">${escHtml(article.title)}</h3>
-                <p class="card-excerpt">${escHtml(article.summary || '')}</p>
+                <p class="card-excerpt">${escHtml(article.summary || article.description || '')}</p>
                 <div class="card-footer">
                     <span class="card-time"><i class="far fa-clock"></i> ${timeAgo(article.publishedAt || article.date)}</span>
-                    <span class="read-btn">
-                        Read <i class="fas fa-arrow-right"></i>
-                    </span>
+                    <span class="read-btn">Read <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>`;
         
@@ -316,6 +329,7 @@ function renderCards(articles, append) {
         
         // Trigger animation
         requestAnimationFrame(() => {
+            card.classList.add('fade-in');
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
         });
@@ -347,7 +361,7 @@ function initLoadMore() {
 
 /* ─── BREAKING TICKER ───────────────────────────────────────── */
 async function loadBreakingTicker() {
-    const track = document.getElementById('breaking-ticker');
+    const track = document.getElementById('ticker-track');
     if (!track) return;
 
     try {
@@ -357,9 +371,9 @@ async function loadBreakingTicker() {
 
         if (articles?.length) {
             const spans = articles
-                .map(article => `<span class="ticker-item" onclick="openArticle('${article.slug || article.id}')" style="cursor:pointer">${escHtml(article.title)}</span>`)
+                .map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')" style="cursor:pointer">${escHtml(a.title)}</span>`)
                 .join('');
-            track.innerHTML = spans + spans;  // duplicate for seamless loop
+            track.innerHTML = spans + spans; // duplicate for loop
         }
     } catch (e) {
         track.textContent = 'Latest global news loading…';
@@ -373,14 +387,7 @@ async function loadTrending() {
 
     // Show skeletons
     list.innerHTML = Array.from({ length: 5 }, () => `
-        <div class="trend-item skeleton-trend-item">
-            <div class="trend-num skeleton-block shimmer" style="width:20px; height:20px;"></div>
-            <div class="trend-thumb skeleton-block shimmer" style="width:64px; height:64px; border-radius:8px;"></div>
-            <div class="trend-content">
-                <div class="skeleton-block shimmer" style="height:15px; margin-bottom:8px;"></div>
-                <div class="skeleton-block shimmer" style="height:10px; width:40%;"></div>
-            </div>
-        </div>
+        <div class="trend-item shimmer" style="height:80px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border);"></div>
     `).join('');
 
     try {
@@ -402,18 +409,18 @@ async function loadTrending() {
 
         list.innerHTML = items.slice(0, 5).map((article, i) => {
             const slugOrId = article.slug || article.id;
+            const cls = catClass(article.category);
             return `
             <div class="trend-item" onclick="openArticle('${slugOrId}')">
                 <div class="trend-num">0${i + 1}</div>
                 <div class="trend-thumb">
-                    <img src="${article.image || article.urlToImage || PLACEHOLDER}" 
-                         onerror="this.onerror=null;this.src='${PLACEHOLDER}'" 
-                         loading="lazy"
-                         alt="Trend">
+                    <img src="${article.image || article.urlToImage || PLACEHOLDER}"
+                         alt="${escHtml(article.title)}"
+                         onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
                 </div>
                 <div class="trend-content">
                     <h4>${escHtml(article.title)}</h4>
-                    <div class="trend-cat">${escHtml(article.category || 'Trending')}</div>
+                    <div class="trend-cat ${cls}">${escHtml(article.category || 'Trending')}</div>
                 </div>
             </div>`;
         }).join('');
@@ -443,9 +450,15 @@ function generateSkeletons(count) {
     return Array.from({ length: count }, () => `
         <div class="skeleton-card">
             <div class="skeleton-img shimmer"></div>
-            <div class="skeleton-text title shimmer"></div>
-            <div class="skeleton-text shimmer"></div>
-            <div class="skeleton-text short shimmer"></div>
+            <div class="skeleton-content">
+                <div class="skeleton-badge shimmer"></div>
+                <div class="skeleton-title shimmer"></div>
+                <div class="skeleton-desc shimmer"></div>
+                <div class="skeleton-footer">
+                    <div class="skeleton-meta shimmer"></div>
+                    <div class="skeleton-meta shimmer"></div>
+                </div>
+            </div>
         </div>
     `).join('');
 }

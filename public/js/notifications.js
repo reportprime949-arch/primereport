@@ -1,7 +1,7 @@
-import { auth } from './firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth } from './firebase.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const API_URL = '/api/admin';
+const API_URL = (window.location.hostname === 'localhost' ? 'http://localhost:3000' : '') + '/api/admin';
 let allNotifs = [];
 let currentFilter = 'all';
 
@@ -13,7 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function authFetch(url, options = {}) {
-    const user = auth.currentUser;
+    let user = auth.currentUser;
+    if (!user) {
+        // Wait for auth if not ready
+        user = await new Promise((resolve) => {
+            const unsub = onAuthStateChanged(auth, u => {
+                unsub();
+                resolve(u);
+            });
+        });
+    }
     if (!user) throw new Error("Not authenticated");
     const token = await user.getIdToken();
     const headers = {
@@ -39,15 +48,23 @@ function initNotificationsPage() {
 }
 
 async function loadNotifications() {
+    const list = document.getElementById('notifications-list');
     try {
         const res = await authFetch('/notifications');
-        if (!res.ok) throw new Error("Failed to fetch");
+        if (!res.ok) throw new Error("Failed to fetch notifications");
         allNotifs = await res.json();
         renderNotifications();
         updateGlobalBadge();
     } catch (e) {
         console.error(e);
-        document.getElementById('notifications-list').innerHTML = '<p class="error-msg">Failed to load notifications.</p>';
+        if (list) {
+            list.innerHTML = `
+                <div class="empty-state" style="padding: 40px; text-align: center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #ef4444; margin-bottom: 10px;"></i>
+                    <p>Failed to load notifications. Please check your connection.</p>
+                </div>
+            `;
+        }
     }
 }
 

@@ -77,11 +77,14 @@ router.get("/analytics", verifyAdmin, (req, res) => {
 /* =========================
    ARTICLES
  ========================= */
+/* =========================
+   ARTICLES
+ ========================= */
 router.get("/articles", verifyAdmin, articleController.getAll);
 router.post(["/article", "/articles"], verifyAdmin, articleController.create);
 router.put(["/article/:id", "/articles/:id"], verifyAdmin, articleController.update);
 router.delete(["/article/:id", "/articles/:id"], verifyAdmin, articleController.delete);
-router.post("/news/reset", verifyAdmin, articleController.reset);
+router.post(["/news/reset", "/refresh"], verifyAdmin, articleController.reset);
 
 /* =========================
    NOTIFICATIONS
@@ -104,7 +107,7 @@ router.post(["/rss-sync", "/rss/sync", "/rss/fetch"], verifyAdmin, rssController
    SETTINGS & AI
  ========================= */
 router.get("/settings/:type?", verifyAdmin, settingsController.getSettings);
-router.post("/settings/:type?", verifyAdmin, settingsController.saveSettings);
+router.post(["/settings/:type?", "/settings"], verifyAdmin, settingsController.saveSettings);
 router.get("/ai-settings", verifyAdmin, settingsController.getAi);
 router.post("/ai-settings", verifyAdmin, settingsController.saveAi);
 
