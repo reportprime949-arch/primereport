@@ -1,8 +1,0 @@
-[
-  { "id": "cat_1", "name": "World", "slug": "world", "icon": "fas fa-globe" },
-  { "id": "cat_2", "name": "India", "slug": "india", "icon": "fas fa-flag" },
-  { "id": "cat_3", "name": "Technology", "slug": "technology", "icon": "fas fa-microchip" },
-  { "id": "cat_4", "name": "Business", "slug": "business", "icon": "fas fa-briefcase" },
-  { "id": "cat_5", "name": "Health", "slug": "health", "icon": "fas fa-heartbeat" },
-  { "id": "cat_6", "name": "Science", "slug": "science", "icon": "fas fa-flask" }
-]

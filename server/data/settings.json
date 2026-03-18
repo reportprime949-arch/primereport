@@ -1,9 +1,0 @@
-{
-  "siteName": "PrimeReport",
-  "logoUrl": "../../logo.png",
-  "contactEmail": "reportprime949@gmail.com",
-  "defaultAuthor": "Admin",
-  "footerText": "© 2026 PrimeReport. All rights reserved.",
-  "rssSyncInterval": 1,
-  "adsEnabled": true
-}
