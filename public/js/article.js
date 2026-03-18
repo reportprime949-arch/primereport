@@ -1,6 +1,4 @@
-const API_BASE = window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://primereport-server.onrender.com";
+const API_BASE = "https://primereport-server.onrender.com";
 
 const API = `${API_BASE}/api/news/`;
 const PLACEHOLDER = "/images/default.jpg";

@@ -1,7 +1,7 @@
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const API_URL = (window.location.hostname === 'localhost' ? 'http://localhost:3000' : '') + '/api/admin';
+const API_URL = 'https://primereport-server.onrender.com/api/admin';
 let allNotifs = [];
 let currentFilter = 'all';
 

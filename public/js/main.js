@@ -2,9 +2,7 @@
    PrimeReport — main.js  (Ultra-Fast Performance Edition)
    ============================================================== */
 
-const API_BASE = window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://primereport-server.onrender.com";
+const API_BASE = "https://primereport-server.onrender.com";
 
 const PLACEHOLDER = 'hero.webp';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
@@ -155,8 +153,9 @@ function initCategoryTabs() {
 async function loadPortalTop() {
     try {
         const res = await fetch(`${API_BASE}/api/news/hero`);
+        if (!res.ok) throw new Error('API Error');
         const articles = await res.json();
-        if (!articles?.length) return;
+        if (!articles?.length) throw new Error('No articles found');
         
         // 1. Hero
         const hero = articles[0];
@@ -195,6 +194,8 @@ async function loadPortalTop() {
         }
     } catch (e) {
         console.warn('[Portal Top] Failed', e);
+        renderError('portal-hero', 'Failed to load breaking news. Please check your connection to the server.');
+        renderError('portal-top-stories', 'Failed to load top stories.');
     }
 }
 
@@ -203,8 +204,10 @@ async function loadCategoryBlock(category, containerId) {
     if (!container) return;
     try {
         const res = await fetch(`${API_BASE}/api/news?category=${category}&limit=4`);
+        if (!res.ok) throw new Error('API Error');
         const data = await res.json();
         const articles = data.articles || [];
+        if (!articles.length) throw new Error('No articles');
         container.innerHTML = articles.map(a => `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
@@ -218,7 +221,9 @@ async function loadCategoryBlock(category, containerId) {
                 </div>
             </div>
         `).join('');
-    } catch(e) {}
+    } catch(e) {
+        renderError(containerId, `Failed to load ${category} news. Ensure the API is running.`);
+    }
 }
 
 async function loadCategoryBlocks() {
@@ -235,12 +240,15 @@ async function loadBreakingTicker() {
     if (!track) return;
     try {
         const res = await fetch(`${API_BASE}/api/news/breaking`);
+        if (!res.ok) throw new Error('API Error');
         const articles = await res.json();
         if (articles?.length) {
             const html = articles.map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')">${escHtml(a.title)}</span>`).join('');
             track.innerHTML = html + html;
         }
-    } catch (e) {}
+    } catch (e) {
+        if (track) track.innerHTML = '<span class="ticker-item" style="color:var(--text-muted)">Live updates currently unavailable. Connection to server failed.</span>';
+    }
 }
 
 async function loadPortalTrending() {
@@ -248,6 +256,7 @@ async function loadPortalTrending() {
     if (!list) return;
     try {
         const res = await fetch(`${API_BASE}/api/news/trending`);
+        if (!res.ok) throw new Error('API Error');
         const items = await res.json();
         if (items?.length) {
             list.innerHTML = items.slice(0, 5).map((a, i) => `
@@ -258,11 +267,26 @@ async function loadPortalTrending() {
                         <div class="editorial-meta-sm">${timeAgo(a.publishedAt)}</div>
                     </div>
                 </div>`).join('');
+        } else {
+            throw new Error('No trending items');
         }
-    } catch (e) {}
+    } catch (e) {
+        renderError('portal-trending', 'Trending feed offline.');
+    }
 }
 
 /* ─── HELPERS ───────────────────────────────────────────────── */
+function renderError(containerId, message) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = `
+        <div style="padding:40px 20px;text-align:center;color:var(--text-muted);background:var(--gray-100);border-radius:4px;width:100%;border:1px dashed var(--border);">
+            <i class="fas fa-exclamation-triangle" style="font-size:24px;color:var(--red);margin-bottom:12px;"></i>
+            <p style="font-size:14px;font-weight:600;">${escHtml(message)}</p>
+        </div>
+    `;
+}
+
 function openArticle(id) { window.location.href = `article.html?id=${encodeURIComponent(id)}`; }
 
 function timeAgo(date) {
