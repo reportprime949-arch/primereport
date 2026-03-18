@@ -55,10 +55,25 @@ router.get("/", async (req, res) => {
             articles = ArticleStore.getByCategory(category, true);
         }
 
+        // Final fallback to raw data file if RSS fetches fail
+        if (articles.length === 0) {
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const raw = fs.readFileSync(path.join(__dirname, '../data/articles.json'), 'utf8');
+                const parsed = JSON.parse(raw);
+                if (category === "all") articles = parsed;
+                else articles = parsed.filter(a => a.category?.toLowerCase() === category);
+            } catch (e) {
+                console.warn("[API] Fallback articles file not found or invalid.");
+            }
+        }
+
         articles.sort((a, b) => new Date(b.publishedAt || b.date || 0) - new Date(a.publishedAt || a.date || 0));
 
         const start = (page - 1) * limit;
         const result = {
+            success: true,
             page,
             limit,
             total: articles.length,
@@ -68,9 +83,10 @@ router.get("/", async (req, res) => {
         // Save to cache
         NEWS_CACHE.set(cacheKey, { time: Date.now(), data: result });
         
+        console.log("Articles sent:", result.articles.length);
         res.json(result);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch news" });
+        res.status(500).json({ success: false, error: "Failed to fetch news" });
     }
 });
 

@@ -190,17 +190,15 @@ class NewsFetcher {
                 }
             }
 
-            // --- STRICT IMAGE VALIDATION ---
-            // Requirement 5: Skip any article that does NOT have a valid image URL
+            // --- IMAGE FALLBACK ---
+            // Requirement: Never skip articles. Assign fallback image.
             if (!finalImage || isLogoUrl(finalImage) || finalImage.trim() === "") {
-                console.log(`[RSS] Skipping article (No image): ${finalTitle}`);
-                continue;
-            }
-
-            const isValid = await validateImageUrl(finalImage);
-            if (!isValid) {
-                console.log(`[RSS] Skipping article (Invalid/Unreachable image): ${finalTitle} - ${finalImage}`);
-                continue;
+                finalImage = "/assets/image/news-placeholder.jpg";
+            } else {
+                const isValid = await validateImageUrl(finalImage);
+                if (!isValid) {
+                    finalImage = "/assets/image/news-placeholder.jpg";
+                }
             }
             // -------------------------------
 
