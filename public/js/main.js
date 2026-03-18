@@ -193,9 +193,7 @@ async function loadPortalTop() {
             `).join('');
         }
     } catch (e) {
-        console.warn('[Portal Top] Failed', e);
-        renderError('portal-hero', 'Failed to load breaking news. Please check your connection to the server.');
-        renderError('portal-top-stories', 'Failed to load top stories.');
+        console.warn('[Portal Top] Failed to load data', e);
     }
 }
 
@@ -206,8 +204,8 @@ async function loadCategoryBlock(category, containerId) {
         const res = await fetch(`${API_BASE}/api/news?category=${category}&limit=4`);
         if (!res.ok) throw new Error('API Error');
         const data = await res.json();
-        const articles = data.articles || [];
-        if (!articles.length) throw new Error('No articles');
+        const articles = (data.articles || []).slice(0, 4);
+        if (!articles.length) return;
         container.innerHTML = articles.map(a => `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
@@ -222,7 +220,7 @@ async function loadCategoryBlock(category, containerId) {
             </div>
         `).join('');
     } catch(e) {
-        renderError(containerId, `Failed to load ${category} news. Ensure the API is running.`);
+        console.warn(`[Category] Failed to load ${category}`, e);
     }
 }
 
@@ -247,7 +245,7 @@ async function loadBreakingTicker() {
             track.innerHTML = html + html;
         }
     } catch (e) {
-        if (track) track.innerHTML = '<span class="ticker-item" style="color:var(--text-muted)">Live updates currently unavailable. Connection to server failed.</span>';
+        console.warn('[Ticker] Failed to load', e);
     }
 }
 
@@ -271,21 +269,11 @@ async function loadPortalTrending() {
             throw new Error('No trending items');
         }
     } catch (e) {
-        renderError('portal-trending', 'Trending feed offline.');
+        console.warn('[Trending] Failed to load', e);
     }
 }
 
 /* ─── HELPERS ───────────────────────────────────────────────── */
-function renderError(containerId, message) {
-    const el = document.getElementById(containerId);
-    if (!el) return;
-    el.innerHTML = `
-        <div style="padding:40px 20px;text-align:center;color:var(--text-muted);background:var(--gray-100);border-radius:4px;width:100%;border:1px dashed var(--border);">
-            <i class="fas fa-exclamation-triangle" style="font-size:24px;color:var(--red);margin-bottom:12px;"></i>
-            <p style="font-size:14px;font-weight:600;">${escHtml(message)}</p>
-        </div>
-    `;
-}
 
 function openArticle(id) { window.location.href = `article.html?id=${encodeURIComponent(id)}`; }
 

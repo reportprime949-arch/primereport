@@ -34,59 +34,22 @@ const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 /**
  * GET /api/news
  */
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
     try {
-        const category = (req.query.category || "world").toLowerCase();
-        const page = parseInt(req.query.page || "1");
-        const limit = parseInt(req.query.limit || "12");
-        const cacheKey = `${category}-${page}-${limit}`;
-
-        // Check cache
-        const cached = NEWS_CACHE.get(cacheKey);
-        if (cached && Date.now() - cached.time < CACHE_TTL) {
-            return res.json(cached.data);
-        }
-
-        let articles = category === "all" ? ArticleStore.getAll(true) : ArticleStore.getByCategory(category, true);
+        const category = req.query.category;
+        let articles = ArticleStore.getAll();
         
-        // Greedy fallback if store is empty for this category
-        if (articles.length === 0) {
-            await fetchAndProcessNews(category);
-            articles = ArticleStore.getByCategory(category, true);
+        if (category && category.toLowerCase() !== "all") {
+            articles = articles.filter(a =>
+                a.category && a.category.toLowerCase() === category.toLowerCase()
+            );
         }
 
-        // Final fallback to raw data file if RSS fetches fail
-        if (articles.length === 0) {
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const raw = fs.readFileSync(path.join(__dirname, '../data/articles.json'), 'utf8');
-                const parsed = JSON.parse(raw);
-                if (category === "all") articles = parsed;
-                else articles = parsed.filter(a => a.category?.toLowerCase() === category);
-            } catch (e) {
-                console.warn("[API] Fallback articles file not found or invalid.");
-            }
-        }
-
-        articles.sort((a, b) => new Date(b.publishedAt || b.date || 0) - new Date(a.publishedAt || a.date || 0));
-
-        const start = (page - 1) * limit;
-        const result = {
-            success: true,
-            page,
-            limit,
-            total: articles.length,
-            articles: articles.slice(start, start + limit)
-        };
-
-        // Save to cache
-        NEWS_CACHE.set(cacheKey, { time: Date.now(), data: result });
-        
-        console.log("Articles count:", result.articles.length);
-        res.json(result);
+        console.log("API RESPONSE:", articles.length);
+        res.json({ success: true, articles });
     } catch (error) {
-        res.status(500).json({ success: false, error: "Failed to fetch news" });
+        console.error("API Error:", error);
+        res.json({ success: false, articles: [] });
     }
 });
 
