@@ -219,8 +219,8 @@ async function optimizeAndStoreImage(imageUrl) {
         });
 
         await sharp(response.data)
-            .resize(800, 450, { fit: 'cover', withoutEnlargement: true })
-            .webp({ quality: 80 })
+            .resize({ width: 800, withoutEnlargement: true })
+            .webp({ quality: 65, effort: 6 })
             .toFile(filePath);
 
         return publicPath;

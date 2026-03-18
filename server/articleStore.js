@@ -13,6 +13,21 @@ class ArticleStore {
         this.init();
     }
 
+    static toLite(a) {
+        if (!a) return null;
+        return {
+            id: a.id,
+            slug: a.slug,
+            title: a.title,
+            summary: a.summary ? a.summary.substring(0, 120) + '...' : '',
+            image: a.image,
+            category: a.category,
+            source: a.source,
+            publishedAt: a.publishedAt,
+            isBreaking: a.isBreaking
+        };
+    }
+
     init() {
         try {
             if (fs.existsSync(ARTICLES_FILE)) {
@@ -76,13 +91,15 @@ class ArticleStore {
     getById(id) { return this.articles.get(String(id)); }
     getBySlug(slug) { return this.slugs.get(String(slug)); }
 
-    getAll() {
-        return Array.from(this.articles.values());
+    getAll(lite = false) {
+        const all = Array.from(this.articles.values());
+        return lite ? all.map(ArticleStore.toLite) : all;
     }
 
-    getByCategory(category) {
+    getByCategory(category, lite = false) {
         const cat = String(category || 'world').toLowerCase();
-        return this.getAll().filter(a => (a.category || '').toLowerCase() === cat);
+        const filtered = this.getAll().filter(a => (a.category || '').toLowerCase() === cat);
+        return lite ? filtered.map(ArticleStore.toLite) : filtered;
     }
 
     getTrending(limit = 5) { return this.trending.slice(0, limit); }

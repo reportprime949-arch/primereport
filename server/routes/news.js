@@ -29,7 +29,7 @@ router.get("/breaking", (req, res) => {
 });
 
 const NEWS_CACHE = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
 /**
  * GET /api/news
@@ -47,19 +47,15 @@ router.get("/", async (req, res) => {
             return res.json(cached.data);
         }
 
-        let articles = category === "all" ? ArticleStore.getAll() : ArticleStore.getByCategory(category);
+        let articles = category === "all" ? ArticleStore.getAll(true) : ArticleStore.getByCategory(category, true);
         
         // Greedy fallback if store is empty for this category
         if (articles.length === 0) {
             await fetchAndProcessNews(category);
-            articles = ArticleStore.getByCategory(category);
+            articles = ArticleStore.getByCategory(category, true);
         }
 
-        articles.sort((a, b) => {
-            const dateA = new Date(a.publishedAt || a.date || 0);
-            const dateB = new Date(b.publishedAt || b.date || 0);
-            return dateB - dateA;
-        });
+        articles.sort((a, b) => new Date(b.publishedAt || b.date || 0) - new Date(a.publishedAt || a.date || 0));
 
         const start = (page - 1) * limit;
         const result = {

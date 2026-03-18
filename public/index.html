@@ -15,9 +15,15 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://primereport-news.netlify.app/">
 
-    <!-- Fonts -->
+    <!-- Performance Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preload" href="css/prime.css" as="style">
+    <link rel="preload" href="js/main.js" as="script">
+    <link rel="preload" as="image" href="hero.webp">
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
 
     <!-- Icons -->
@@ -26,17 +32,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="css/prime.css">
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-KPL3F3WTF0');
-    </script>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799" crossorigin="anonymous"></script>
+    <!-- Google Analytics and AdSense Deferred to Body Bottom -->
     <meta name="google-site-verification" content="RUl9Kp6f7bHEyfOggzUtAHqBUPWXCNSBOCTPE_Le1Ns" />
 </head>
 
@@ -63,7 +59,7 @@
         <div class="container header-inner">
             <!-- Logo -->
             <a href="index.html" class="logo">
-                <img src="logo.png" alt="PrimeReport" class="logo-img"
+                <img src="logo.png" alt="PrimeReport" class="logo-img" width="120" height="44" loading="eager"
                     onerror="this.style.display='none';document.querySelector('.logo-text').style.display='flex'">
                 <span class="logo-text" style="display:none">Prime<span>Report</span></span>
             </a>
@@ -132,103 +128,85 @@
         </div>
     </div>
 
-    <!-- ===== HERO SECTION ===== -->
-    <section class="hero-section">
-        <div class="container">
-            <div id="hero-container">
-                <!-- Skeleton -->
-                <div class="hero-skeleton">
-                    <div class="skeleton-block skeleton-hero-main shimmer"></div>
-                    <div class="hero-side-skeleton">
-                        <div class="skeleton-block shimmer"></div>
-                        <div class="skeleton-block shimmer"></div>
-                        <div class="skeleton-block shimmer"></div>
-                        <div class="skeleton-block shimmer"></div>
-                    </div>
+    <!-- ===== EDITORIAL PORTAL TOP ===== -->
+    <section class="portal-top-section">
+        <div class="container portal-top-grid">
+            <!-- Left/Center: Main Breaking Hero -->
+            <div class="portal-main-hero" id="portal-hero">
+                <div class="hero-skeleton" style="height: 480px; background: #f1f5f9; border-radius: 8px;"></div>
+            </div>
+            
+            <!-- Right: Top Stories List -->
+            <div class="portal-top-stories">
+                <div class="portal-section-header">
+                    <h3>Top Stories</h3>
+                </div>
+                <div class="top-stories-list" id="portal-top-stories">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+            
+            <!-- Far Right: Trending List -->
+            <div class="portal-trending-stories">
+                <div class="portal-section-header">
+                    <h3>Trending Now</h3>
+                </div>
+                <div class="trending-list-editorial" id="portal-trending">
+                    <!-- Injected via JS -->
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="site-main">
+    <!-- ===== CATEGORY BLOCKS ===== -->
+    <main class="site-main editorial-main">
         <div class="container">
-            <div class="main-content-layout">
-
-                <!-- Feed -->
-                <div class="feed-col">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <span class="title-accent"></span>
-                            Latest News
-                        </h2>
-                        <div class="category-tabs" id="category-tabs">
-                            <button class="tab-btn active" data-cat="all">All</button>
-                            <button class="tab-btn" data-cat="World">World</button>
-                            <button class="tab-btn" data-cat="Technology">Tech</button>
-                            <button class="tab-btn" data-cat="Business">Business</button>
-                            <button class="tab-btn" data-cat="Politics">Politics</button>
-                            <button class="tab-btn" data-cat="Sports">Sports</button>
-                        </div>
-                    </div>
-
-                    <div class="news-grid" id="news-grid">
-                        <!-- Skeleton Cards -->
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                        <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text title shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-                    </div>
-
-                    <div class="load-more-wrap">
-                        <button class="load-more-btn" id="load-more-btn">
-                            <i class="fas fa-arrow-down"></i> Load more
-                        </button>
+            <!-- World News Block -->
+            <section class="category-block">
+                <div class="portal-section-header with-border">
+                    <h2><span class="title-accent"></span>World News</h2>
+                    <a href="index.html?category=World" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="news-grid editorial-grid" id="block-world"></div>
+            </section>
+            
+            <!-- Technology Block -->
+            <section class="category-block mt-40">
+                <div class="portal-section-header with-border">
+                    <h2><span class="title-accent"></span>Technology</h2>
+                    <a href="index.html?category=Technology" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="news-grid editorial-grid" id="block-technology"></div>
+            </section>
+            
+            <!-- Business Block -->
+            <section class="category-block mt-40">
+                <div class="portal-section-header with-border">
+                    <h2><span class="title-accent"></span>Business</h2>
+                    <a href="index.html?category=Business" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="news-grid editorial-grid" id="block-business"></div>
+            </section>
+            
+            <!-- Utility Widgets (Ad & Newsletter) -->
+            <div class="editorial-utilities mt-40">
+                <!-- Newsletter Widget -->
+                <div class="sidebar-widget newsletter-widget editorial-newsletter">
+                    <div class="newsletter-icon"><i class="fas fa-envelope"></i></div>
+                    <h3>Subscribe to Daily Briefing</h3>
+                    <p>Get the most important stories curated by our editors directly to your inbox.</p>
+                    <form class="newsletter-form" id="newsletter-form" onsubmit="handleSubscribe(event)">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+                <!-- Ad Widget -->
+                <div class="sidebar-widget ad-widget editorial-ad">
+                    <div class="ad-label">Advertisement</div>
+                    <div class="ad-box">
+                        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3174617678465799" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     </div>
                 </div>
-
-                <!-- Sidebar -->
-                <aside class="sidebar">
-
-                    <!-- Trending Widget -->
-                    <div class="sidebar-widget">
-                        <div class="widget-header">
-                            <h3><i class="fas fa-fire"></i> Trending Now</h3>
-                        </div>
-                        <div class="trending-list" id="trending-list">
-                            <div class="trend-item"><div class="trend-num">01</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
-                            <div class="trend-item"><div class="trend-num">02</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
-                            <div class="trend-item"><div class="trend-num">03</div><div class="trend-thumb"><div class="skeleton-block shimmer" style="width:64px;height:64px;border-radius:8px;"></div></div><div class="trend-content"><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div></div>
-                        </div>
-                    </div>
-
-                    <!-- Newsletter Widget -->
-                    <div class="sidebar-widget newsletter-widget">
-                        <div class="newsletter-icon"><i class="fas fa-envelope"></i></div>
-                        <h3>Stay Updated</h3>
-                        <p>Join 50,000+ readers getting the latest news daily.</p>
-                        <form class="newsletter-form" id="newsletter-form" onsubmit="handleSubscribe(event)">
-                            <input type="email" placeholder="Your email address" required>
-                            <button type="submit"><i class="fas fa-paper-plane"></i> Subscribe Free</button>
-                        </form>
-                    </div>
-
-                    <!-- Ad Widget -->
-                    <div class="sidebar-widget ad-widget">
-                        <div class="ad-label">Advertisement</div>
-                        <div class="ad-box">
-                            <ins class="adsbygoogle"
-                                style="display:block"
-                                data-ad-client="ca-pub-3174617678465799"
-                                data-ad-slot="1234567890"
-                                data-ad-format="auto"
-                                data-full-width-responsive="true"></ins>
-                        </div>
-                    </div>
-
-                </aside>
             </div>
         </div>
     </main>
@@ -284,11 +262,58 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- ===== BOTTOM NAV (MOBILE) ===== -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="bottom-nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="index.html?category=World" class="bottom-nav-item">
+            <i class="fas fa-globe"></i>
+            <span>World</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <i class="fas fa-fire"></i>
+            <span>Trending</span>
+        </a>
+        <a href="#" class="bottom-nav-item" id="bottom-nav-categories">
+            <i class="fas fa-th-large"></i>
+            <span>Categories</span>
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- Deferred Third-Party Scripts -->
     <script>
-        // Adsbygoogle init
-        try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        // Delay heavy scripts to improve performance
+        setTimeout(() => {
+            // Google Analytics
+            const gaScript = document.createElement('script');
+            gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0";
+            gaScript.async = true;
+            document.body.appendChild(gaScript);
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-KPL3F3WTF0');
+
+            // Google AdSense
+            const adScript = document.createElement('script');
+            adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799";
+            adScript.async = true;
+            adScript.crossOrigin = "anonymous";
+            document.body.appendChild(adScript);
+            
+            // Adsbygoogle init
+            setTimeout(() => {
+                try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+            }, 500);
+        }, 3000); // 3-second delay for third-party scripts
     </script>
+    <script src="js/main.js" defer></script>
 </body>
 
 </html>
