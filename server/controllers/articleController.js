@@ -2,7 +2,7 @@ const { NewsFetcher, ArticleStore } = require("../rss-fetcher");
 
 exports.getAll = (req, res) => {
     const articles = ArticleStore.getAll();
-    console.log("Articles sent:", articles.length);
+    console.log("Articles count:", articles.length);
     res.json({ success: true, articles });
 };
 

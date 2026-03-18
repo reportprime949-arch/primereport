@@ -83,7 +83,7 @@ router.get("/", async (req, res) => {
         // Save to cache
         NEWS_CACHE.set(cacheKey, { time: Date.now(), data: result });
         
-        console.log("Articles sent:", result.articles.length);
+        console.log("Articles count:", result.articles.length);
         res.json(result);
     } catch (error) {
         res.status(500).json({ success: false, error: "Failed to fetch news" });

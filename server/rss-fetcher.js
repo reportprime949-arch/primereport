@@ -193,11 +193,11 @@ class NewsFetcher {
             // --- IMAGE FALLBACK ---
             // Requirement: Never skip articles. Assign fallback image.
             if (!finalImage || isLogoUrl(finalImage) || finalImage.trim() === "") {
-                finalImage = "/assets/image/news-placeholder.jpg";
+                finalImage = "https://via.placeholder.com/400x250?text=News";
             } else {
                 const isValid = await validateImageUrl(finalImage);
                 if (!isValid) {
-                    finalImage = "/assets/image/news-placeholder.jpg";
+                    finalImage = "https://via.placeholder.com/400x250?text=News";
                 }
             }
             // -------------------------------

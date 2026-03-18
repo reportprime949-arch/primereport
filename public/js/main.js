@@ -164,7 +164,7 @@ async function loadPortalTop() {
             heroContainer.innerHTML = `
                 <div class="editorial-hero-card" onclick="openArticle('${hero.slug || hero.id}')">
                     <img src="${hero.image || hero.urlToImage || PLACEHOLDER}" alt="${escHtml(hero.title)}" 
-                         class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high">
+                         class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                     <div class="editorial-hero-overlay"></div>
                     <div class="editorial-hero-content">
                         <span class="cat-badge">${hero.category || 'Breaking'}</span>
@@ -184,7 +184,7 @@ async function loadPortalTop() {
         if (topContainer) {
             topContainer.innerHTML = topStories.map(a => `
                 <div class="editorial-top-story" onclick="openArticle('${a.slug || a.id}')">
-                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" class="top-story-img" loading="lazy">
+                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                     <div class="top-story-content">
                         <h4>${escHtml(a.title)}</h4>
                         <div class="editorial-meta-sm">${timeAgo(a.publishedAt)} &bull; ${escHtml(a.source || 'Prime')}</div>
@@ -211,7 +211,7 @@ async function loadCategoryBlock(category, containerId) {
         container.innerHTML = articles.map(a => `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
-                    <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy">
+                    <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                 </div>
                 <div class="editorial-card-body">
                     <div class="editorial-cat-label">${a.category || category}</div>

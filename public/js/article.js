@@ -96,7 +96,7 @@ function displayArticle(a) {
             </header>
 
             <div class="article-featured-image">
-                <img src="${a.image || PLACEHOLDER}" 
+                <img src="${a.image || PLACEHOLDER}" onerror="this.src='https://via.placeholder.com/400x250?text=News'"
                      alt="${escHtml(a.title)}"
                      loading="eager"
                      onerror="this.onerror=null;this.src='/images/default.jpg'">
