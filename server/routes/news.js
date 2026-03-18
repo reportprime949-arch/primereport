@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
         
         if (category && category.toLowerCase() !== "all") {
             articles = articles.filter(a =>
-                a.category && a.category.toLowerCase() === category.toLowerCase()
+                a.category && a.category.toLowerCase().includes(category.toLowerCase())
             );
         }
 

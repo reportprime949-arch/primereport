@@ -200,6 +200,12 @@ class NewsFetcher {
                     finalImage = "https://via.placeholder.com/400x250?text=PrimeReport";
                 }
             }
+
+            // --- FORCE FULL URL ---
+            if (finalImage.startsWith("/")) {
+                finalImage = "https://primereport-server.onrender.com" + finalImage;
+            }
+
             // -------------------------------
 
             // Phase 6: Localize and Optimize Image
@@ -222,7 +228,7 @@ class NewsFetcher {
               summary: rawSummary.substring(0, 300),
               content: expandedContent,
               link: realLink,
-              category: feed.category || "World",
+              category: (feed.category || "world").toLowerCase(),
               source: sourceName,
               publishedAt: pubDate,
               image: finalImage,

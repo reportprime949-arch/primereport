@@ -136,6 +136,15 @@ function initSearch() {
 
 /* ─── Category Tabs ─────────────────────────────────────────── */
 function initCategoryTabs() {
+    // Phase 2 Fix: Add listeners to nav-links for category clicks
+    document.querySelectorAll(".nav-link").forEach(link => {
+        link.addEventListener("click", (e) => {
+            const category = e.target.innerText.toLowerCase();
+            detectActiveCat(); // Update active states
+            loadCategory(category);
+        });
+    });
+
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const cat = btn.dataset.cat;
@@ -144,10 +153,29 @@ function initCategoryTabs() {
             currentPage = 1;
             hasMore = true;
             allArticles = [];
-            loadNewsGrid(cat);
+            loadCategory(cat);
         });
     });
 }
+
+async function loadCategory(category) {
+    try {
+        const res = await fetch(`${API_BASE}/api/news?category=${category}`);
+        const data = await res.json();
+
+        if (!data.articles || !data.articles.length) {
+            console.warn("No articles for", category);
+        }
+
+        renderFilteredCards(data.articles || []);
+
+    } catch (err) {
+        console.error("Category load failed:", err);
+    }
+}
+
+// Map loadNewsGrid to the new loadCategory for compatibility if needed
+const loadNewsGrid = loadCategory;
 
 /* ─── EDITORIAL PORTAL LOADERS ───────────────────────────────── */
 async function loadPortalTop() {
@@ -164,7 +192,8 @@ async function loadPortalTop() {
             heroContainer.innerHTML = `
                 <div class="editorial-hero-card" onclick="openArticle('${hero.slug || hero.id}')">
                     <img src="${hero.image || hero.urlToImage || PLACEHOLDER}" alt="${escHtml(hero.title)}" 
-                         class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
+                         class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high" 
+                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                     <div class="editorial-hero-overlay"></div>
                     <div class="editorial-hero-content">
                         <span class="cat-badge">${hero.category || 'Breaking'}</span>
@@ -209,7 +238,8 @@ async function loadCategoryBlock(category, containerId) {
         container.innerHTML = articles.map(a => `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
-                    <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
+                    <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" 
+                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
                 </div>
                 <div class="editorial-card-body">
                     <div class="editorial-cat-label">${a.category || category}</div>
