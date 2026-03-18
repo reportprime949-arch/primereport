@@ -231,14 +231,15 @@ class NewsFetcher {
               category: (feed.category || "world").toLowerCase(),
               source: sourceName,
               publishedAt: pubDate,
-              image: finalImage,
+              // User requirement: image fallback to thumbnails/enclosures
+              image: finalImage || item.mediaThumbnail?.url || item.enclosure?.url || "https://via.placeholder.com/400x250?text=PrimeReport",
               isBreaking: isBreaking,
               views: Math.floor(Math.random() * 500) + 100,
               seo: seoEngine.generateMeta({ 
                   title: finalTitle, 
                   summary: rawSummary, 
                   category: feed.category, 
-                  image: finalImage,
+                  image: finalImage || "https://via.placeholder.com/400x250?text=PrimeReport",
                   link: realLink
               })
             };

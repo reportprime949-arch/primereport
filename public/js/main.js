@@ -137,9 +137,17 @@ function initSearch() {
 /* ─── Category Tabs ─────────────────────────────────────────── */
 function initCategoryTabs() {
     // Phase 2 Fix: Add listeners to nav-links for category clicks
+    const CAT_MAP = {
+        'tech': 'technology',
+        'world news': 'world',
+        'breaking news': 'all',
+        'home': 'all'
+    };
+
     document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", (e) => {
-            const category = e.target.innerText.toLowerCase();
+            let category = e.target.innerText.trim().toLowerCase();
+            category = CAT_MAP[category] || category;
             detectActiveCat(); // Update active states
             loadCategory(category);
         });
@@ -160,11 +168,17 @@ function initCategoryTabs() {
 
 async function loadCategory(category) {
     try {
+        console.log(`[Diagnostic] Fetching category: ${category}`);
         const res = await fetch(`${API_BASE}/api/news?category=${category}`);
         const data = await res.json();
+        
+        console.log(`Fetched Articles [${category}]:`, data.articles);
 
         if (!data.articles || !data.articles.length) {
             console.warn("No articles for", category);
+            // Replace error boxes with "No articles available"
+            renderNoArticles(category);
+            return;
         }
 
         renderFilteredCards(data.articles || []);
@@ -174,6 +188,11 @@ async function loadCategory(category) {
     }
 }
 
+function renderNoArticles(category) {
+    const grid = document.getElementById('news-grid');
+    if (grid) grid.innerHTML = `<div class="no-data">No articles available for ${category} at this time.</div>`;
+}
+
 // Map loadNewsGrid to the new loadCategory for compatibility if needed
 const loadNewsGrid = loadCategory;
 
@@ -181,8 +200,17 @@ const loadNewsGrid = loadCategory;
 async function loadPortalTop() {
     try {
         const res = await fetch(`${API_BASE}/api/news/hero`);
-        if (!res.ok) throw new Error('API Error');
-        const articles = await res.json();
+        let articles = await res.json();
+        
+        // Fallback: Slice from general news if hero is empty
+        if (!articles || articles.length === 0) {
+            console.warn('[Portal Top] Hero API empty, falling back to general news slice');
+            const genRes = await fetch(`${API_BASE}/api/news`);
+            const genData = await genRes.json();
+            articles = (genData.articles || []).slice(0, 5);
+        }
+
+        console.log("Fetched Articles [Top Stories]:", articles);
         if (!articles?.length) throw new Error('No articles found');
         
         // 1. Hero
@@ -193,7 +221,7 @@ async function loadPortalTop() {
                 <div class="editorial-hero-card" onclick="openArticle('${hero.slug || hero.id}')">
                     <img src="${hero.image || hero.urlToImage || PLACEHOLDER}" alt="${escHtml(hero.title)}" 
                          class="editorial-hero-img" width="800" height="500" loading="eager" fetchpriority="high" 
-                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
+                         onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
                     <div class="editorial-hero-overlay"></div>
                     <div class="editorial-hero-content">
                         <span class="cat-badge">${hero.category || 'Breaking'}</span>
@@ -208,12 +236,13 @@ async function loadPortalTop() {
         }
         
         // 2. Top Stories (Right Col)
+        // User request: Top Stories -> first 5 articles (excluding hero usually, but let's take 1-5 as per layout)
         const topStories = articles.slice(1, 5);
         const topContainer = document.getElementById('portal-top-stories');
         if (topContainer) {
             topContainer.innerHTML = topStories.map(a => `
                 <div class="editorial-top-story" onclick="openArticle('${a.slug || a.id}')">
-                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=News'">
+                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
                     <div class="top-story-content">
                         <h4>${escHtml(a.title)}</h4>
                         <div class="editorial-meta-sm">${timeAgo(a.publishedAt)} &bull; ${escHtml(a.source || 'Prime')}</div>
@@ -231,15 +260,18 @@ async function loadCategoryBlock(category, containerId) {
     if (!container) return;
     try {
         const res = await fetch(`${API_BASE}/api/news?category=${category}&limit=4`);
-        if (!res.ok) throw new Error('API Error');
         const data = await res.json();
+        console.log(`Fetched Articles [${category}]:`, data.articles);
         const articles = (data.articles || []).slice(0, 4);
-        if (!articles.length) return;
+        if (!articles.length) {
+            container.innerHTML = `<div style="padding:20px; color:var(--text-muted); font-size:13px;">No ${category} updates available.</div>`;
+            return;
+        }
         container.innerHTML = articles.map(a => `
             <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
                 <div class="card-img-wrap">
                     <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" 
-                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
+                         onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
                 </div>
                 <div class="editorial-card-body">
                     <div class="editorial-cat-label">${a.category || category}</div>
@@ -258,7 +290,11 @@ async function loadCategoryBlocks() {
     await Promise.all([
         loadCategoryBlock('World', 'block-world'),
         loadCategoryBlock('Technology', 'block-technology'),
-        loadCategoryBlock('Business', 'block-business')
+        loadCategoryBlock('Business', 'block-business'),
+        loadCategoryBlock('Politics', 'block-politics'),
+        loadCategoryBlock('Entertainment', 'block-entertainment'),
+        loadCategoryBlock('Sports', 'block-sports'),
+        loadCategoryBlock('Science', 'block-science')
     ]);
 }
 
@@ -284,8 +320,18 @@ async function loadPortalTrending() {
     if (!list) return;
     try {
         const res = await fetch(`${API_BASE}/api/news/trending`);
-        if (!res.ok) throw new Error('API Error');
-        const items = await res.json();
+        let items = await res.json();
+        
+        // Fallback: Slice from general news if trending is empty
+        if (!items || items.length === 0) {
+            console.warn('[Portal Trending] Trending API empty, falling back to general news slice');
+            const genRes = await fetch(`${API_BASE}/api/news`);
+            const genData = await genRes.json();
+            // User requirement: Trending -> load next 5 articles (e.g., 5-10)
+            items = (genData.articles || []).slice(5, 10);
+        }
+
+        console.log("Fetched Articles [Trending]:", items);
         if (items?.length) {
             list.innerHTML = items.slice(0, 5).map((a, i) => `
                 <div class="editorial-trend-item" onclick="openArticle('${a.slug || a.id}')">
@@ -296,7 +342,7 @@ async function loadPortalTrending() {
                     </div>
                 </div>`).join('');
         } else {
-            throw new Error('No trending items');
+            list.innerHTML = `<div style="padding:10px; color:var(--text-muted); font-size:13px;">No trending news at the moment.</div>`;
         }
     } catch (e) {
         console.warn('[Trending] Failed to load', e);

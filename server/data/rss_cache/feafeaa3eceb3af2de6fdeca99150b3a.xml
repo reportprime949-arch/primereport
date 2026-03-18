@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+    <channel>
+        <title><![CDATA[BBC News]]></title>
+        <description><![CDATA[BBC News - World]]></description>
+        <link>https://www.bbc.co.uk/news/world</link>
+        <image>
+            <url>https://news.bbcimg.co.uk/nol/shared/img/bbc_news_120x60.gif</url>
+            <title>BBC News</title>
+            <link>https://www.bbc.co.uk/news/world</link>
+        </image>
+        <generator>RSS for Node</generator>
+        <lastBuildDate>Wed, 18 Mar 2026 18:00:31 GMT</lastBuildDate>
+        <atom:link href="https://feeds.bbci.co.uk/news/world/rss.xml" rel="self" type="application/rss+xml"/>
+        <copyright><![CDATA[Copyright: (C) British Broadcasting Corporation, see https://www.bbc.co.uk/usingthebbc/terms-of-use/#15metadataandrssfeeds for terms and conditions of reuse.]]></copyright>
+        <language><![CDATA[en-gb]]></language>
+        <ttl>15</ttl>
+        <item>
+            <title><![CDATA[Iran's intelligence minister Esmail Khatib killed in air strike]]></title>
+            <description><![CDATA[Israel said it had killed Khatib, whose death was confirmed by Iranian President Masoud Pezeshkian on Wednesday. ]]></description>
+            <link>https://www.bbc.com/news/articles/c2d1dz14k51o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c2d1dz14k51o#0</guid>
+            <pubDate>Wed, 18 Mar 2026 17:05:46 GMT</pubDate>
+            <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/595c/live/d5b5f0e0-22e2-11f1-9c64-25f36d76b36f.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA['Very difficult to stop': BBC visits scene of Iran cluster bomb strike on Israel]]></title>
+            <description><![CDATA[An elderly couple was killed after a bomb flew into their apartment in central Israel and exploded.]]></description>
+            <link>https://www.bbc.com/news/articles/cwy9yldgn7qo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cwy9yldgn7qo#0</guid>
+            <pubDate>Wed, 18 Mar 2026 16:04:29 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b43e/live/c8e1b7c0-22ef-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Russian archaeologist can be sent to Ukraine for trial, Polish judge rules]]></title>
+            <description><![CDATA[Archaeologist Alexander Butyagin is accused of conducting illegal excavations in Crimea - Ukraine's peninsula annexed by Russia. 
+]]></description>
+            <link>https://www.bbc.com/news/articles/c86y65j26xno?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c86y65j26xno#0</guid>
+            <pubDate>Wed, 18 Mar 2026 16:39:00 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0e9e/live/f6424ba0-22de-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Norway prosecutor asks for seven years' jail for crown princess's son in rape trial]]></title>
+            <description><![CDATA[Prosecutors in the trial of Marius Borg Høiby argue he should be found guilty of 39 of the 40 charges he is accused of.]]></description>
+            <link>https://www.bbc.com/news/articles/c74741pgleko?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c74741pgleko#0</guid>
+            <pubDate>Wed, 18 Mar 2026 12:44:12 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/c9be/live/b46fbe00-22d0-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Hittler faces Zielinski as French town's election contest goes viral]]></title>
+            <description><![CDATA[Charles Hittler, mayor of Arcis-sur-Aube, has always faced jokes about his name but now he faces a rival with another unlikely name.]]></description>
+            <link>https://www.bbc.com/news/articles/c2d1drzgxzyo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c2d1drzgxzyo#0</guid>
+            <pubDate>Wed, 18 Mar 2026 13:57:26 GMT</pubDate>
+            <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3b51/live/eb5bdef0-22ce-11f1-b72c-95dabe3e6755.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[US judge orders Trump administration to reopen Voice of America]]></title>
+            <description><![CDATA[Some 85% of VOA staff were laid off by Trump who accused the international broadcaster of bias.]]></description>
+            <link>https://www.bbc.com/news/articles/ce3g3j1y2ldo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/ce3g3j1y2ldo#0</guid>
+            <pubDate>Wed, 18 Mar 2026 11:01:43 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3b0f/live/d8346f80-4ea9-11f0-9e07-7900e9cdda16.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Oil nears $110 a barrel after gas field strike]]></title>
+            <description><![CDATA[Iran's military warned it would take "decisive action" in response to the strike on its energy infrastructure. ]]></description>
+            <link>https://www.bbc.com/news/articles/c78x83lpgngo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c78x83lpgngo#1</guid>
+            <pubDate>Wed, 18 Mar 2026 17:41:23 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b8fb/live/167b5fd0-22e7-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[King Charles greets Nigerian president in Windsor sunshine]]></title>
+            <description><![CDATA[The King and President Tinubu will give speeches later at the state banquet, to be attended by political leaders and celebrities.]]></description>
+            <link>https://www.bbc.com/news/articles/cedzqqp9x2do?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cedzqqp9x2do#1</guid>
+            <pubDate>Wed, 18 Mar 2026 14:58:11 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7537/live/de9eac10-22e2-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Quantum pioneers win Turing Award for encryption breakthrough]]></title>
+            <description><![CDATA[It is hoped Charles H Bennett and Gilles Brassard's work will make digital communications secure for decades ahead.]]></description>
+            <link>https://www.bbc.com/news/articles/c7474004g01o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c7474004g01o#1</guid>
+            <pubDate>Wed, 18 Mar 2026 15:23:16 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2703/live/f9246120-22d7-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Italy warns Russian tanker could explode in Mediterranean at any time]]></title>
+            <description><![CDATA[Italy is one of nine EU countries urging the European Commission to act over the Arctic Metagaz, drifting out of control in the Mediterranean Sea.]]></description>
+            <link>https://www.bbc.com/news/articles/cn9e9dxw3e1o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cn9e9dxw3e1o#1</guid>
+            <pubDate>Tue, 17 Mar 2026 19:21:00 GMT</pubDate>
+            <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/727c/live/d3ad3890-2232-11f1-b26d-cd49b90fee82.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Top US counterterrorism official resigns over Iran war, urging Trump to 'reverse course']]></title>
+            <description><![CDATA[National Counterterrorism Center Director Joe Kent says Trump "started this war due to pressure from Israel and its powerful American lobby".]]></description>
+            <link>https://www.bbc.com/news/articles/cg4g66r3z40o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cg4g66r3z40o#1</guid>
+            <pubDate>Wed, 18 Mar 2026 02:12:16 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0b41/live/90b14820-220e-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Spanish king reopens debate on conquest of Mexico by acknowledging 'abuse']]></title>
+            <description><![CDATA[King Felipe appears to have helped thaw frosty relations with Mexico while reviving a fierce debate over events 500 years ago.]]></description>
+            <link>https://www.bbc.com/news/articles/c33j3ne2mjlo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c33j3ne2mjlo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 18:55:17 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/8ff7/live/2064f3d0-2224-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Air strike hit Kabul rehab centre as patients ate dinner, survivor tells BBC]]></title>
+            <description><![CDATA[The exact number killed in Monday night's strike by Pakistan is still not known, but is feared to be in the hundreds.]]></description>
+            <link>https://www.bbc.com/news/articles/ckg1kgz6wkgo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/ckg1kgz6wkgo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 18:45:54 GMT</pubDate>
+            <media:thumbnail width="240" height="162" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2090/live/10ef2a40-2230-11f1-a79a-77e93010d956.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[US Attorney General Bondi formally summoned to Congress in Epstein case]]></title>
+            <description><![CDATA[It comes weeks after a Republican lawmaker accused the justice department of a "cover-up" in releasing the Epstein files.]]></description>
+            <link>https://www.bbc.com/news/articles/cwyky51jwl0o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cwyky51jwl0o#1</guid>
+            <pubDate>Tue, 17 Mar 2026 18:59:17 GMT</pubDate>
+            <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/74f9/live/a7bc4a00-2232-11f1-b26d-cd49b90fee82.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Water supply cut in Moldova after oil spill blamed on Russian strike in Ukraine]]></title>
+            <description><![CDATA[Moldova has imposed a 15-day state of alert in the Dniester river basin as a precaution.]]></description>
+            <link>https://www.bbc.com/news/articles/cwy98qnpg1jo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cwy98qnpg1jo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 16:10:06 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/91ac/live/15f950b0-21f9-11f1-9256-9b680459597d.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Pakistan air strike kills at least 100 at Kabul drug rehab centre]]></title>
+            <description><![CDATA[Some of the bodies were injured beyond recognition, forensic laboratory sources told the BBC.]]></description>
+            <link>https://www.bbc.com/news/articles/c4g8n7e0l40o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c4g8n7e0l40o#1</guid>
+            <pubDate>Tue, 17 Mar 2026 12:38:49 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/f1f8/live/5f67f710-21cc-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Chile's president begins building border barrier less than week into term]]></title>
+            <description><![CDATA[José Antonio Kast visited the ditch - a few feet wide and deep - on Monday, calling it a "milestone".]]></description>
+            <link>https://www.bbc.com/news/articles/cvg1227k00eo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cvg1227k00eo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 15:49:46 GMT</pubDate>
+            <media:thumbnail width="240" height="134" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/bd28/live/758493c0-2210-11f1-bf90-75745ee3e0e5.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[And the burger goes to... Michael B Jordan marks Oscars win at In-N-Out]]></title>
+            <description><![CDATA[Hours after winning best actor, Jordan joins an exclusive list of famous faces to celebrate an Oscar victory with a burger.]]></description>
+            <link>https://www.bbc.com/news/articles/cpd8w5y0dpdo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cpd8w5y0dpdo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 04:41:58 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/fa47/live/5f39f750-21ce-11f1-a79a-77e93010d956.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Utah mother who wrote book about grief found guilty of poisoning husband]]></title>
+            <description><![CDATA[A jury found that Kouri Richins killed her husband in March 2022 by poisoning him with a fentanyl-laced drink.]]></description>
+            <link>https://www.bbc.com/news/articles/cdxg1nx2r61o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cdxg1nx2r61o#1</guid>
+            <pubDate>Tue, 17 Mar 2026 01:14:04 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/de27/live/879861c0-21f9-11f1-a79a-77e93010d956.png"/>
+        </item>
+        <item>
+            <title><![CDATA[Aspiring female Zambian politicians were asked for sexual favours, official says  ]]></title>
+            <description><![CDATA[These reports harm attempts to close the wide gender representation gap in Zambia, activists say.]]></description>
+            <link>https://www.bbc.com/news/articles/cm28ldvj3jvo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cm28ldvj3jvo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 13:31:08 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/31c9/live/e1d39630-220f-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Sri Lanka declares Wednesdays off as Asian countries try to conserve fuel]]></title>
+            <description><![CDATA[This is the latest in a series of measures undertaken by Asian countries which rely on oil from the Gulf.]]></description>
+            <link>https://www.bbc.com/news/articles/c4g5n58rlnzo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c4g5n58rlnzo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 04:17:14 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/1920/live/3f8dfc30-21ab-11f1-9bdf-83bdc0466ec5.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Iranian security chief Ali Larijani killed in air strike]]></title>
+            <description><![CDATA[His death is confirmed on state TV, alongside that of another senior figure, Gholamreza Soleimani ]]></description>
+            <link>https://www.bbc.com/news/articles/c24deezq6meo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c24deezq6meo#1</guid>
+            <pubDate>Tue, 17 Mar 2026 22:49:03 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a4b2/live/40055f60-2209-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Total repression and air strikes bring unrelenting dread for Iranians]]></title>
+            <description><![CDATA[Tehran residents tell the BBC they're caught between US-Israeli bombing and an Iranian regime trying to reassert its power. ]]></description>
+            <link>https://www.bbc.com/news/articles/cn9e0wrglgdo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cn9e0wrglgdo#2</guid>
+            <pubDate>Wed, 18 Mar 2026 00:07:36 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/ef75/live/d2549d10-2298-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Death of Ali Larijani deepens crisis at heart of Iran's leadership]]></title>
+            <description><![CDATA[Larijani has long been seen as one of the Islamic Republic's most experienced and influential policy makers.]]></description>
+            <link>https://www.bbc.com/news/articles/cgqgxqekp89o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cgqgxqekp89o#2</guid>
+            <pubDate>Wed, 18 Mar 2026 04:36:46 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/74f3/live/bf65d7a0-221b-11f1-a7da-4b07d7d50798.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[India's cheap weight-loss drugs could reshape global obesity fight]]></title>
+            <description><![CDATA[With India’s semaglutide patent expiring on 20 March, about 50 branded generics are expected to enter the market.]]></description>
+            <link>https://www.bbc.com/news/articles/cx2g4411en3o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cx2g4411en3o#2</guid>
+            <pubDate>Wed, 18 Mar 2026 00:30:49 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/93c1/live/1ad74b40-22b8-11f1-a79a-77e93010d956.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Celebrations in Morocco but devastation in Senegal after Africa Cup of Nations decision]]></title>
+            <description><![CDATA[Moroccans feel justice has been done but the Senegalese are angry after being stripped of the title.]]></description>
+            <link>https://www.bbc.com/news/articles/crm8mem74mko?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/crm8mem74mko#2</guid>
+            <pubDate>Wed, 18 Mar 2026 15:48:41 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/edb1/live/5db252c0-22c7-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[What have US allies and China said about sending ships to the Strait of Hormuz?]]></title>
+            <description><![CDATA[US allies have either pushed back or remained cautious on Trump's initial request to send ships to the crucial oil route.]]></description>
+            <link>https://www.bbc.com/news/articles/crm8g938erdo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/crm8g938erdo#2</guid>
+            <pubDate>Tue, 17 Mar 2026 16:35:29 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3f86/live/cf452550-21f7-11f1-9256-9b680459597d.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Will the Iran war squeeze India's piped gas next?]]></title>
+            <description><![CDATA[The Iran war has already rattled LPG users. Will India’s piped gas network face the next squeeze?]]></description>
+            <link>https://www.bbc.com/news/articles/cj6dl175w01o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cj6dl175w01o#2</guid>
+            <pubDate>Wed, 18 Mar 2026 05:45:58 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a248/live/ca970430-21c3-11f1-a79a-77e93010d956.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Surge in US gas prices deepens political peril for Trump over Iran]]></title>
+            <description><![CDATA[The odds of a quick resolution to the war appear to be dwindling by the day, and the political stakes for the president are only growing.]]></description>
+            <link>https://www.bbc.com/news/articles/c70k29914q4o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c70k29914q4o#2</guid>
+            <pubDate>Tue, 17 Mar 2026 00:24:01 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2f02/live/958f4b90-2181-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA['Fire came from the sky and burned them' - life on the brink of civil war in South Sudan]]></title>
+            <description><![CDATA[Some 50,000 people are told to flee their homes as the army warns of a huge military offensive in Jonglei state.]]></description>
+            <link>https://www.bbc.com/news/articles/cx2g4v9mzxro?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/cx2g4v9mzxro#2</guid>
+            <pubDate>Tue, 17 Mar 2026 00:08:56 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a64e/live/56c84ac0-1e06-11f1-801d-ed3cff6bf876.png"/>
+        </item>
+        <item>
+            <title><![CDATA[Wary allies show there's no quick fix to Trump's Iran crisis]]></title>
+            <description><![CDATA[European leaders are hesitant to help Trump secure the Strait of Hormuz, but they know inaction on the Iran war is not really an option. ]]></description>
+            <link>https://www.bbc.com/news/articles/c8r17plnvy3o?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c8r17plnvy3o#2</guid>
+            <pubDate>Mon, 16 Mar 2026 17:34:13 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/f521/live/30b2ab10-214d-11f1-8771-8f3ba04352de.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA['My mother cried out one last time': Palestinian boy, 12, describes how Israeli forces killed his family in car]]></title>
+            <description><![CDATA[Khaled Bani Odeh's parents and two brothers were shot dead as they drove home from a shopping trip in the occupied West Bank.]]></description>
+            <link>https://www.bbc.com/news/articles/c70n2x7p22do?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/c70n2x7p22do#2</guid>
+            <pubDate>Mon, 16 Mar 2026 17:57:45 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/26e0/live/5fb34240-215b-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Iran taking steps to prevent anti-establishment protests, Tehran residents tell BBC]]></title>
+            <description><![CDATA[Residents describe new security checkpoints around the capital, where they say people are stopped and searched.]]></description>
+            <link>https://www.bbc.com/news/articles/clygdwqw5dvo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/articles/clygdwqw5dvo#2</guid>
+            <pubDate>Mon, 16 Mar 2026 04:43:43 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a11a/live/30940050-211d-11f1-b048-c9424b2cf5fd.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Why did only two Iranian football players stay in Australia?]]></title>
+            <description><![CDATA[After Australia gave humanitarian visas to seven team members, only two decided to stay - the BBC's Katy Watson explains what happened.]]></description>
+            <link>https://www.bbc.com/news/videos/czd8921rljpo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/videos/czd8921rljpo#3</guid>
+            <pubDate>Tue, 17 Mar 2026 05:22:11 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/cd82/live/6330df90-21c4-11f1-934f-036468834728.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Watch: Reunion resident gets close to lava from erupting volcano ]]></title>
+            <description><![CDATA[Lava from the Piton de la Fournaise volcano reached the Indian ocean for the first time in 19 years.
+]]></description>
+            <link>https://www.bbc.com/news/videos/c23zj1e0lxmo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/videos/c23zj1e0lxmo#3</guid>
+            <pubDate>Mon, 16 Mar 2026 20:39:01 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0a71/live/d9d3b7d0-2174-11f1-b297-95b0a0a8331e.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Historic firsts, emotional speeches, and a tie: Watch the top Oscars moments]]></title>
+            <description><![CDATA[One Battle After Another dominated the night with six awards, while Sinners and Frankenstein weren't far behind. ]]></description>
+            <link>https://www.bbc.com/news/videos/cedzq0q6x5lo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/videos/cedzq0q6x5lo#3</guid>
+            <pubDate>Mon, 16 Mar 2026 03:15:43 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0cfd/live/187de720-20e5-11f1-9120-a910fc22c6ac.jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Mexico City breaks Guinness Record with giant football training session]]></title>
+            <description><![CDATA[Mexico City set a Guinness record for the largest football training session as 9,500 participants filled the capital’s Zocalo square ahead of World Cup. ]]></description>
+            <link>https://www.bbc.com/news/videos/cy7jrymgpjyo?at_medium=RSS&amp;at_campaign=rss</link>
+            <guid isPermaLink="false">https://www.bbc.com/news/videos/cy7jrymgpjyo#3</guid>
+            <pubDate>Mon, 16 Mar 2026 17:23:27 GMT</pubDate>
+            <media:thumbnail width="240" height="135" url="https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/830b/live/c9dd7e00-215c-11f1-a79a-77e93010d956.jpg"/>
+        </item>
+    </channel>
+</rss>

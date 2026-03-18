@@ -40,8 +40,11 @@ class TrendingEngine {
         const trending = scored.sort((a, b) => b.trendScore - a.trendScore).slice(0, 15);
 
         // Update Store and Persist
-        this.store.updateTrending(trending);
-        this.store.updateHero(trending.filter(a => a.image).slice(0, 5));
+        this.store.updateTrending(trending.length > 0 ? trending : articles.slice(0, 15));
+        
+        // Ensure hero has at least 5 articles if possible, falling back to any available articles
+        const heroList = trending.filter(a => a.image).slice(0, 5);
+        this.store.updateHero(heroList.length > 0 ? heroList : articles.slice(0, 5));
         
         try {
             fs.writeFileSync(this.trendingFile, JSON.stringify(trending, null, 2));
