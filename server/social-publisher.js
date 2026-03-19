@@ -9,7 +9,7 @@ async function publishToSocialMedia(article) {
         // In production, integrate with Twitter API, Meta Graph API, etc.
 
         const socialData = {
-            text: `📢 BREAKING NEWS: ${article.headline_variations?.[0] || article.title} 🚀\n\n${article.summary.substring(0, 150)}...\n\n👉 Full Story: http://localhost:3000/article.html?id=${article.id}\n\n#PrimeReport #GlobalNews #BreakingNews #AI #Trends #${article.category}`,
+            text: `📢 BREAKING NEWS: ${article.headline_variations?.[0] || article.title} 🚀\n\n${article.summary.substring(0, 150)}...\n\n👉 Full Story: https://primereport-news.netlify.app/article.html?id=${article.id}\n\n#PrimeReport #GlobalNews #BreakingNews #AI #Trends #${article.category}`,
             image: article.image || article.urlToImage
         };
 

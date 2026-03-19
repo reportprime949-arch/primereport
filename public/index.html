@@ -4,16 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrimeReport – Global News Portal</title>
-    <link rel="icon" type="image/jpeg" href="favicon.jpeg">
-
+    <title>PrimeReport - Global News Portal</title>
     <meta name="description" content="PrimeReport delivers real-time news from around the world. Get breaking news, analysis, and in-depth reporting on World, Technology, Business, Politics, Sports, and more.">
     <meta property="og:title" content="PrimeReport – Global News Portal">
     <meta property="og:description" content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
+    <meta property="og:image" content="https://primereport-news.netlify.app/hero.webp">
+    <meta property="og:url" content="https://primereport-news.netlify.app/">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PrimeReport – Global News Portal">
+    <meta name="twitter:description" content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
+    <meta name="twitter:image" content="https://primereport-news.netlify.app/hero.webp">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://primereport-news.netlify.app/">
+
+    <!-- SEO Static Fallback (Hidden from users, visible to crawlers) -->
+    <div style="display:none">
+        <h1>PrimeReport - Latest News</h1>
+        <nav>
+            <a href="/?category=World">World News</a>
+            <a href="/?category=Technology">Technology</a>
+            <a href="/?category=Business">Business</a>
+            <a href="/?category=Politics">Politics</a>
+            <a href="/?category=Sports">Sports</a>
+        </nav>
+        <p>PrimeReport provides instant field health insights and news for farmers and the global community. Our AI-powered system delivers real-time reporting on global events.</p>
+    </div>
+    
 
     <!-- Performance Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,20 +72,14 @@
     </div>
 
     <!-- ===== HEADER ===== -->
-    <header class="site-header" id="site-header">
+    <header class="site-header">
         <div class="container header-inner">
-            <!-- Logo -->
-            <a href="index.html" class="logo">
-                <img src="logo.png" alt="PrimeReport" class="logo-img" width="120" height="44" loading="eager"
-                    onerror="this.style.display='none';document.querySelector('.logo-text').style.display='flex'">
-                <span class="logo-text" style="display:none">Prime<span>Report</span></span>
-            </a>
-
-            <!-- Desktop Nav -->
-            <nav class="main-nav" id="main-nav">
+            <a href="index.html" class="logo-text">Prime<span>Report</span></a>
+            
+            <nav class="desktop-nav" id="main-nav">
                 <a href="index.html" class="nav-link active" data-cat="all">Home</a>
                 <a href="index.html?category=World" class="nav-link" data-cat="World">World</a>
-                <a href="index.html?category=Technology" class="nav-link" data-cat="Technology">Tech</a>
+                <a href="index.html?category=Technology" class="nav-link" data-cat="Technology">Technology</a>
                 <a href="index.html?category=Business" class="nav-link" data-cat="Business">Business</a>
                 <a href="index.html?category=Politics" class="nav-link" data-cat="Politics">Politics</a>
                 <a href="index.html?category=Entertainment" class="nav-link" data-cat="Entertainment">Entertainment</a>
@@ -76,27 +87,20 @@
                 <a href="index.html?category=Science" class="nav-link" data-cat="Science">Science</a>
             </nav>
 
-            <!-- Right Actions -->
             <div class="header-actions">
                 <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Search news…" autocomplete="off">
+                    <input type="text" id="search-input" placeholder="Search news…">
                     <i class="fas fa-search"></i>
                 </div>
-                <button id="theme-toggle" class="icon-btn" title="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button id="mobile-menu-btn" class="icon-btn mobile-only" title="Open menu">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+                <button id="mobile-menu-btn" class="icon-btn mobile-hamburger" style="display:none"><i class="fas fa-bars"></i></button>
             </div>
         </div>
     </header>
 
     <!-- ===== BREAKING NEWS TICKER ===== -->
     <div class="breaking-bar">
-        <div class="breaking-label">
-            <i class="fas fa-bolt"></i> BREAKING
-        </div>
+        <div class="breaking-label">BREAKING</div>
         <div class="ticker-wrapper">
             <div class="ticker-track" id="ticker-track">
                 <span class="ticker-item">Loading latest headlines…</span>
@@ -104,89 +108,113 @@
         </div>
     </div>
 
-    <!-- ===== MOBILE MENU ===== -->
-    <div class="mobile-menu-overlay hidden" id="mobile-menu">
-        <div class="mobile-menu-drawer">
-            <div class="mobile-menu-header">
-                <span class="logo-text-sm">Prime<span>Report</span></span>
-                <button id="close-menu" class="icon-btn"><i class="fas fa-times"></i></button>
+    <!-- ===== HERO SECTION (70/30) ===== -->
+    <section class="hero-section">
+        <div class="container hero-grid">
+            <!-- Left: Main Top Story (70%) -->
+            <div class="main-hero" id="portal-hero" onclick="/* Injected */">
+                <div class="skeleton" style="height:100%"></div>
             </div>
-            <nav class="mobile-nav">
-                <a href="index.html">🏠 Home</a>
-                <a href="index.html?category=World">🌍 World</a>
-                <a href="index.html?category=Technology">💻 Technology</a>
-                <a href="index.html?category=Business">💼 Business</a>
-                <a href="index.html?category=Politics">🏛️ Politics</a>
-                <a href="index.html?category=Entertainment">🎬 Entertainment</a>
-                <a href="index.html?category=Sports">⚽ Sports</a>
-                <a href="index.html?category=Science">🔬 Science</a>
-            </nav>
-            <div class="mobile-menu-footer">
-                <a href="about.html">About</a>
-                <a href="support.html">Support</a>
-            </div>
-        </div>
-    </div>
 
-    <!-- ===== EDITORIAL PORTAL TOP ===== -->
-    <section class="portal-top-section">
-        <div class="container portal-top-grid">
-            <!-- Left/Center: Main Breaking Hero -->
-            <div class="portal-main-hero" id="portal-hero">
-                <div class="hero-skeleton" style="height: 480px; background: #f1f5f9; border-radius: 8px;"></div>
-            </div>
-            
-            <!-- Right: Top Stories List -->
-            <div class="portal-top-stories">
-                <div class="portal-section-header">
-                    <h3>Top Stories</h3>
+            <!-- Right: Side Lists (30%) -->
+            <div class="hero-sidebar">
+                <div class="sidebar-block">
+                    <div class="sidebar-list-header">Top Stories</div>
+                    <div id="portal-top-stories">
+                        <!-- Injected -->
+                    </div>
                 </div>
-                <div class="top-stories-list" id="portal-top-stories">
-                    <!-- Injected via JS -->
-                </div>
-            </div>
-            
-            <!-- Far Right: Trending List -->
-            <div class="portal-trending-stories">
-                <div class="portal-section-header">
-                    <h3>Trending Now</h3>
-                </div>
-                <div class="trending-list-editorial" id="portal-trending">
-                    <!-- Injected via JS -->
+                <div class="sidebar-block">
+                    <div class="sidebar-list-header">Trending</div>
+                    <div id="portal-trending">
+                        <!-- Injected -->
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ===== CATEGORY BLOCKS ===== -->
-    <main class="site-main editorial-main">
-        <div class="container">
-            <!-- World News Block -->
-            <section class="category-block">
-                <div class="portal-section-header with-border">
-                    <h2><span class="title-accent"></span>World News</h2>
-                    <a href="index.html?category=World" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="news-grid editorial-grid" id="block-world"></div>
-            </section>
-            
-            <!-- Technology Block -->
-            <section class="category-block mt-40">
-                <div class="portal-section-header with-border">
-                    <h2><span class="title-accent"></span>Technology</h2>
-                    <a href="index.html?category=Technology" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="news-grid editorial-grid" id="block-technology"></div>
-            </section>
-            
-            <!-- Business Block -->
-            <section class="category-block mt-40">
-                <div class="portal-section-header with-border">
-                    <h2><span class="title-accent"></span>Business</h2>
-                    <a href="index.html?category=Business" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="news-grid editorial-grid" id="block-business"></div>
-            </section>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="container">
+        <!-- World News -->
+        <section class="category-section">
+            <div class="section-header">
+                <h2>World News</h2>
+                <a href="index.html?category=World" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-world">
+                <!-- Skeletons -->
+                <div class="skeleton" style="height:250px"></div>
+                <div class="skeleton" style="height:250px"></div>
+                <div class="skeleton" style="height:250px"></div>
+                <div class="skeleton" style="height:250px"></div>
+            </div>
+        </section>
+
+        <!-- Technology -->
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Technology</h2>
+                <a href="index.html?category=Technology" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-technology"></div>
+        </section>
+
+        <!-- Business -->
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Business</h2>
+                <a href="index.html?category=Business" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-business"></div>
+        </section>
+
+        <!-- SUB-CATEGORY TAB STRIP -->
+        <div class="sub-cat-strip">
+            <div class="sub-cat-tab active" data-sub="Politics">Politics</div>
+            <div class="sub-cat-tab" data-sub="Entertainment">Entertainment</div>
+            <div class="sub-cat-tab" data-sub="Sports">Sports</div>
+            <div class="sub-cat-tab" data-sub="Science">Science</div>
+        </div>
+        <div class="news-grid" id="sub-cat-grid" style="margin-top:-10px;">
+            <!-- Loaded dynamically based on tab -->
+        </div>
+
+        <!-- Remaining Categories -->
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Politics</h2>
+                <a href="index.html?category=Politics" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-politics"></div>
+        </section>
+
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Entertainment</h2>
+                <a href="index.html?category=Entertainment" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-entertainment"></div>
+        </section>
+
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Sports</h2>
+                <a href="index.html?category=Sports" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-sports"></div>
+        </section>
+
+        <section class="category-section">
+            <div class="section-header">
+                <h2>Science</h2>
+                <a href="index.html?category=Science" class="view-all">View All</a>
+            </div>
+            <div class="news-grid" id="block-science"></div>
+        </section>
+    </main>
+
+
             
             <!-- Utility Widgets (Ad & Newsletter) -->
             <div class="editorial-utilities mt-40">

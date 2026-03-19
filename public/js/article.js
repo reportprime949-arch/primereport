@@ -1,203 +1,162 @@
-const API_BASE = "https://primereport-server.onrender.com";
+/* ==============================================================
+   PrimeReport — Professional Article.js
+   ============================================================== */
 
-const API = `${API_BASE}/api/news/`;
-const PLACEHOLDER = "/images/default.jpg";
+const API = "https://primereport-server.onrender.com/api/news";
+const PLACEHOLDER = 'hero.webp';
 
-/* ─── Progress Bar ─────────────────────────────────────────── */
-const ProgressBar = {
-    el: document.getElementById('top-progress-bar'),
-    start() {
-        if (!this.el) return;
-        this.el.style.width = '30%';
-        this.el.classList.add('loading');
-    },
-    set(percent) {
-        if (!this.el) return;
-        this.el.style.width = percent + '%';
-    },
-    finish() {
-        if (!this.el) return;
-        this.el.style.width = '100%';
-        this.el.classList.remove('loading');
-        setTimeout(() => {
-            this.el.style.width = '0%';
-        }, 500);
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initMobileMenu();
+    loadArticle();
+});
+
+/* ─── UI Helpers ────────────────────────────────────────────── */
+function initTheme() {
+    const root = document.documentElement;
+    const btn  = document.getElementById('theme-toggle');
+    const icon = btn?.querySelector('i');
+    const saved = localStorage.getItem('theme') || 'light';
+
+    if (saved === 'dark') {
+        root.classList.add('dark');
+        if (icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
-};
 
-function getId() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("id");
+    btn?.addEventListener('click', () => {
+        root.classList.toggle('dark');
+        const dark = root.classList.contains('dark');
+        if (icon) icon.classList.replace(dark ? 'fa-moon' : 'fa-sun', dark ? 'fa-sun' : 'fa-moon');
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
 }
 
+function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('main-nav');
+    if (btn && menu) {
+        btn.onclick = () => {
+            menu.classList.toggle('active');
+            btn.querySelector('i').classList.toggle('fa-bars');
+            btn.querySelector('i').classList.toggle('fa-times');
+        };
+    }
+}
+
+/* ─── Article Loading ───────────────────────────────────────── */
 async function loadArticle() {
-
-    const id = getId();
-
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
     if (!id) {
-        showError();
+        window.location.href = 'index.html';
         return;
     }
 
+    const loader = document.getElementById("article-loading");
+    const content = document.getElementById("article-content");
+
     try {
-        ProgressBar.start();
+        const res = await fetch(`${API}/${encodeURIComponent(id)}`);
+        const a = await res.json();
 
-        const res = await fetch(API + encodeURIComponent(id));
-        if (!res.ok) throw new Error(`Article API failed: ${res.status}`);
-        const article = await res.json();
+        if (!a || a.error) throw new Error("Not found");
 
-        if (!article || article.error) {
-            showError();
-            return;
-        }
+        loader.style.display = "none";
+        content.classList.remove("hidden");
 
-        displayArticle(article);
+        renderArticle(a, content);
+        loadRelated(a.category, id);
+        updateMeta(a);
 
     } catch (e) {
-        ProgressBar.finish();
-        console.error(e);
-        showError();
+        loader.innerHTML = `<div style="padding:100px; text-align:center;"><h2>Story Not Found</h2><p>This article may have been moved or removed.</p><a href="index.html" class="nav-link" style="display:inline-block; margin-top:20px;">Return Home</a></div>`;
     }
 }
 
-function displayArticle(a) {
-    const loader = document.getElementById("article-loading");
-    const container = document.getElementById("article-content");
-
-    if (loader) loader.style.display = "none";
-    if (!container) return;
-    
-    ProgressBar.finish();
-    container.classList.remove("hidden");
-    container.classList.add("fade-in");
-    container.style.opacity = '0';
-
-    const publishDate = new Date(a.publishedAt || a.date);
-    const dateStr = !isNaN(publishDate) ? publishDate.toLocaleString('en-US', {
-        month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
-    }) : "Recently Published";
+function renderArticle(a, container) {
+    const date = new Date(a.publishedAt || a.date).toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric'
+    });
 
     container.innerHTML = `
-        <article class="article-viewer">
-            <nav class="article-nav-breadcrumb">
-                <a href="index.html">Home</a> <i class="fas fa-chevron-right"></i> 
-                <a href="index.html?category=${a.category || 'world'}">${a.category || 'World'}</a>
-            </nav>
-
-            <header class="article-header">
-                <div class="cat-badge" style="background:var(--red); margin-bottom:15px;">${a.category || 'World'}</div>
+        <article class="pro-article">
+            <div class="article-header">
+                <span class="hero-badge" style="margin-bottom:15px; display:inline-block">${a.category || 'News'}</span>
                 <h1>${escHtml(a.title)}</h1>
-                <div class="article-meta">
-                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(a.author || 'P')}&background=e11d48&color=fff" class="author-avatar" alt="Author">
+                <div class="article-meta" style="margin-top:20px; display:flex; align-items:center; gap:15px; color:var(--text-muted); font-size:14px;">
                     <span>By <strong>${escHtml(a.author || "Prime Editorial")}</strong></span>
-                    <span class="meta-divider"></span>
-                    <span><i class="far fa-calendar-alt"></i> ${dateStr}</span>
-                </div>
-            </header>
-
-            <div class="article-featured-image">
-                <img src="${a.image || PLACEHOLDER}" onerror="this.src='https://via.placeholder.com/400x250?text=News'"
-                     alt="${escHtml(a.title)}"
-                     loading="eager"
-                     onerror="this.onerror=null;this.src='/images/default.jpg'">
-            </div>
-
-            <div class="article-body">
-                <p class="article-lead">${escHtml(a.summary || a.description || "")}</p>
-                <div class="article-main-text">
-                    ${a.content || a.description || "Full content is being processed. Please check the original source for more details."}
+                    <span>&bull;</span>
+                    <span>${date}</span>
                 </div>
             </div>
 
-            <footer class="article-footer">
-                <p>Source: <strong>${escHtml(a.source || "PrimeReport")}</strong></p>
-                <a href="${a.link || '#'}" target="_blank" class="btn-read-original">
-                    Read Original Article <i class="fas fa-external-link-alt"></i>
+            <div class="article-main-image" style="margin:30px 0; border-radius:12px; overflow:hidden; aspect-ratio:16/9; background:#eee;">
+                <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+
+            <div class="article-body" style="font-size:1.15rem; line-height:1.7; color:var(--text); max-width:800px;">
+                <p style="font-weight:500; font-size:1.25rem; margin-bottom:25px;">${escHtml(a.summary || a.description || "")}</p>
+                <div class="article-text">
+                    ${a.content || a.description || "Reading mode active. Full coverage available via source link below."}
+                </div>
+            </div>
+
+            <footer style="margin-top:50px; padding-top:30px; border-top:1px solid var(--border);">
+                <p style="font-size:14px; color:var(--text-muted)">Source: <strong>${escHtml(a.source || "PrimeReport")}</strong></p>
+                <a href="${a.link || '#'}" target="_blank" class="nav-link active" style="display:inline-block; margin-top:15px; padding:12px 24px; text-decoration:none; border-radius:6px;">
+                    Read Original Story <i class="fas fa-external-link-alt" style="margin-left:8px;"></i>
                 </a>
             </footer>
         </article>
     `;
+}
 
-    requestAnimationFrame(() => container.style.opacity = '1');
+async function loadRelated(category, currentId) {
+    const section = document.getElementById("related-section");
+    const grid = document.getElementById("related-grid");
+    if (!category || !grid) return;
+
+    try {
+        const res = await fetch(`${API}?category=${category}&limit=5`);
+        const data = await res.json();
+        const articles = (data.articles || []).filter(a => (a.slug || a.id) !== currentId).slice(0, 4);
+
+        if (articles.length) {
+            section.classList.remove("hidden");
+            grid.innerHTML = articles.map(a => `
+                <div class="news-card" onclick="window.location.href='/article/${a.slug || a.id}'">
+                    <div class="card-img-wrap">
+                        <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" loading="lazy">
+                    </div>
+                    <div class="card-content">
+                        <h3>${escHtml(a.title)}</h3>
+                        <div class="card-footer">
+                            <span>${timeAgo(a.publishedAt)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (e) {
+        console.warn('Related failed', e);
+    }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────── */
+function updateMeta(a) {
     document.title = a.title + " | PrimeReport";
-    
-    // Update metadata and schema
-    if (typeof updateMeta === 'function') updateMeta(a);
-    if (typeof addSchema === 'function') addSchema(a);
+    const canon = document.querySelector('link[rel="canonical"]');
+    if (canon) canon.href = `https://primereport-news.netlify.app/article/${a.slug || a.id}`;
+}
+
+function timeAgo(date) {
+    if (!date) return 'Just now';
+    const diff = (Date.now() - new Date(date)) / 1000;
+    if (diff < 3600) return `${Math.floor(diff/60) || 1}m ago`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+    return `${Math.floor(diff/86400)}d ago`;
 }
 
 function escHtml(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function showError() {
-
-    const loader = document.getElementById("article-loading");
-    const container = document.getElementById("article-content");
-
-    loader.style.display = "none";
-
-    container.innerHTML = `
-        <div style="text-align:center;padding:80px">
-            <h2>Article Not Found</h2>
-            <p>The article may have expired.</p>
-            <a href="index.html">Back to Home</a>
-        </div>
-    `;
-}
-
-loadArticle();
-
-function updateMeta(article) {
-    const title = article.title || "PrimeReport";
-    const desc = article.summary || article.description || "";
-    const img = article.image || PLACEHOLDER;
-
-    document.title = title;
-
-    const setMeta = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.content = val;
-    };
-
-    setMeta("page-title", title);
-    setMeta("page-desc", desc);
-    setMeta("og-title", title);
-    setMeta("og-desc", desc);
-    setMeta("og-image", img);
-    setMeta("og-url", window.location.href);
-    setMeta("tw-title", title);
-    setMeta("tw-desc", desc);
-    setMeta("tw-image", img);
-
-    const canon = document.getElementById("canonical-url");
-    if (canon) canon.href = window.location.href;
-}
-
-function addSchema(article) {
-    const schemaEl = document.getElementById("article-schema");
-    if (!schemaEl) return;
-
-    const schema = {
-        "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        "headline": article.title,
-        "image": [article.image || PLACEHOLDER],
-        "datePublished": article.publishedAt || article.date,
-        "dateModified": article.publishedAt || article.date,
-        "author": {
-            "@type": "Person",
-            "name": article.author || "Prime Editorial"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "PrimeReport",
-            "logo": {
-                "@type": "ImageObject",
-                "url": window.location.origin + "/logo.png"
-            }
-        }
-    };
-
-    schemaEl.textContent = JSON.stringify(schema);
 }

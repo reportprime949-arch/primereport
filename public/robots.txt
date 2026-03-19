@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /article/
 
+# Sitemap location
 Sitemap: https://primereport-news.netlify.app/sitemap.xml
 Sitemap: https://primereport-news.netlify.app/news-sitemap.xml

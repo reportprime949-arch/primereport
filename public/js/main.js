@@ -1,67 +1,25 @@
 /* ==============================================================
-   PrimeReport — main.js  (Ultra-Fast Performance Edition)
+   PrimeReport — Professional BBC-Style main.js
    ============================================================== */
 
-const API_BASE = "https://primereport-server.onrender.com";
-
+const API = "https://primereport-server.onrender.com";
 const PLACEHOLDER = 'hero.webp';
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
-
-let allArticles   = [];
-let currentPage   = 1;
-let currentCat    = 'all';
-let isLoadingMore = false;
-let hasMore       = true;
-
-/* ─── Cache Engine ─────────────────────────────────────────── */
-const Cache = {
-    get(key) {
-        try {
-            const raw = sessionStorage.getItem(key);
-            if (!raw) return null;
-            const { data, ts } = JSON.parse(raw);
-            if (Date.now() - ts > CACHE_TTL) {
-                sessionStorage.removeItem(key);
-                return null;
-            }
-            return data;
-        } catch { return null; }
-    },
-    set(key, data) {
-        try {
-            sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-        } catch { /* storage full */ }
-    }
-};
 
 /* ─── Bootstrap ─────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
-    initMobileMenu();
     updateDate();
-    detectActiveCat();
     initSearch();
-    initCategoryTabs();
-    initEventDelegation();
-    initInfiniteScroll();
+    initMobileMenu();
+    initSubCategoryTabs();
 
-    // Fire data fetches async
-    loadPortalTop();
-    loadCategoryBlocks();
-    loadPortalTrending();
-    loadBreakingTicker();
+    // Data Loaders
+    loadPortalTop();      // Hero + Sidebars
+    loadCategoryBlocks(); // Main grids
+    loadBreakingTicker(); // Ticker
 });
 
-/* ─── Infinite Scroll (Disabled for Editorial View) ────────── */
-/* ─── Infinite Scroll (Disabled) ────────────────────────────── */
-function initInfiniteScroll() {}
-
-/* ─── Event Delegation ──────────────────────────────────────── */
-function initEventDelegation() {
-    // Relying on inline onclick="openArticle('slug')" for now.
-}
-
-/* ─── Date ─────────────────────────────────────────────────── */
+/* ─── UI Initializers ───────────────────────────────────────── */
 function updateDate() {
     const el = document.getElementById('current-date');
     if (el) el.textContent = new Date().toLocaleDateString('en-US', {
@@ -69,7 +27,6 @@ function updateDate() {
     });
 }
 
-/* ─── Theme ────────────────────────────────────────────────── */
 function initTheme() {
     const root = document.documentElement;
     const btn  = document.getElementById('theme-toggle');
@@ -89,279 +46,201 @@ function initTheme() {
     });
 }
 
-/* ─── Mobile Menu ───────────────────────────────────────────── */
 function initMobileMenu() {
-    const overlay = document.getElementById('mobile-menu');
-    const openBtn  = document.getElementById('mobile-menu-btn');
-    const closeBtn = document.getElementById('close-menu');
-    const bottomNavCategories = document.getElementById('bottom-nav-categories');
-    
-    const close = () => overlay?.classList.add('hidden');
-    const open = (e) => { e.preventDefault(); overlay?.classList.remove('hidden'); };
-
-    openBtn?.addEventListener('click', open);
-    bottomNavCategories?.addEventListener('click', open);
-    closeBtn?.addEventListener('click', close);
-}
-
-/* ─── Active nav link ───────────────────────────────────────── */
-function detectActiveCat() {
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get('category') || 'all';
-    currentCat = cat.toLowerCase();
-
-    document.querySelectorAll('[data-cat]').forEach(el => {
-        const matched = el.dataset.cat.toLowerCase() === currentCat;
-        el.classList.toggle('active', matched);
-    });
-}
-
-/* ─── Search ────────────────────────────────────────────────── */
-function initSearch() {
-    const input = document.getElementById('search-input');
-    if (!input) return;
-    let debounce;
-    input.addEventListener('input', () => {
-        clearTimeout(debounce);
-        debounce = setTimeout(() => {
-            const q = input.value.trim().toLowerCase();
-            if (q.length > 2) {
-                renderFilteredCards(allArticles.filter(a => a.title?.toLowerCase().includes(q)));
-            } else if (!q) {
-                renderFilteredCards(allArticles);
-            }
-        }, 300);
-    });
-}
-
-/* ─── Category Tabs ─────────────────────────────────────────── */
-function initCategoryTabs() {
-    // Phase 2 Fix: Add listeners to nav-links for category clicks
-    const CAT_MAP = {
-        'tech': 'technology',
-        'world news': 'world',
-        'breaking news': 'all',
-        'home': 'all'
-    };
-
-    document.querySelectorAll(".nav-link").forEach(link => {
-        link.addEventListener("click", (e) => {
-            let category = e.target.innerText.trim().toLowerCase();
-            category = CAT_MAP[category] || category;
-            detectActiveCat(); // Update active states
-            loadCategory(category);
-        });
-    });
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const cat = btn.dataset.cat;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentPage = 1;
-            hasMore = true;
-            allArticles = [];
-            loadCategory(cat);
-        });
-    });
-}
-
-async function loadCategory(category) {
-    try {
-        console.log(`[Diagnostic] Fetching category: ${category}`);
-        const res = await fetch(`${API_BASE}/api/news?category=${category}`);
-        const data = await res.json();
-        
-        console.log(`Fetched Articles [${category}]:`, data.articles);
-
-        if (!data.articles || !data.articles.length) {
-            console.warn("No articles for", category);
-            // Replace error boxes with "No articles available"
-            renderNoArticles(category);
-            return;
-        }
-
-        data.articles.forEach(a => console.log("Article Image:", a.image));
-        renderFilteredCards(data.articles || []);
-
-    } catch (err) {
-        console.error("Category load failed:", err);
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('main-nav');
+    if (btn && menu) {
+        btn.onclick = () => {
+            menu.classList.toggle('active');
+            btn.querySelector('i').classList.toggle('fa-bars');
+            btn.querySelector('i').classList.toggle('fa-times');
+        };
     }
 }
 
-function renderNoArticles(category) {
-    const grid = document.getElementById('news-grid');
-    if (grid) grid.innerHTML = `<div class="no-data">No articles available for ${category} at this time.</div>`;
+function initSearch() {
+    const input = document.getElementById('search-input');
+    if (!input) return;
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const q = input.value.trim();
+            if (q) window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+        }
+    });
 }
 
-// Map loadNewsGrid to the new loadCategory for compatibility if needed
-const loadNewsGrid = loadCategory;
+/* ─── Data Fetching & Rendering ──────────────────────────────── */
 
-/* ─── EDITORIAL PORTAL LOADERS ───────────────────────────────── */
+// Helper: Card Renderer
+function createNewsCard(a, category) {
+    const link = `/article/${a.slug || a.id}`;
+    return `
+        <div class="news-card" onclick="openArticle('${a.slug || a.id}')">
+            <div class="card-img-wrap">
+                <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
+                <span class="card-cat-badge">${a.category || category || 'News'}</span>
+            </div>
+            <div class="card-content">
+                <a href="${link}" class="card-link-seo"><h3>${escHtml(a.title)}</h3></a>
+                <div class="card-footer">
+                    <span>${escHtml(a.source || 'PrimeReport')}</span>
+                    <span>${timeAgo(a.publishedAt)}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Helper: Sidebar Item Renderer
+function createSidebarItem(a, index) {
+    const link = `/article/${a.slug || a.id}`;
+    return `
+        <div class="sidebar-item" onclick="openArticle('${a.slug || a.id}')">
+            <div class="item-number">${String(index).padStart(2, '0')}</div>
+            <div class="sidebar-item-content">
+                <a href="${link}" class="card-link-seo"><h4>${escHtml(a.title)}</h4></a>
+                <div class="editorial-meta-sm">${timeAgo(a.publishedAt)}</div>
+            </div>
+        </div>
+    `;
+}
+
+// Loader: Hero + Sidebars
 async function loadPortalTop() {
     try {
-        const res = await fetch(`${API_BASE}/api/news/hero`);
-        let articles = await res.json();
+        const res = await fetch(`${API}/api/news`);
+        const data = await res.json();
+        const articles = data.articles || [];
         
-        // Fallback: Slice from general news if hero is empty
-        if (!articles || articles.length === 0) {
-            console.warn('[Portal Top] Hero API empty, falling back to general news slice');
-            const genRes = await fetch(`${API_BASE}/api/news`);
-            const genData = await genRes.json();
-            articles = (genData.articles || []).slice(0, 5);
-        }
+        if (!articles.length) return;
 
-        console.log("Fetched Articles [Top Stories]:", articles);
-        if (!articles?.length) throw new Error('No articles found');
-        
-        // 1. Hero
+        // 1. Hero (70%)
         const hero = articles[0];
         const heroContainer = document.getElementById('portal-hero');
         if (heroContainer) {
             heroContainer.innerHTML = `
-                <div class="editorial-hero-card" onclick="openArticle('${hero.slug || hero.id}')">
-                    <img src="${hero.image || hero.urlToImage || PLACEHOLDER}" alt="${escHtml(hero.title)}" 
-                         class="editorial-hero-img" width="800" height="500" loading="lazy" fetchpriority="high" 
-                         onerror="this.src='https://via.placeholder.com/400x250?text=News'">
-                    <div class="editorial-hero-overlay"></div>
-                    <div class="editorial-hero-content">
-                        <span class="cat-badge">${hero.category || 'Breaking'}</span>
-                        <h2>${escHtml(hero.title)}</h2>
-                        <div class="editorial-meta">
-                            <span><i class="far fa-clock"></i> ${timeAgo(hero.publishedAt)}</span>
-                            <span><i class="fas fa-newspaper"></i> ${escHtml(hero.source || 'PrimeReport')}</span>
-                        </div>
+                <img src="${hero.image || PLACEHOLDER}" alt="${escHtml(hero.title)}" fetchpriority="high">
+                <div class="hero-overlay">
+                    <span class="hero-badge">${hero.category || 'Top Story'}</span>
+                    <a href="/article/${hero.slug || hero.id}" class="card-link-seo"><h1>${escHtml(hero.title)}</h1></a>
+                    <div class="hero-meta">
+                        <span><i class="far fa-clock"></i> ${timeAgo(hero.publishedAt)}</span>
+                        <span><i class="fas fa-newspaper"></i> ${escHtml(hero.source || 'PrimeReport')}</span>
                     </div>
                 </div>
             `;
+            heroContainer.onclick = () => openArticle(hero.slug || hero.id);
         }
-        
-        // 2. Top Stories (Right Col)
-        // User request: Top Stories -> first 5 articles (excluding hero usually, but let's take 1-5 as per layout)
-        const topStories = articles.slice(1, 5);
+
+        // 2. Top Stories (Right Sidebar - items 2-4)
         const topContainer = document.getElementById('portal-top-stories');
         if (topContainer) {
-            topContainer.innerHTML = topStories.map(a => {
-                console.log("Article Image (Top):", a.image);
-                return `
-                <div class="editorial-top-story" onclick="openArticle('${a.slug || a.id}')">
-                    <img src="${a.image || a.urlToImage || PLACEHOLDER}" alt="${escHtml(a.title)}" class="top-story-img" loading="lazy" onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
-                    <div class="top-story-content">
-                        <h4>${escHtml(a.title)}</h4>
-                        <div class="editorial-meta-sm">${timeAgo(a.publishedAt)} &bull; ${escHtml(a.source || 'Prime')}</div>
-                    </div>
-                </div>
-            `;}).join('');
+            topContainer.innerHTML = articles.slice(1, 4).map((a, i) => createSidebarItem(a, i + 1)).join('');
+        }
+
+        // 3. Trending (Right Sidebar - items 5-7)
+        const trendContainer = document.getElementById('portal-trending');
+        if (trendContainer) {
+            trendContainer.innerHTML = articles.slice(4, 7).map((a, i) => createSidebarItem(a, i + 4)).join('');
         }
     } catch (e) {
-        console.warn('[Portal Top] Failed to load data', e);
+        console.warn('[Hero Load Error]', e);
     }
 }
 
-async function loadCategoryBlock(category, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    try {
-        const res = await fetch(`${API_BASE}/api/news?category=${category}&limit=4`);
-        const data = await res.json();
-        console.log(`Fetched Articles [${category}]:`, data.articles);
-        const articles = (data.articles || []).slice(0, 4);
-        if (!articles.length) {
-            container.innerHTML = `<div style="padding:20px; color:var(--text-muted); font-size:13px;">No ${category} updates available.</div>`;
-            return;
-        }
-        container.innerHTML = articles.map(a => {
-            console.log("Article Image (Grid):", a.image);
-            return `
-            <div class="editorial-card" onclick="openArticle('${a.slug || a.id}')">
-                <div class="card-img-wrap">
-                    <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" class="editorial-card-img" loading="lazy" 
-                         onerror="this.src='https://via.placeholder.com/400x250?text=PrimeReport'">
-                </div>
-                <div class="editorial-card-body">
-                    <div class="editorial-cat-label">${a.category || category}</div>
-                    <h3>${escHtml(a.title)}</h3>
-                    <p class="editorial-excerpt">${escHtml(a.excerpt || a.description || 'No description available for this story. Read full coverage inside.')}</p>
-                    <div class="editorial-meta-sm editorial-time"><i class="far fa-clock"></i> ${timeAgo(a.publishedAt)}</div>
-                </div>
-            </div>
-        `;}).join('');
-    } catch(e) {
-        console.warn(`[Category] Failed to load ${category}`, e);
-    }
-}
-
+// Loader: Category Blocks
 async function loadCategoryBlocks() {
-    await Promise.all([
-        loadCategoryBlock('World', 'block-world'),
-        loadCategoryBlock('Technology', 'block-technology'),
-        loadCategoryBlock('Business', 'block-business'),
-        loadCategoryBlock('Politics', 'block-politics'),
-        loadCategoryBlock('Entertainment', 'block-entertainment'),
-        loadCategoryBlock('Sports', 'block-sports'),
-        loadCategoryBlock('Science', 'block-science')
-    ]);
+    const cats = ['World', 'Technology', 'Business', 'Politics', 'Entertainment', 'Sports', 'Science'];
+    cats.forEach(async (cat) => {
+        const grid = document.getElementById(`block-${cat.toLowerCase()}`);
+        if (!grid) return;
+        
+        try {
+            const res = await fetch(`${API}/api/news?category=${cat}&limit=4`);
+            const data = await res.json();
+            const articles = data.articles || [];
+            
+            if (!articles.length) {
+                grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); font-size:13px;">No updates for this section.</div>';
+                return;
+            }
+            
+            grid.innerHTML = articles.map(a => createNewsCard(a, cat)).join('');
+        } catch (e) {
+            console.warn(`[Category Load Error: ${cat}]`, e);
+        }
+    });
 }
 
-/* ─── TICKER / TRENDING ─────────────────────────────────────── */
+// Loader/Handler: Sub-category Tabs
+function initSubCategoryTabs() {
+    const tabs = document.querySelectorAll('.sub-cat-tab');
+    const grid = document.getElementById('sub-cat-grid');
+    if (!tabs.length || !grid) return;
+
+    tabs.forEach(tab => {
+        tab.onclick = async () => {
+            const sub = tab.dataset.sub;
+            
+            // Switch active state
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Show skeletons
+            grid.innerHTML = Array(4).fill('<div class="skeleton" style="height:250px"></div>').join('');
+
+            try {
+                const res = await fetch(`${API}/api/news?category=${sub}&limit=4`);
+                const data = await res.json();
+                const articles = data.articles || [];
+
+                if (!articles.length) {
+                    grid.innerHTML = '<div style="padding:40px; text-align:center; grid-column:1/-1;">No stories found.</div>';
+                    return;
+                }
+
+                grid.innerHTML = articles.map(a => createNewsCard(a, sub)).join('');
+            } catch (e) {
+                grid.innerHTML = '<div style="padding:40px; text-align:center; grid-column:1/-1;">Error loading data.</div>';
+            }
+        };
+    });
+
+    // Initial load
+    tabs[0].click();
+}
+
+// Loader: Breaking Ticker
 async function loadBreakingTicker() {
     const track = document.getElementById('ticker-track');
     if (!track) return;
-    try {
-        const res = await fetch(`${API_BASE}/api/news/breaking`);
-        if (!res.ok) throw new Error('API Error');
-        const articles = await res.json();
-        if (articles?.length) {
-            const html = articles.map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')">${escHtml(a.title)}</span>`).join('');
-            track.innerHTML = html + html;
-        }
-    } catch (e) {
-        console.warn('[Ticker] Failed to load', e);
-    }
-}
 
-async function loadPortalTrending() {
-    const list = document.getElementById('portal-trending');
-    if (!list) return;
     try {
-        const res = await fetch(`${API_BASE}/api/news/trending`);
-        let items = await res.json();
+        const res = await fetch(`${API}/api/news`);
+        const data = await res.json();
+        const articles = data.articles || [];
         
-        // Fallback: Slice from general news if trending is empty
-        if (!items || items.length === 0) {
-            console.warn('[Portal Trending] Trending API empty, falling back to general news slice');
-            const genRes = await fetch(`${API_BASE}/api/news`);
-            const genData = await genRes.json();
-            // User requirement: Trending -> load next 5 articles (e.g., 5-10)
-            items = (genData.articles || []).slice(5, 10);
-        }
-
-        console.log("Fetched Articles [Trending]:", items);
-        if (items?.length) {
-            list.innerHTML = items.slice(0, 5).map((a, i) => `
-                <div class="editorial-trend-item" onclick="openArticle('${a.slug || a.id}')">
-                    <div class="trend-number">${String(i + 1).padStart(2, '0')}</div>
-                    <div class="trend-content">
-                        <h4>${escHtml(a.title)}</h4>
-                        <div class="editorial-meta-sm">${timeAgo(a.publishedAt)}</div>
-                    </div>
-                </div>`).join('');
+        if (articles.length) {
+            const content = articles.slice(0, 10).map(a => `
+                <span class="ticker-item" onclick="openArticle('${a.slug || a.id}')">${escHtml(a.title)}</span>
+            `).join('');
+            track.innerHTML = content + content; // Double for seamless loop
         } else {
-            list.innerHTML = `<div style="padding:10px; color:var(--text-muted); font-size:13px;">No trending news at the moment.</div>`;
+            track.innerHTML = '<span class="ticker-item">No breaking news available.</span>';
         }
     } catch (e) {
-        console.warn('[Trending] Failed to load', e);
+        track.innerHTML = '<span class="ticker-item">Breaking news ticker unavailable.</span>';
     }
 }
 
-/* ─── HELPERS ───────────────────────────────────────────────── */
-
-function openArticle(id) { window.location.href = `article.html?id=${encodeURIComponent(id)}`; }
+/* ─── Utilities ────────────────────────────────────────────────── */
+function openArticle(id) { window.location.href = `/article/${encodeURIComponent(id)}`; }
 
 function timeAgo(date) {
     if (!date) return 'Just now';
     const diff = (Date.now() - new Date(date)) / 1000;
-    if (diff < 3600) return `${Math.floor(diff/60) || 1}m ago`;
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
     return `${Math.floor(diff/86400)}d ago`;
 }

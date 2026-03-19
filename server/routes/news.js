@@ -36,13 +36,22 @@ const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
  */
 router.get("/", (req, res) => {
     try {
-        const category = req.query.category;
+        let category = req.query.category;
         let articles = ArticleStore.getAll();
         
-        if (category && category.toLowerCase() !== "all") {
-            articles = articles.filter(a =>
-                a.category && a.category.toLowerCase().includes(category.toLowerCase())
-            );
+        // Normalize Category
+        if (category) {
+            category = category.toLowerCase();
+            if (category === "tech") category = "technology";
+        }
+
+        if (category && category !== "all") {
+            articles = articles.filter(a => {
+                if (!a.category) return false;
+                const aCat = a.category.toLowerCase();
+                // Exact match or includes for flexibility, but normalized
+                return aCat === category || aCat.includes(category);
+            });
         }
 
         console.log("API RESPONSE:", articles.length);
@@ -52,6 +61,7 @@ router.get("/", (req, res) => {
         res.json({ success: false, articles: [] });
     }
 });
+
 
 /**
  * GET /api/news/:id

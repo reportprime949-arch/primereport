@@ -30,7 +30,7 @@ async function generateDailyNewsletter() {
                         <img src="${a.urlToImage || 'https://via.placeholder.com/600x300'}" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
                         <h2 style="margin: 0 0 10px 0; color: #111827;">${a.title}</h2>
                         <p style="color: #4b5563; line-height: 1.6;">${a.summary}</p>
-                        <a href="http://localhost:3000/article.html?id=${a.id}" style="display: inline-block; background: #dc2626; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 10px;">Read More</a>
+                        <a href="https://primereport-news.netlify.app/article.html?id=${a.id}" style="display: inline-block; background: #dc2626; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 10px;">Read More</a>
                     </div>
                 `).join('')}
             </div>
