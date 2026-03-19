@@ -5,77 +5,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrimeReport - Global News Portal</title>
-    <meta name="description" content="PrimeReport delivers real-time news from around the world. Get breaking news, analysis, and in-depth reporting on World, Technology, Business, Politics, Sports, and more.">
+    <meta name="description" content="PrimeReport delivers real-time news from around the world. BBC/CNN-level reporting on World, Technology, Business, and more.">
     <meta property="og:title" content="PrimeReport – Global News Portal">
-    <meta property="og:description" content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
     <meta property="og:image" content="https://primereport-news.netlify.app/hero.webp">
-    <meta property="og:url" content="https://primereport-news.netlify.app/">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PrimeReport – Global News Portal">
-    <meta name="twitter:description" content="Real-time global news powered by AI. World, Technology, Business, Politics & more.">
-    <meta name="twitter:image" content="https://primereport-news.netlify.app/hero.webp">
-    <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://primereport-news.netlify.app/">
 
-    <!-- SEO Static Fallback (Hidden from users, visible to crawlers) -->
-    <div style="display:none">
-        <h1>PrimeReport - Latest News</h1>
-        <nav>
-            <a href="/?category=World">World News</a>
-            <a href="/?category=Technology">Technology</a>
-            <a href="/?category=Business">Business</a>
-            <a href="/?category=Politics">Politics</a>
-            <a href="/?category=Sports">Sports</a>
-        </nav>
-        <p>PrimeReport provides instant field health insights and news for farmers and the global community. Our AI-powered system delivers real-time reporting on global events.</p>
-    </div>
-    
-
-    <!-- Performance Hints -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preload" href="css/prime.css" as="style">
-    <link rel="preload" href="js/main.js" as="script">
-    <link rel="preload" as="image" href="hero.webp">
-    
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    
     <!-- Styles -->
     <link rel="stylesheet" href="css/prime.css">
-
-    <!-- Google Analytics and AdSense Deferred to Body Bottom -->
-    <meta name="google-site-verification" content="RUl9Kp6f7bHEyfOggzUtAHqBUPWXCNSBOCTPE_Le1Ns" />
+    
+    <!-- SEO Meta -->
+    <meta name="google-site-verification" content="RUl9Kp6f7bHEyfOggzUtAHBUPWXCNSBOCTPE_Le1Ns" />
 </head>
 
 <body>
 
-    <!-- Global Progress Bar -->
-    <div id="top-progress-bar"></div>
-
-    <!-- ===== TOP BAR ===== -->
-    <div class="top-bar">
-        <div class="container top-bar-inner">
-            <div class="top-links">
-                <span id="current-date"></span>
-                <a href="support.html">Support</a>
-            </div>
-            <div class="top-links">
-                <span class="live-dot"><span class="dot-pulse"></span> LIVE</span>
-            </div>
+    <!-- ===== HEADER ===== -->
+    <div class="header-top">
+        <div class="container" style="display:flex; justify-content:space-between">
+            <span id="current-date"></span>
+            <span><i class="fas fa-bolt"></i> Live Updates</span>
         </div>
     </div>
 
-    <!-- ===== HEADER ===== -->
     <header class="site-header">
-        <div class="container header-inner">
-            <a href="index.html" class="logo-text">Prime<span>Report</span></a>
-            
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo-text">Prime<span>Report</span></a>
+                
+                <div class="header-actions">
+                    <div class="search-box-wrap">
+                        <input type="text" id="search-input" placeholder="Search news…">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+                    <button id="mobile-menu-btn" class="icon-btn mobile-hamburger" style="display:none"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+
             <nav class="desktop-nav" id="main-nav">
                 <a href="index.html" class="nav-link active" data-cat="all">Home</a>
                 <a href="index.html?category=World" class="nav-link" data-cat="World">World</a>
@@ -86,15 +57,6 @@
                 <a href="index.html?category=Sports" class="nav-link" data-cat="Sports">Sports</a>
                 <a href="index.html?category=Science" class="nav-link" data-cat="Science">Science</a>
             </nav>
-
-            <div class="header-actions">
-                <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Search news…">
-                    <i class="fas fa-search"></i>
-                </div>
-                <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
-                <button id="mobile-menu-btn" class="icon-btn mobile-hamburger" style="display:none"><i class="fas fa-bars"></i></button>
-            </div>
         </div>
     </header>
 
@@ -103,47 +65,55 @@
         <div class="breaking-label">BREAKING</div>
         <div class="ticker-wrapper">
             <div class="ticker-track" id="ticker-track">
-                <span class="ticker-item">Loading latest headlines…</span>
+                <span class="ticker-item">Loading latest headlines from PrimeReport global network…</span>
             </div>
         </div>
     </div>
 
-    <!-- ===== HERO SECTION (70/30) ===== -->
+    <!-- ===== HERO SECTION (70/30 SPLIT) ===== -->
     <section class="hero-section">
         <div class="container hero-grid">
-            <!-- Left: Main Top Story (70%) -->
-            <div class="main-hero" id="portal-hero" onclick="/* Injected */">
-                <div class="skeleton" style="height:100%"></div>
+            <!-- Left: Main Featured Story (70%) -->
+            <div class="main-hero" id="portal-hero">
+                <div class="hero-overlay">
+                    <div class="skeleton" style="height:100%; width:100%;"></div>
+                </div>
             </div>
 
-            <!-- Right: Side Lists (30%) -->
-            <div class="hero-sidebar">
+            <!-- Right: Top Stories Sidebar (30%) -->
+            <aside class="hero-sidebar">
                 <div class="sidebar-block">
                     <div class="sidebar-list-header">Top Stories</div>
                     <div id="portal-top-stories">
-                        <!-- Injected -->
+                        <!-- Injected numbered items -->
+                        <div class="skeleton" style="height:80px; margin-bottom:15px;"></div>
+                        <div class="skeleton" style="height:80px; margin-bottom:15px;"></div>
+                        <div class="skeleton" style="height:80px; margin-bottom:15px;"></div>
                     </div>
                 </div>
+
                 <div class="sidebar-block">
-                    <div class="sidebar-list-header">Trending</div>
+                    <div class="sidebar-list-header">Trending Now</div>
                     <div id="portal-trending">
-                        <!-- Injected -->
+                        <!-- Injected compact items -->
+                        <div class="skeleton" style="height:60px; margin-bottom:10px;"></div>
+                        <div class="skeleton" style="height:60px; margin-bottom:10px;"></div>
                     </div>
                 </div>
-            </div>
+            </aside>
         </div>
     </section>
 
-    <!-- ===== MAIN CONTENT ===== -->
+    <!-- ===== DYNAMIC CATEGORY SECTIONS ===== -->
     <main class="container">
-        <!-- World News -->
+        
+        <!-- Category: World -->
         <section class="category-section">
             <div class="section-header">
-                <h2>World News</h2>
+                <h2>World news</h2>
                 <a href="index.html?category=World" class="view-all">View All</a>
             </div>
             <div class="news-grid" id="block-world">
-                <!-- Skeletons -->
                 <div class="skeleton" style="height:250px"></div>
                 <div class="skeleton" style="height:250px"></div>
                 <div class="skeleton" style="height:250px"></div>
@@ -151,7 +121,7 @@
             </div>
         </section>
 
-        <!-- Technology -->
+        <!-- Category: Technology -->
         <section class="category-section">
             <div class="section-header">
                 <h2>Technology</h2>
@@ -160,7 +130,7 @@
             <div class="news-grid" id="block-technology"></div>
         </section>
 
-        <!-- Business -->
+        <!-- Category: Business -->
         <section class="category-section">
             <div class="section-header">
                 <h2>Business</h2>
@@ -169,74 +139,18 @@
             <div class="news-grid" id="block-business"></div>
         </section>
 
-        <!-- SUB-CATEGORY TAB STRIP -->
-        <div class="sub-cat-strip">
-            <div class="sub-cat-tab active" data-sub="Politics">Politics</div>
-            <div class="sub-cat-tab" data-sub="Entertainment">Entertainment</div>
-            <div class="sub-cat-tab" data-sub="Sports">Sports</div>
-            <div class="sub-cat-tab" data-sub="Science">Science</div>
+        <!-- Sub-Category Tab Strip (Dynamic) -->
+        <div class="sub-cat-tabs-wrap">
+            <div class="sidebar-list-header">Editors' Picks</div>
+            <div class="sub-cat-tabs" id="category-tabs">
+                <div class="tab-item active" data-sub="Politics">Politics</div>
+                <div class="tab-item" data-sub="Entertainment">Entertainment</div>
+                <div class="tab-item" data-sub="Sports">Sports</div>
+                <div class="tab-item" data-sub="Science">Science</div>
+            </div>
+            <div class="news-grid" id="block-sub-grid"></div>
         </div>
-        <div class="news-grid" id="sub-cat-grid" style="margin-top:-10px;">
-            <!-- Loaded dynamically based on tab -->
-        </div>
 
-        <!-- Remaining Categories -->
-        <section class="category-section">
-            <div class="section-header">
-                <h2>Politics</h2>
-                <a href="index.html?category=Politics" class="view-all">View All</a>
-            </div>
-            <div class="news-grid" id="block-politics"></div>
-        </section>
-
-        <section class="category-section">
-            <div class="section-header">
-                <h2>Entertainment</h2>
-                <a href="index.html?category=Entertainment" class="view-all">View All</a>
-            </div>
-            <div class="news-grid" id="block-entertainment"></div>
-        </section>
-
-        <section class="category-section">
-            <div class="section-header">
-                <h2>Sports</h2>
-                <a href="index.html?category=Sports" class="view-all">View All</a>
-            </div>
-            <div class="news-grid" id="block-sports"></div>
-        </section>
-
-        <section class="category-section">
-            <div class="section-header">
-                <h2>Science</h2>
-                <a href="index.html?category=Science" class="view-all">View All</a>
-            </div>
-            <div class="news-grid" id="block-science"></div>
-        </section>
-    </main>
-
-
-            
-            <!-- Utility Widgets (Ad & Newsletter) -->
-            <div class="editorial-utilities mt-40">
-                <!-- Newsletter Widget -->
-                <div class="sidebar-widget newsletter-widget editorial-newsletter">
-                    <div class="newsletter-icon"><i class="fas fa-envelope"></i></div>
-                    <h3>Subscribe to Daily Briefing</h3>
-                    <p>Get the most important stories curated by our editors directly to your inbox.</p>
-                    <form class="newsletter-form" id="newsletter-form" onsubmit="handleSubscribe(event)">
-                        <input type="email" placeholder="Your email address" required>
-                        <button type="submit">Subscribe</button>
-                    </form>
-                </div>
-                <!-- Ad Widget -->
-                <div class="sidebar-widget ad-widget editorial-ad">
-                    <div class="ad-label">Advertisement</div>
-                    <div class="ad-box">
-                        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3174617678465799" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- ===== FOOTER ===== -->
@@ -244,103 +158,53 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo">Prime<span>Report</span></div>
-                    <p>Premium global news portal delivering accurate, timely reporting from around the world.</p>
-                    <div class="social-links">
-                        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <div class="footer-logo">PRIME<span>REPORT</span></div>
+                    <p class="footer-tagline">Award-winning global reporting. Delivering accuracy, depth, and the stories that shape our world across five continents.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link-btn" aria-label="X-twitter"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" class="social-link-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">
                     <h4>Categories</h4>
-                    <ul>
-                        <li><a href="index.html?category=World">World News</a></li>
+                    <ul class="footer-links-list">
+                        <li><a href="index.html?category=World">World news</a></li>
                         <li><a href="index.html?category=Technology">Technology</a></li>
                         <li><a href="index.html?category=Business">Business</a></li>
                         <li><a href="index.html?category=Politics">Politics</a></li>
                         <li><a href="index.html?category=Sports">Sports</a></li>
-                        <li><a href="index.html?category=Science">Science</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Company</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="editorial.html">Editorial Team</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="support.html">Support Center</a></li>
+                    <ul class="footer-links-list">
+                        <li><a href="#">About PrimeReport</a></li>
+                        <li><a href="#">Editorial Team</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Support Center</a></li>
+                        <li><a href="#">Newsletters</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Legal</h4>
-                    <ul>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="cookies.html">Cookie Policy</a></li>
-                        <li><a href="advertise.html">Advertise</a></li>
+                    <ul class="footer-links-list">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">Ad Choices</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <span>© 2026 PrimeReport. All rights reserved.</span>
-                <span>Made with <i class="fas fa-heart"></i> for global readers</span>
+            <div class="footer-bottom-info">
+                <span>© 2026 PrimeReport News. All Rights Reserved.</span>
+                <span>Independent Journalism Matters.</span>
             </div>
         </div>
     </footer>
 
-    <!-- ===== BOTTOM NAV (MOBILE) ===== -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="bottom-nav-item active">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="index.html?category=World" class="bottom-nav-item">
-            <i class="fas fa-globe"></i>
-            <span>World</span>
-        </a>
-        <a href="#" class="bottom-nav-item">
-            <i class="fas fa-fire"></i>
-            <span>Trending</span>
-        </a>
-        <a href="#" class="bottom-nav-item" id="bottom-nav-categories">
-            <i class="fas fa-th-large"></i>
-            <span>Categories</span>
-        </a>
-        <a href="#" class="bottom-nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-    </nav>
-
-    <!-- Deferred Third-Party Scripts -->
-    <script>
-        // Delay heavy scripts to improve performance
-        setTimeout(() => {
-            // Google Analytics
-            const gaScript = document.createElement('script');
-            gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-KPL3F3WTF0";
-            gaScript.async = true;
-            document.body.appendChild(gaScript);
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-KPL3F3WTF0');
-
-            // Google AdSense
-            const adScript = document.createElement('script');
-            adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3174617678465799";
-            adScript.async = true;
-            adScript.crossOrigin = "anonymous";
-            document.body.appendChild(adScript);
-            
-            // Adsbygoogle init
-            setTimeout(() => {
-                try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-            }, 500);
-        }, 3000); // 3-second delay for third-party scripts
-    </script>
     <script src="js/main.js" defer></script>
 </body>
 

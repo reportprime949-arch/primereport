@@ -171,7 +171,9 @@ class NewsFetcher {
             expandedContent = linkEngine.linkify(expandedContent || scrapedContent || rawSummary, feed.category);
 
             // 4. Advanced Image Extraction Pipeline
+            // User Requirement: Use urlToImage or image, fallback ONLY if missing.
             let finalImage = 
+                item.urlToImage || 
                 (item.enclosure && item.enclosure.url) ||
                 (item.mediaContent && item.mediaContent.$ && item.mediaContent.$.url) ||
                 (item.mediaThumbnail && item.mediaThumbnail.$ && item.mediaThumbnail.$.url) ||
@@ -220,8 +222,12 @@ class NewsFetcher {
             const pubDate = new Date(item.pubDate || item.isoDate || Date.now());
             const isBreaking = (Date.now() - pubDate.getTime()) < (45 * 60 * 1000);
 
+            // Clean ID: Force hash if GUID is a URL to prevent slug corruption
+            const rawId = item.guid || item.id || realLink;
+            const cleanId = rawId.includes('://') ? crypto.createHash('md5').update(rawId).digest('hex') : rawId;
+
             const article = {
-              id: item.guid || item.id || crypto.createHash('md5').update(realLink).digest('hex'),
+              id: cleanId,
               title: finalTitle,
               summary: rawSummary.substring(0, 300),
               content: expandedContent,

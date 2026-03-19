@@ -50,9 +50,14 @@ class ArticleStore {
 
         const idStr = String(a.id);
         
-        // Ensure slug exists for SEO engine
-        if (!a.slug) {
-            a.slug = `${slugify(a.title)}-${idStr.substring(0, 8)}`;
+        // Ensure slug exists and is CLEAN for SEO engine
+        // Requirement: Remove any encoded URLs or weird chars from slugs
+        if (!a.slug || a.slug.includes('%') || a.slug.includes('://')) {
+            const cleanTitle = slugify(a.title);
+            const suffix = idStr.includes('://') ? 
+                           crypto.createHash('md5').update(idStr).digest('hex').substring(0, 8) : 
+                           idStr.substring(0, 8);
+            a.slug = `${cleanTitle}-${suffix}`;
         }
 
         this.articles.set(idStr, a);

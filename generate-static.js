@@ -195,15 +195,14 @@ async function generate() {
   try {
     console.log("🚀 Starting static site generation...");
     const res = await axios.get(API);
-    const articles = res.data.articles;
-
-    console.log(`📦 Found ${articles.length} articles. Processing...`);
-
     const sitemapLinks = [];
     const baseUrl = "https://primereport-news.netlify.app";
+    const res = await axios.get(API);
+    const articles = res.data.articles || [];
+    console.log(`[Static] Fetched ${articles.length} articles.`);
 
     for (const article of articles) {
-      const slug = slugify(article.title);
+      const slug = article.slug || slugify(article.title);
       const fileName = `${slug}.html`;
       const filePath = path.join(ARTICLES_DIR, fileName);
 

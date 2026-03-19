@@ -1,51 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article – PrimeReport</title>
-    <meta name="description" content="Read the latest news on PrimeReport.">
+    <title>Global News | PrimeReport</title>
+    <meta name="description" content="Read the latest global news, analysis, and reports on PrimeReport.">
     <meta property="og:type" content="article">
     <meta name="robots" content="index, follow, max-image-preview:large">
 
-    <!-- Fonts & Icons -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/prime.css">
-    <link rel="stylesheet" href="css/article.css">
 
     <!-- Article Schema (populated by JS) -->
     <script type="application/ld+json" id="article-schema"></script>
+    
     <!-- Open Graph SEO -->
     <meta property="og:title" content="">
     <meta property="og:description" content="">
     <meta property="og:image" content="">
     <meta property="og:url" content="">
     <meta property="og:site_name" content="PrimeReport">
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="">
-    <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="">
-
-    <!-- Canonical -->
-    <link rel="canonical" href="">
 </head>
+
 <body>
 
-<!-- Global Progress Bar -->
-<div id="top-progress-bar"></div>
-
     <!-- ===== HEADER ===== -->
+    <div class="header-top">
+        <div class="container" style="display:flex; justify-content:space-between">
+            <a href="index.html" style="color:#fff; text-decoration:none;"><i class="fas fa-chevron-left"></i> Back to Home</a>
+            <span><i class="fas fa-bolt"></i> Global Edition</span>
+        </div>
+    </div>
+
     <header class="site-header">
-        <div class="container header-inner">
-            <a href="index.html" class="logo-text">Prime<span>Report</span></a>
-            
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo-text">Prime<span>Report</span></a>
+                
+                <div class="header-actions">
+                    <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+                    <button id="mobile-menu-btn" class="icon-btn mobile-hamburger" style="display:none"><i class="fas fa-bars"></i></button>
+                </div>
+            </div>
+
             <nav class="desktop-nav" id="main-nav">
                 <a href="index.html" class="nav-link">Home</a>
                 <a href="index.html?category=World" class="nav-link">World</a>
@@ -56,39 +61,39 @@
                 <a href="index.html?category=Sports" class="nav-link">Sports</a>
                 <a href="index.html?category=Science" class="nav-link">Science</a>
             </nav>
-
-            <div class="header-actions">
-                <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
-                <button id="mobile-menu-btn" class="icon-btn mobile-hamburger" style="display:none"><i class="fas fa-bars"></i></button>
-            </div>
         </div>
     </header>
 
     <!-- ===== ARTICLE CONTENT ===== -->
-    <main style="padding: 40px 0; background: var(--bg); min-height: 80vh;">
-        <div class="container">
+    <main>
+        <div class="article-detail-container">
+            
             <!-- Loading State -->
             <div id="article-loading">
-                <div class="skeleton" style="height:30px; width:40%; margin-bottom:20px;"></div>
-                <div class="skeleton" style="height:60px; margin-bottom:20px;"></div>
-                <div class="skeleton" style="height:400px; margin-bottom:30px;"></div>
-                <div class="skeleton" style="height:20px; margin-bottom:10px;"></div>
-                <div class="skeleton" style="height:20px; margin-bottom:10px;"></div>
+                <div class="skeleton" style="height:30px; width:150px; margin-bottom:25px;"></div>
+                <div class="skeleton" style="height:120px; width:100%; margin-bottom:30px;"></div>
+                <div class="skeleton" style="height:25px; width:300px; margin-bottom:40px;"></div>
+                <div class="skeleton" style="height:450px; width:100%; margin-bottom:50px;"></div>
+                <div class="skeleton" style="height:20px; margin-bottom:15px;"></div>
+                <div class="skeleton" style="height:20px; margin-bottom:15px;"></div>
+                <div class="skeleton" style="height:20px; margin-bottom:15px;"></div>
             </div>
 
-            <!-- Article Content -->
-            <div id="article-content" class="hidden"></div>
+            <!-- Dynamic Article Content -->
+            <article id="article-content" class="hidden"></article>
 
-            <!-- SEO Static Fallback (Hidden from users, visible to crawlers) -->
-            <div id="article-static-fallback" style="display:none"></div>
-            
-            <!-- Related -->
-            <div id="related-section" class="hidden" style="margin-top: 60px;">
-                <div class="section-header">
+            <!-- Related Section -->
+            <div id="related-section" class="hidden">
+                <div class="related-header">
                     <h2>Related Stories</h2>
                 </div>
-                <div class="news-grid" id="related-grid"></div>
+                <div class="news-grid" id="related-grid">
+                    <!-- Injected -->
+                </div>
             </div>
+
+            <!-- SEO Static Fallback -->
+            <div id="article-static-fallback" style="display:none"></div>
         </div>
     </main>
 
@@ -97,39 +102,41 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo">Prime<span>Report</span></div>
-                    <p>Premium global news portal delivering accurate, timely reporting from around the world.</p>
+                    <div class="footer-logo">PRIME<span>REPORT</span></div>
+                    <p class="footer-tagline">Award-winning global reporting. Delivering accuracy, depth, and the stories that shape our world across five continents.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Categories</h4>
-                    <ul class="footer-links" style="list-style:none">
-                        <li><a href="index.html?category=World">World News</a></li>
+                    <ul class="footer-links-list">
+                        <li><a href="index.html?category=World">World news</a></li>
                         <li><a href="index.html?category=Technology">Technology</a></li>
                         <li><a href="index.html?category=Business">Business</a></li>
                         <li><a href="index.html?category=Politics">Politics</a></li>
-                        <li><a href="index.html?category=Sports">Sports</a></li>
                     </ul>
                 </div>
-                <div class="footer-col" style="visibility:hidden"></div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Editorial Team</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
                 <div class="footer-col">
                     <h4>Legal</h4>
-                    <ul class="footer-links" style="list-style:none">
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="terms.html">Terms of Service</a></li>
+                    <ul class="footer-links-list">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <span>© 2026 PrimeReport. All rights reserved.</span>
-                <span>Made with <i class="fas fa-heart"></i> for global readers</span>
+            <div class="footer-bottom-info">
+                <span>© 2026 PrimeReport News. Independent Global Journalism.</span>
             </div>
         </div>
     </footer>
 
-
-<script src="js/article.js">
-    
-</script>
-
+    <script src="js/article.js" defer></script>
 </body>
+
 </html>

@@ -1,5 +1,5 @@
 /* ==============================================================
-   PrimeReport — Professional BBC-Style main.js
+   PRIME REPORT – Premium BBC-Style main.js
    ============================================================== */
 
 const API = "https://primereport-server.onrender.com";
@@ -10,15 +10,15 @@ const PLACEHOLDER = 'hero.webp';
  */
 async function fetchWithRetry(url, options = {}, retries = 3, backoff = 2000) {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    const idTimeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
     try {
         const response = await fetch(url, { ...options, signal: controller.signal });
-        clearTimeout(id);
+        clearTimeout(idTimeout);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     } catch (err) {
-        clearTimeout(id);
+        clearTimeout(idTimeout);
         if (retries > 0) {
             console.warn(`[Fetch Retry] ${url} - Attempts left: ${retries}`);
             await new Promise(r => setTimeout(r, backoff));
@@ -28,21 +28,21 @@ async function fetchWithRetry(url, options = {}, retries = 3, backoff = 2000) {
     }
 }
 
-/* ─── Bootstrap ─────────────────────────────────────────────── */
+/* ─── Initialization ────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     updateDate();
     initSearch();
     initMobileMenu();
-    initSubCategoryTabs();
+    initCategoryTabs();
 
-    // Data Loaders
+    // Core Content Loading
     loadPortalTop();      // Hero + Sidebars
     loadCategoryBlocks(); // Main grids
     loadBreakingTicker(); // Ticker
 });
 
-/* ─── UI Initializers ───────────────────────────────────────── */
+/* ─── UI Actions ───────────────────────────────────────────── */
 function updateDate() {
     const el = document.getElementById('current-date');
     if (el) el.textContent = new Date().toLocaleDateString('en-US', {
@@ -52,33 +52,32 @@ function updateDate() {
 
 function initTheme() {
     const root = document.documentElement;
-    const btn  = document.getElementById('theme-toggle');
+    const btn = document.getElementById('theme-toggle');
     const icon = btn?.querySelector('i');
+    
     const saved = localStorage.getItem('theme') || 'light';
-
     if (saved === 'dark') {
         root.classList.add('dark');
-        if (icon) icon.classList.replace('fa-moon', 'fa-sun');
+        if (icon) icon.className = 'fas fa-sun';
     }
 
     btn?.addEventListener('click', () => {
         root.classList.toggle('dark');
-        const dark = root.classList.contains('dark');
-        if (icon) icon.classList.replace(dark ? 'fa-moon' : 'fa-sun', dark ? 'fa-sun' : 'fa-moon');
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        const isDark = root.classList.contains('dark');
+        if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
 }
 
 function initMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
-    const menu = document.getElementById('main-nav');
-    if (btn && menu) {
-        btn.onclick = () => {
-            menu.classList.toggle('active');
-            btn.querySelector('i').classList.toggle('fa-bars');
-            btn.querySelector('i').classList.toggle('fa-times');
-        };
-    }
+    const nav = document.getElementById('main-nav');
+    if (!btn || !nav) return;
+
+    btn.onclick = () => {
+        nav.classList.toggle('active');
+        btn.innerHTML = nav.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    };
 }
 
 function initSearch() {
@@ -86,144 +85,162 @@ function initSearch() {
     if (!input) return;
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            const q = input.value.trim();
-            if (q) window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+            const val = input.value.trim();
+            if (val) window.location.href = `index.html?search=${encodeURIComponent(val)}`;
         }
     });
 }
 
-/* ─── Data Fetching & Rendering ──────────────────────────────── */
+/* ─── Component Renderers ───────────────────────────────────── */
 
-// Helper: Card Renderer
-function createNewsCard(a, category) {
-    const link = `/article/${a.slug || a.id}`;
+/**
+ * Premium Article Card
+ */
+function createNewsCard(a, catOverride) {
+    const slug = a.slug || a.id;
     return `
-        <div class="news-card" onclick="openArticle('${a.slug || a.id}')">
+        <div class="news-card" onclick="openArticle('${slug}')">
+            <span class="card-cat-badge">${a.category || catOverride || 'News'}</span>
             <div class="card-img-wrap">
                 <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
-                <span class="card-cat-badge">${a.category || category || 'News'}</span>
             </div>
-            <div class="card-content">
-                <a href="${link}" class="card-link-seo"><h3>${escHtml(a.title)}</h3></a>
-                <div class="card-footer">
-                    <span>${escHtml(a.source || 'PrimeReport')}</span>
-                    <span>${timeAgo(a.publishedAt)}</span>
-                </div>
+            <h3>${escHtml(a.title)}</h3>
+            <div class="card-meta">
+                <span>${escHtml(a.source || 'PrimeReport')}</span>
+                <span>${timeAgo(a.publishedAt)}</span>
             </div>
         </div>
     `;
 }
 
-// Helper: Sidebar Item Renderer
+/**
+ * Numbered Sidebar Item
+ */
 function createSidebarItem(a, index) {
-    const link = `/article/${a.slug || a.id}`;
     return `
         <div class="sidebar-item" onclick="openArticle('${a.slug || a.id}')">
             <div class="item-number">${String(index).padStart(2, '0')}</div>
             <div class="sidebar-item-content">
-                <a href="${link}" class="card-link-seo"><h4>${escHtml(a.title)}</h4></a>
-                <div class="editorial-meta-sm">${timeAgo(a.publishedAt)}</div>
+                <h4>${escHtml(a.title)}</h4>
+                <div class="card-meta">${timeAgo(a.publishedAt)}</div>
             </div>
         </div>
     `;
 }
 
-// Loader: Hero + Sidebars
+/**
+ * Compact Trending Widget Item
+ */
+function createTrendingItem(a) {
+    return `
+        <div class="trending-side-item" onclick="openArticle('${a.slug || a.id}')">
+            <div class="trending-img">
+                <img src="${a.image || PLACEHOLDER}" alt="${escHtml(a.title)}" loading="lazy">
+            </div>
+            <div class="trending-text">
+                <h5>${escHtml(a.title)}</h5>
+                <div class="card-meta" style="font-size:10px">${timeAgo(a.publishedAt)}</div>
+            </div>
+        </div>
+    `;
+}
+
+/* ─── Content Loading Logic ──────────────────────────────────── */
+
+/**
+ * Load Hero (70%) and Sidebars (30%)
+ */
 async function loadPortalTop() {
     try {
-        const data = await fetchWithRetry(`${API}/api/news?limit=10`);
+        const data = await fetchWithRetry(`${API}/api/news?limit=15`);
         const articles = data.articles || [];
-        
         if (!articles.length) return;
 
-        // 1. Hero (70%)
+        // 1. Hero (Main)
         const hero = articles[0];
-        const heroContainer = document.getElementById('portal-hero');
-        if (heroContainer) {
-            heroContainer.innerHTML = `
+        const heroEl = document.getElementById('portal-hero');
+        if (heroEl) {
+            heroEl.innerHTML = `
                 <img src="${hero.image || PLACEHOLDER}" alt="${escHtml(hero.title)}" fetchpriority="high">
                 <div class="hero-overlay">
-                    <span class="hero-badge">${hero.category || 'Top Story'}</span>
-                    <a href="/article/${hero.slug || hero.id}" class="card-link-seo"><h1>${escHtml(hero.title)}</h1></a>
+                    <span class="hero-badge">${hero.category || 'Featured'}</span>
+                    <h1>${escHtml(hero.title)}</h1>
                     <div class="hero-meta">
                         <span><i class="far fa-clock"></i> ${timeAgo(hero.publishedAt)}</span>
-                        <span><i class="fas fa-newspaper"></i> ${escHtml(hero.source || 'PrimeReport')}</span>
+                        <span><i class="fas fa-globe"></i> ${escHtml(hero.source || 'PrimeReport')}</span>
                     </div>
                 </div>
             `;
-            heroContainer.onclick = () => openArticle(hero.slug || hero.id);
+            heroEl.onclick = () => openArticle(hero.slug || hero.id);
         }
 
-        // 2. Top Stories (Right Sidebar - items 2-4)
-        const topContainer = document.getElementById('portal-top-stories');
-        if (topContainer) {
-            topContainer.innerHTML = articles.slice(1, 4).map((a, i) => createSidebarItem(a, i + 1)).join('');
+        // 2. Top Stories Sidebar (Right Top 2-6)
+        const topEl = document.getElementById('portal-top-stories');
+        if (topEl) {
+            topEl.innerHTML = articles.slice(1, 6).map((a, i) => createSidebarItem(a, i + 1)).join('');
         }
 
-        // 3. Trending (Right Sidebar - items 5-7)
-        const trendContainer = document.getElementById('portal-trending');
-        if (trendContainer) {
-            trendContainer.innerHTML = articles.slice(4, 7).map((a, i) => createSidebarItem(a, i + 4)).join('');
+        // 3. Trending Now Sidebar (Right Bottom 7-10)
+        const trendEl = document.getElementById('portal-trending');
+        if (trendEl) {
+            trendEl.innerHTML = articles.slice(6, 10).map(a => createTrendingItem(a)).join('');
         }
-    } catch (e) {
-        console.warn('[Hero Load Error]', e);
+
+    } catch (err) {
+        console.error('[loadPortalTop Error]', err);
     }
 }
 
-// Loader: Category Blocks
+/**
+ * Load Main Category Grids
+ */
 async function loadCategoryBlocks() {
-    // Requirements: World, Technology, Business, Politics, Entertainment, Sports, Science
-    const cats = ['World', 'Technology', 'Business', 'Politics', 'Entertainment', 'Sports', 'Science'];
+    const cats = ['World', 'Technology', 'Business'];
     cats.forEach(async (cat) => {
         const grid = document.getElementById(`block-${cat.toLowerCase()}`);
         if (!grid) return;
-        
+
         try {
-            const data = await fetchWithRetry(`${API}/api/news?category=${cat}&limit=4`);
+            const data = await fetchWithRetry(`${API}/api/category/${cat.toLowerCase()}?limit=4`);
             const articles = data.articles || [];
-            
             if (!articles.length) {
-                grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); font-size:13px;">No updates for this section.</div>';
+                grid.innerHTML = '<div style="padding:40px; color:var(--text-muted);">No recent updates in this category.</div>';
                 return;
             }
-            
             grid.innerHTML = articles.map(a => createNewsCard(a, cat)).join('');
-        } catch (e) {
-            console.warn(`[Category Load Error: ${cat}]`, e);
+        } catch (err) {
+            console.warn(`[loadCategory Error: ${cat}]`, err);
         }
     });
 }
 
-// Loader/Handler: Sub-category Tabs
-function initSubCategoryTabs() {
-    const tabs = document.querySelectorAll('.sub-cat-tab');
-    const grid = document.getElementById('sub-cat-grid');
+/**
+ * Editor's Picks (Sub-category Tabs)
+ */
+function initCategoryTabs() {
+    const tabs = document.querySelectorAll('.tab-item');
+    const grid = document.getElementById('block-sub-grid');
     if (!tabs.length || !grid) return;
 
     tabs.forEach(tab => {
         tab.onclick = async () => {
             const sub = tab.dataset.sub;
-            
-            // Switch active state
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
 
-            // Show skeletons
-            grid.innerHTML = Array(4).fill('<div class="skeleton" style="height:250px"></div>').join('');
+            // Loading state
+            grid.innerHTML = Array(4).fill('<div class="skeleton" style="height:280px"></div>').join('');
 
             try {
-                const res = await fetch(`${API}/api/news?category=${sub}&limit=4`);
-                const data = await res.json();
+                const data = await fetchWithRetry(`${API}/api/category/${sub.toLowerCase()}?limit=4`);
                 const articles = data.articles || [];
-
                 if (!articles.length) {
-                    grid.innerHTML = '<div style="padding:40px; text-align:center; grid-column:1/-1;">No stories found.</div>';
+                    grid.innerHTML = '<div style="grid-column:1/-1; padding:60px; text-align:center;">No stories found in this section.</div>';
                     return;
                 }
-
                 grid.innerHTML = articles.map(a => createNewsCard(a, sub)).join('');
-            } catch (e) {
-                grid.innerHTML = '<div style="padding:40px; text-align:center; grid-column:1/-1;">Error loading data.</div>';
+            } catch (err) {
+                grid.innerHTML = '<div style="grid-column:1/-1; padding:60px; text-align:center; color:var(--primary);">Failed to load section.</div>';
             }
         };
     });
@@ -232,37 +249,37 @@ function initSubCategoryTabs() {
     tabs[0].click();
 }
 
-// Loader: Breaking Ticker
+/**
+ * Breaking News Ticker
+ */
 async function loadBreakingTicker() {
     const track = document.getElementById('ticker-track');
     if (!track) return;
 
     try {
-        const res = await fetch(`${API}/api/news`);
-        const data = await res.json();
+        const data = await fetchWithRetry(`${API}/api/news?limit=10`);
         const articles = data.articles || [];
-        
         if (articles.length) {
-            const content = articles.slice(0, 10).map(a => `
-                <span class="ticker-item" onclick="openArticle('${a.slug || a.id}')">${escHtml(a.title)}</span>
-            `).join('');
-            track.innerHTML = content + content; // Double for seamless loop
-        } else {
-            track.innerHTML = '<span class="ticker-item">No breaking news available.</span>';
+            const txt = articles.map(a => `<span class="ticker-item" onclick="openArticle('${a.slug || a.id}')">${escHtml(a.title)}</span>`).join('');
+            track.innerHTML = txt + txt; // Seamless loop
         }
-    } catch (e) {
-        track.innerHTML = '<span class="ticker-item">Breaking news ticker unavailable.</span>';
+    } catch (err) {
+        track.innerHTML = '<span class="ticker-item">Breaking news ticker temporarily unavailable.</span>';
     }
 }
 
-/* ─── Utilities ────────────────────────────────────────────────── */
-function openArticle(id) { window.location.href = `/article/${encodeURIComponent(id)}`; }
+/* ─── Global Helpers ────────────────────────────────────────── */
+
+function openArticle(slug) {
+    if (!slug) return;
+    window.location.href = `/article/${slug}`;
+}
 
 function timeAgo(date) {
     if (!date) return 'Just now';
-    const diff = (Date.now() - new Date(date)) / 1000;
-    if (diff < 60) return 'Just now';
-    if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+    const d = new Date(date);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 3600) return `${Math.floor(diff/60) || 1}m ago`;
     if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
     return `${Math.floor(diff/86400)}d ago`;
 }
