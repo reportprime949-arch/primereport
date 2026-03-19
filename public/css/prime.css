@@ -18,6 +18,13 @@
     --container:  1280px;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     --font-head: 'Poppins', 'Inter', sans-serif;
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+html.dark {
+    --glass: rgba(20, 20, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 /* Dark mode overrides */
@@ -179,7 +186,22 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
 /* ===== 5. SUB-CATEGORY STRIP ===== */
-.sub-cat-strip { background: var(--card-bg); border-radius: 12px; padding: 15px; display: flex; gap: 30px; margin-top: -30px; margin-bottom: 30px; box-shadow: var(--shadow); border: 1px solid var(--border); justify-content: center; }
+.sub-cat-strip { 
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px; 
+    padding: 15px; 
+    display: flex; 
+    gap: 30px; 
+    margin-top: -30px; 
+    margin-bottom: 30px; 
+    box-shadow: var(--shadow); 
+    border: 1px solid var(--glass-border); 
+    justify-content: center; 
+    position: relative;
+    z-index: 10;
+}
 .sub-cat-tab { font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: 0.2s; }
 .sub-cat-tab:hover, .sub-cat-tab.active { color: var(--primary); }
 

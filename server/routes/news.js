@@ -42,23 +42,32 @@ router.get("/", (req, res) => {
         // Normalize Category
         if (category) {
             category = category.toLowerCase();
-            if (category === "tech") category = "technology";
+            const aliases = {
+                "tech": "technology",
+                "biz": "business",
+                "pol": "politics"
+            };
+            category = aliases[category] || category;
         }
 
         if (category && category !== "all") {
             articles = articles.filter(a => {
                 if (!a.category) return false;
                 const aCat = a.category.toLowerCase();
-                // Exact match or includes for flexibility, but normalized
                 return aCat === category || aCat.includes(category);
             });
         }
 
-        console.log("API RESPONSE:", articles.length);
-        res.json({ success: true, articles });
+        // Limit results if requested
+        const limit = parseInt(req.query.limit);
+        if (!isNaN(limit)) {
+            articles = articles.slice(0, limit);
+        }
+
+        res.json({ success: true, count: articles.length, articles });
     } catch (error) {
-        console.error("API Error:", error);
-        res.json({ success: false, articles: [] });
+        console.error("[API News] Error:", error.message);
+        res.status(500).json({ success: false, articles: [], error: "Failed to fetch news" });
     }
 });
 

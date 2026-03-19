@@ -5,6 +5,29 @@
 const API = "https://primereport-server.onrender.com/api/news";
 const PLACEHOLDER = 'hero.webp';
 
+/**
+ * Robust Fetch with Retry & Timeout
+ */
+async function fetchWithRetry(url, options = {}, retries = 3, backoff = 2000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        clearTimeout(id);
+        if (retries > 0) {
+            console.warn(`[Fetch Retry] ${url} - Attempts left: ${retries}`);
+            await new Promise(r => setTimeout(r, backoff));
+            return fetchWithRetry(url, options, retries - 1, backoff * 1.5);
+        }
+        throw err;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initMobileMenu();
@@ -56,9 +79,8 @@ async function loadArticle() {
     const content = document.getElementById("article-content");
 
     try {
-        const res = await fetch(`${API}/${encodeURIComponent(id)}`);
-        const a = await res.json();
-
+        const a = await fetchWithRetry(`${API}/${encodeURIComponent(id)}`);
+        
         if (!a || a.error) throw new Error("Not found");
 
         loader.style.display = "none";
@@ -117,8 +139,7 @@ async function loadRelated(category, currentId) {
     if (!category || !grid) return;
 
     try {
-        const res = await fetch(`${API}?category=${category}&limit=5`);
-        const data = await res.json();
+        const data = await fetchWithRetry(`${API}?category=${category}&limit=5`);
         const articles = (data.articles || []).filter(a => (a.slug || a.id) !== currentId).slice(0, 4);
 
         if (articles.length) {

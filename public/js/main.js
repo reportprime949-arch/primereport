@@ -5,6 +5,29 @@
 const API = "https://primereport-server.onrender.com";
 const PLACEHOLDER = 'hero.webp';
 
+/**
+ * Robust Fetch with Retry & Timeout
+ */
+async function fetchWithRetry(url, options = {}, retries = 3, backoff = 2000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        clearTimeout(id);
+        if (retries > 0) {
+            console.warn(`[Fetch Retry] ${url} - Attempts left: ${retries}`);
+            await new Promise(r => setTimeout(r, backoff));
+            return fetchWithRetry(url, options, retries - 1, backoff * 1.5);
+        }
+        throw err;
+    }
+}
+
 /* ─── Bootstrap ─────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -108,8 +131,7 @@ function createSidebarItem(a, index) {
 // Loader: Hero + Sidebars
 async function loadPortalTop() {
     try {
-        const res = await fetch(`${API}/api/news`);
-        const data = await res.json();
+        const data = await fetchWithRetry(`${API}/api/news?limit=10`);
         const articles = data.articles || [];
         
         if (!articles.length) return;
@@ -150,14 +172,14 @@ async function loadPortalTop() {
 
 // Loader: Category Blocks
 async function loadCategoryBlocks() {
+    // Requirements: World, Technology, Business, Politics, Entertainment, Sports, Science
     const cats = ['World', 'Technology', 'Business', 'Politics', 'Entertainment', 'Sports', 'Science'];
     cats.forEach(async (cat) => {
         const grid = document.getElementById(`block-${cat.toLowerCase()}`);
         if (!grid) return;
         
         try {
-            const res = await fetch(`${API}/api/news?category=${cat}&limit=4`);
-            const data = await res.json();
+            const data = await fetchWithRetry(`${API}/api/news?category=${cat}&limit=4`);
             const articles = data.articles || [];
             
             if (!articles.length) {
